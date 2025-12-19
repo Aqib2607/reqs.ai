@@ -11,7 +11,7 @@ export const addKey = async (req: Request, res: Response, next: NextFunction) =>
 
         // Basic validation for simple strings or patterns could go here
 
-        const encryptedKey = encrypt(key);
+        const encryptedKey = encrypt(key.trim());
         const last4 = key.slice(-4);
 
         const newKey = await APIKey.create({

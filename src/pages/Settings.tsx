@@ -49,7 +49,7 @@ const Settings = () => {
         try {
             const response = await apiKeyService.getKeys();
             if (response.status === 'success') {
-                setApiKeys(response.data.keys);
+                setApiKeys(response.data);
             }
         } catch (error) {
             console.error("Failed to fetch API keys", error);

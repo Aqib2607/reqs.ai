@@ -15,7 +15,9 @@ export const createPlan = async (req: Request, res: Response, next: NextFunction
         }
 
         // 1. Get User's API Key
-        const apiKeyDoc = await APIKey.findOne({ userId: req.user!._id, isActive: true }).select('+key');
+        const apiKeyDoc = await APIKey.findOne({ userId: req.user!._id, isActive: true })
+            .select('+key')
+            .sort({ createdAt: -1 });
         if (!apiKeyDoc) {
             return next(new AppError('No active API key found. Please add a Gemini API key in settings.', 400));
         }

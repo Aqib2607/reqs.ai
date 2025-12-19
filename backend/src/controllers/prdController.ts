@@ -21,7 +21,9 @@ export const generatePRD = async (req: Request, res: Response, next: NextFunctio
         }
 
         // 2. Get API Key
-        const apiKeyDoc = await APIKey.findOne({ userId: req.user!._id, isActive: true }).select('+key');
+        const apiKeyDoc = await APIKey.findOne({ userId: req.user!._id, isActive: true })
+            .select('+key')
+            .sort({ createdAt: -1 });
         if (!apiKeyDoc) {
             return next(new AppError('No active API key found', 400));
         }

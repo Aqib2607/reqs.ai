@@ -1,0 +1,153 @@
+{
+  "taskName": "Dark/Light Theme Toggle Implementation",
+  "description": "Add a theme toggle button in navbar to switch between dark and light modes",
+  "priority": "High",
+  "estimatedTime": "30 minutes",
+  "implementation": {
+    "step1": {
+      "title": "Create Theme Context",
+      "description": "Setup theme management with React Context",
+      "code": {
+        "file": "src/contexts/ThemeContext.tsx",
+        "content": "import React, { createContext, useContext, useEffect, useState } from 'react';\n\ntype Theme = 'light' | 'dark';\n\ninterface ThemeContextType {\n  theme: Theme;\n  toggleTheme: () => void;\n}\n\nconst ThemeContext = createContext<ThemeContextType | undefined>(undefined);\n\nexport function ThemeProvider({ children }: { children: React.ReactNode }) {\n  const [theme, setTheme] = useState<Theme>(() => {\n    const savedTheme = localStorage.getItem('theme') as Theme;\n    return savedTheme || 'dark';\n  });\n\n  useEffect(() => {\n    const root = document.documentElement;\n    if (theme === 'dark') {\n      root.classList.add('dark');\n    } else {\n      root.classList.remove('dark');\n    }\n    localStorage.setItem('theme', theme);\n  }, [theme]);\n\n  const toggleTheme = () => {\n    setTheme(prev => prev === 'light' ? 'dark' : 'light');\n  };\n\n  return (\n    <ThemeContext.Provider value={{ theme, toggleTheme }}>\n      {children}\n    </ThemeContext.Provider>\n  );\n}\n\nexport function useTheme() {\n  const context = useContext(ThemeContext);\n  if (!context) {\n    throw new Error('useTheme must be used within ThemeProvider');\n  }\n  return context;\n}"
+      },
+      "instructions": [
+        "Create a new file src/contexts/ThemeContext.tsx",
+        "Paste the above code",
+        "This creates a context to manage theme state across the app"
+      ]
+    },
+    "step2": {
+      "title": "Wrap App with ThemeProvider",
+      "description": "Add ThemeProvider to the root of your application",
+      "code": {
+        "file": "src/App.tsx or src/main.tsx",
+        "content": "import { ThemeProvider } from './contexts/ThemeContext';\n\nfunction App() {\n  return (\n    <ThemeProvider>\n      {/* Your existing app components */}\n    </ThemeProvider>\n  );\n}"
+      },
+      "instructions": [
+        "Open your main App.tsx or main.tsx file",
+        "Import ThemeProvider",
+        "Wrap your entire app with <ThemeProvider>",
+        "Make sure it wraps all other providers and components"
+      ]
+    },
+    "step3": {
+      "title": "Create Theme Toggle Button Component",
+      "description": "Create a reusable theme toggle button with icons",
+      "code": {
+        "file": "src/components/ThemeToggle.tsx",
+        "content": "import { useTheme } from '../contexts/ThemeContext';\nimport { Moon, Sun } from 'lucide-react';\n\nexport function ThemeToggle() {\n  const { theme, toggleTheme } = useTheme();\n\n  return (\n    <button\n      onClick={toggleTheme}\n      className=\"p-2 rounded-lg bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-all duration-200 ease-in-out\"\n      aria-label=\"Toggle theme\"\n    >\n      {theme === 'light' ? (\n        <Moon className=\"w-5 h-5 text-gray-800 dark:text-gray-200\" />\n      ) : (\n        <Sun className=\"w-5 h-5 text-gray-800 dark:text-gray-200\" />\n      )}\n    </button>\n  );\n}"
+      },
+      "instructions": [
+        "Create a new file src/components/ThemeToggle.tsx",
+        "Paste the above code",
+        "This creates a button that shows Sun icon in dark mode and Moon icon in light mode",
+        "Uses lucide-react for icons (install if not present: npm install lucide-react)"
+      ]
+    },
+    "step4": {
+      "title": "Add Toggle Button to Navbar",
+      "description": "Place the theme toggle button in your navbar",
+      "code": {
+        "file": "src/components/Navbar.tsx (or your navbar component)",
+        "content": "import { ThemeToggle } from './ThemeToggle';\n\nexport function Navbar() {\n  return (\n    <nav className=\"flex items-center justify-between p-4\">\n      {/* Your existing navbar content */}\n      <div className=\"flex items-center gap-4\">\n        {/* Your other navbar items */}\n        <ThemeToggle />\n      </div>\n    </nav>\n  );\n}"
+      },
+      "instructions": [
+        "Open your Navbar component file",
+        "Import the ThemeToggle component",
+        "Add <ThemeToggle /> in the navbar, typically on the right side",
+        "Place it near other action buttons like profile or notifications"
+      ]
+    },
+    "step5": {
+      "title": "Configure Tailwind for Dark Mode",
+      "description": "Ensure Tailwind CSS is configured for dark mode",
+      "code": {
+        "file": "tailwind.config.js",
+        "content": "module.exports = {\n  darkMode: 'class',\n  content: ['./src/**/*.{js,jsx,ts,tsx}'],\n  theme: {\n    extend: {},\n  },\n  plugins: [],\n}"
+      },
+      "instructions": [
+        "Open tailwind.config.js",
+        "Ensure darkMode is set to 'class'",
+        "This allows toggling dark mode via the 'dark' class on the root element"
+      ]
+    },
+    "step6": {
+      "title": "Update Components with Dark Mode Styles",
+      "description": "Add dark mode variants to your existing components",
+      "examples": [
+        {
+          "component": "Background colors",
+          "lightMode": "bg-white",
+          "darkMode": "dark:bg-gray-900",
+          "combined": "bg-white dark:bg-gray-900"
+        },
+        {
+          "component": "Text colors",
+          "lightMode": "text-gray-900",
+          "darkMode": "dark:text-white",
+          "combined": "text-gray-900 dark:text-white"
+        },
+        {
+          "component": "Border colors",
+          "lightMode": "border-gray-200",
+          "darkMode": "dark:border-gray-700",
+          "combined": "border-gray-200 dark:border-gray-700"
+        },
+        {
+          "component": "Card backgrounds",
+          "lightMode": "bg-gray-50",
+          "darkMode": "dark:bg-gray-800",
+          "combined": "bg-gray-50 dark:bg-gray-800"
+        }
+      ],
+      "instructions": [
+        "Go through your components and add dark: variants",
+        "Common pattern: bg-white dark:bg-gray-900",
+        "For text: text-gray-900 dark:text-white",
+        "For borders: border-gray-200 dark:border-gray-700",
+        "Test each page to ensure readability in both themes"
+      ]
+    }
+  },
+  "testingChecklist": [
+    "Click the theme toggle button in navbar",
+    "Verify page switches from dark to light theme smoothly",
+    "Click again to switch back to dark theme",
+    "Refresh the page and verify theme persists",
+    "Check all pages (landing, dashboard, profile, etc.)",
+    "Verify text is readable in both themes",
+    "Check that buttons and cards look good in both themes",
+    "Test on mobile devices",
+    "Verify smooth transition animations between themes"
+  ],
+  "commonIssues": [
+    {
+      "issue": "Theme toggle button not visible",
+      "solution": "Check if ThemeToggle component is properly imported and added to Navbar"
+    },
+    {
+      "issue": "Theme not switching",
+      "solution": "Verify ThemeProvider wraps the entire app and tailwind.config.js has darkMode: 'class'"
+    },
+    {
+      "issue": "Theme doesn't persist after refresh",
+      "solution": "Check if localStorage is being used correctly in ThemeContext"
+    },
+    {
+      "issue": "Some components don't change color",
+      "solution": "Add dark: variants to those component's Tailwind classes"
+    },
+    {
+      "issue": "Icons not showing",
+      "solution": "Install lucide-react: npm install lucide-react"
+    }
+  ],
+  "finalNotes": [
+    "The theme preference is saved in localStorage",
+    "Users will see their preferred theme on return visits",
+    "The toggle uses smooth CSS transitions for a polished feel",
+    "Sun icon appears in dark mode (click to go light)",
+    "Moon icon appears in light mode (click to go dark)"
+  ]
+}

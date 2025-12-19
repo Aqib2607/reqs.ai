@@ -3,13 +3,14 @@ import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Sparkles } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
-  
+
   const isAuthPage = location.pathname === "/login" || location.pathname === "/signup";
-  
+
   return (
     <motion.header
       initial={{ y: -100 }}
@@ -29,20 +30,20 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
-            <Link 
-              to="/#features" 
+            <Link
+              to="/#features"
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
               Features
             </Link>
-            <Link 
-              to="/#how-it-works" 
+            <Link
+              to="/#how-it-works"
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
               How it Works
             </Link>
-            <Link 
-              to="/#testimonials" 
+            <Link
+              to="/#testimonials"
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
               Testimonials
@@ -50,16 +51,19 @@ const Header = () => {
           </div>
 
           {/* Auth Buttons */}
-          {!isAuthPage && (
-            <div className="hidden md:flex items-center gap-4">
-              <Link to="/login">
-                <Button variant="ghost">Log in</Button>
-              </Link>
-              <Link to="/signup">
-                <Button variant="gradient">Get Started Free</Button>
-              </Link>
-            </div>
-          )}
+          <div className="hidden md:flex items-center gap-4">
+            <ThemeToggle />
+            {!isAuthPage && (
+              <>
+                <Link to="/login">
+                  <Button variant="ghost">Log in</Button>
+                </Link>
+                <Link to="/signup">
+                  <Button variant="gradient">Get Started Free</Button>
+                </Link>
+              </>
+            )}
+          </div>
 
           {/* Mobile Menu Button */}
           <button
@@ -83,22 +87,22 @@ const Header = () => {
             className="md:hidden py-4 border-t border-border"
           >
             <div className="flex flex-col gap-4">
-              <Link 
-                to="/#features" 
+              <Link
+                to="/#features"
                 className="text-muted-foreground hover:text-foreground transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Features
               </Link>
-              <Link 
-                to="/#how-it-works" 
+              <Link
+                to="/#how-it-works"
                 className="text-muted-foreground hover:text-foreground transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 How it Works
               </Link>
-              <Link 
-                to="/#testimonials" 
+              <Link
+                to="/#testimonials"
                 className="text-muted-foreground hover:text-foreground transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
@@ -106,6 +110,10 @@ const Header = () => {
               </Link>
               {!isAuthPage && (
                 <div className="flex flex-col gap-2 pt-4 border-t border-border">
+                  <div className="flex items-center justify-between px-2">
+                    <span className="text-sm font-medium">Theme</span>
+                    <ThemeToggle />
+                  </div>
                   <Link to="/login" onClick={() => setIsMenuOpen(false)}>
                     <Button variant="ghost" className="w-full">Log in</Button>
                   </Link>

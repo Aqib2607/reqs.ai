@@ -45,10 +45,23 @@ const parsePlanContent = (content: string) => {
   return result;
 };
 
+interface Plan {
+  _id: string;
+  ideaText: string;
+  generatedPlan: string;
+  status: 'pending' | 'completed' | 'failed';
+  createdAt: string;
+}
+
+interface Section {
+  title: string;
+  content: string;
+}
+
 const PlanView = () => {
   const { id } = useParams<{ id: string }>();
-  const [plan, setPlan] = useState<any>(null);
-  const [sections, setSections] = useState<any[]>([]);
+  const [plan, setPlan] = useState<Plan | null>(null);
+  const [sections, setSections] = useState<Section[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedSections, setExpandedSections] = useState<number[]>([0, 1, 2]);
   const [copied, setCopied] = useState(false);
@@ -62,9 +75,9 @@ const PlanView = () => {
         setLoading(true);
         const response = await planService.getPlan(id);
         if (response.status === 'success') {
-          setPlan(response.data.plan);
-          if (response.data.plan.generatedPlan) {
-            setSections(parsePlanContent(response.data.plan.generatedPlan));
+          setPlan(response.data);
+          if (response.data.generatedPlan) {
+            setSections(parsePlanContent(response.data.generatedPlan));
             // Expand all by default if reasonable count
             setExpandedSections([0, 1, 2, 3, 4, 5].slice(0, 6));
           }
@@ -121,7 +134,8 @@ const PlanView = () => {
         // The result.data.prd contains the new PRD
         navigate(`/prd/${result.data.prd._id}`);
       }
-    } catch (error: any) {
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
       console.error("PRD generation failed", error);
       toast({
         title: "Generation failed",

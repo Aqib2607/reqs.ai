@@ -30,10 +30,24 @@ app.use(cors({ origin: config.corsOrigin }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
+import path from 'path';
+
+// Serve static files from the React frontend app
+app.use(express.static(path.join(__dirname, '../../dist')));
+
+// Valid Routes
 app.use('/api/v1', routes);
 
-// 404 Handler
+// Handle React Routing, return all other requests to React app
+app.get('*', (req, res, next) => {
+    // Skip API routes to allow 404 for them
+    if (req.url.startsWith('/api')) {
+        return next();
+    }
+    res.sendFile(path.join(__dirname, '../../dist/index.html'));
+});
+
+// 404 Handler for API routes
 app.all('*', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });

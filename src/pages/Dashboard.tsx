@@ -20,11 +20,17 @@ import { planService } from "@/services/planService";
 import { userService } from "@/services/userService";
 import { DashboardSkeleton } from "@/components/loading/DashboardSkeleton";
 
+interface Plan {
+  _id: string;
+  ideaText: string;
+  createdAt: string;
+}
+
 const Dashboard = () => {
   const [idea, setIdea] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [stats, setStats] = useState({ totalPlans: 0, totalPRDs: 0 });
-  const [recentActivity, setRecentActivity] = useState<any[]>([]);
+  const [recentActivity, setRecentActivity] = useState<Plan[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -36,8 +42,8 @@ const Dashboard = () => {
         const statsData = await userService.getDashboardStats();
         if (statsData.status === 'success') {
           setStats({
-            totalPlans: statsData.data.aggregation.totalPlans,
-            totalPRDs: statsData.data.aggregation.totalPRDs
+            totalPlans: statsData.data.totalPlans,
+            totalPRDs: statsData.data.totalPRDs
           });
           setRecentActivity(statsData.data.recentPlans || []);
         }
@@ -87,7 +93,8 @@ const Dashboard = () => {
 
       // The createPlan controller returns { status: 'success', data: { plan: ... } }
       navigate(`/plan/${result.data.plan._id}`);
-    } catch (error: any) {
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
       toast({
         title: "Generation failed",
         description: error.response?.data?.message || "Could not generate plan",
