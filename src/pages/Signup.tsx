@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,7 @@ import { Sparkles, Mail, Lock, Eye, EyeOff, User, Loader2, Check, X } from "luci
 import { useToast } from "@/hooks/use-toast";
 
 const Signup = () => {
+  const { signup } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,7 +37,7 @@ const Signup = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (password !== confirmPassword) {
       toast({
         title: "Passwords don't match",
@@ -46,17 +48,29 @@ const Signup = () => {
     }
 
     setIsLoading(true);
-    
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    
-    toast({
-      title: "Account created!",
-      description: "Welcome to Reqs.ai. Let's build something amazing.",
-    });
-    
-    setIsLoading(false);
-    navigate("/dashboard");
+
+    try {
+      await signup({
+        name,
+        email,
+        password,
+        passwordConfirm: confirmPassword
+      });
+
+      toast({
+        title: "Account created!",
+        description: "Welcome to Reqs.ai. Let's build something amazing.",
+      });
+      navigate("/dashboard");
+    } catch (error: any) {
+      toast({
+        title: "Signup failed",
+        description: error.response?.data?.message || "Could not create account",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -182,7 +196,7 @@ const Signup = () => {
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
-              
+
               {/* Password Strength Indicator */}
               {password && (
                 <motion.div
@@ -194,9 +208,8 @@ const Signup = () => {
                     {[1, 2, 3, 4].map((level) => (
                       <div
                         key={level}
-                        className={`h-1 flex-1 rounded-full transition-colors ${
-                          passwordStrength >= level ? getStrengthColor() : "bg-muted"
-                        }`}
+                        className={`h-1 flex-1 rounded-full transition-colors ${passwordStrength >= level ? getStrengthColor() : "bg-muted"
+                          }`}
                       />
                     ))}
                   </div>

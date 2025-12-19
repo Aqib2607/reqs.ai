@@ -1,0 +1,1290 @@
+{
+  "projectName": "Reqs.ai",
+  "projectDescription": "AI-powered project plan and PRD generator for developers",
+  "totalEstimatedDuration": "6-8 weeks",
+  "phases": [
+    {
+      "phaseNumber": 1,
+      "phaseName": "Project Foundation & Backend Setup",
+      "duration": "Week 1",
+      "description": "Setup backend infrastructure, database, and core architecture",
+      "tasks": [
+        {
+          "taskId": "1.1",
+          "taskName": "Project Bootstrap & Structure",
+          "description": "Initialize Node.js + TypeScript + Express backend with proper folder structure",
+          "details": [
+            "Create backend folder structure: src/(routes, controllers, services, models, utils, config)",
+            "Setup package.json with dependencies: express, typescript, cors, helmet, dotenv, mongoose, bcrypt, jsonwebtoken",
+            "Configure tsconfig.json for Node.js",
+            "Create .env.example with required variables",
+            "Setup ESLint + Prettier configs",
+            "Create README.md with setup instructions"
+          ],
+          "dependencies": [],
+          "acceptanceCriteria": [
+            "Project structure follows modular architecture",
+            "TypeScript compiles without errors",
+            "Development server runs successfully",
+            "Health check endpoint responds at GET /api/health"
+          ],
+          "relatedPrompts": ["Master Prompt #1"],
+          "estimatedTime": "2-3 hours"
+        },
+        {
+          "taskId": "1.2",
+          "taskName": "Environment Configuration",
+          "description": "Setup environment variables and configuration management",
+          "details": [
+            "Create .env file with: NODE_ENV, PORT, DATABASE_URL, JWT_SECRET, JWT_REFRESH_SECRET, CORS_ORIGIN, ENCRYPTION_KEY",
+            "Create config loader utility in src/config",
+            "Add environment validation on startup",
+            "Setup separate configs for dev/staging/prod"
+          ],
+          "dependencies": ["1.1"],
+          "acceptanceCriteria": [
+            "Environment variables load correctly",
+            "Application fails gracefully if required vars missing",
+            ".env.example matches all required variables"
+          ],
+          "relatedPrompts": ["Master Prompt #2"],
+          "estimatedTime": "1 hour"
+        },
+        {
+          "taskId": "1.3",
+          "taskName": "Database Connection & Setup",
+          "description": "Setup MongoDB connection with Mongoose",
+          "details": [
+            "Install mongoose package",
+            "Create database connection module in src/config/database.ts",
+            "Implement connection error handling and retry logic",
+            "Configure Mongoose global settings",
+            "Add database connection status logging",
+            "Create connection status endpoint"
+          ],
+          "dependencies": ["1.2"],
+          "acceptanceCriteria": [
+            "Successfully connects to MongoDB Atlas",
+            "Handles connection failures gracefully",
+            "Connection status endpoint returns DB health"
+          ],
+          "relatedPrompts": ["Master Prompt #3"],
+          "estimatedTime": "2 hours"
+        },
+        {
+          "taskId": "1.4",
+          "taskName": "Base API Architecture",
+          "description": "Implement RESTful API architecture with versioning",
+          "details": [
+            "Setup Express router with /api/v1/ versioning",
+            "Implement Controller-Service-Model pattern",
+            "Create standard response format utility",
+            "Setup async error wrapper utility",
+            "Define HTTP status code constants",
+            "Organize routes by feature"
+          ],
+          "dependencies": ["1.3"],
+          "acceptanceCriteria": [
+            "API responds at /api/v1/ endpoints",
+            "All responses follow standard format",
+            "Error handling works consistently"
+          ],
+          "relatedPrompts": ["Master Prompt #4"],
+          "estimatedTime": "2 hours"
+        },
+        {
+          "taskId": "1.5",
+          "taskName": "Global Error Handling",
+          "description": "Implement centralized error handling system",
+          "details": [
+            "Create custom AppError class with statusCode",
+            "Create catchAsync wrapper for async routes",
+            "Implement global error middleware",
+            "Setup environment-specific error responses",
+            "Add error logging",
+            "Handle validation and JWT errors"
+          ],
+          "dependencies": ["1.4"],
+          "acceptanceCriteria": [
+            "All errors caught and handled consistently",
+            "Development shows stack trace, production shows friendly messages",
+            "Error responses follow standard format"
+          ],
+          "relatedPrompts": ["Master Prompt #9"],
+          "estimatedTime": "2 hours"
+        }
+      ]
+    },
+    {
+      "phaseNumber": 2,
+      "phaseName": "User Authentication System",
+      "duration": "Week 1-2",
+      "description": "Complete user authentication with JWT and security features",
+      "tasks": [
+        {
+          "taskId": "2.1",
+          "taskName": "User Schema Design",
+          "description": "Design and implement User model with all required fields",
+          "details": [
+            "Create User schema in src/models/User.ts",
+            "Fields: email (unique, indexed), password (hashed), name, role (enum), isActive, emailVerified, lastLogin, timestamps",
+            "Add email validation",
+            "Add password strength requirements",
+            "Create indexes on email field"
+          ],
+          "dependencies": ["1.3"],
+          "acceptanceCriteria": [
+            "User model created with all fields",
+            "Email uniqueness enforced",
+            "Proper indexes created"
+          ],
+          "relatedPrompts": ["Master Prompt #5"],
+          "estimatedTime": "1.5 hours"
+        },
+        {
+          "taskId": "2.2",
+          "taskName": "Password Security Implementation",
+          "description": "Implement secure password hashing with bcrypt",
+          "details": [
+            "Install bcrypt package",
+            "Hash passwords with 12 salt rounds before saving",
+            "Create password comparison method",
+            "Add pre-save hook for auto-hashing",
+            "Implement password strength validator",
+            "Never return password in API responses"
+          ],
+          "dependencies": ["2.1"],
+          "acceptanceCriteria": [
+            "Passwords hashed before storage",
+            "Password comparison works securely",
+            "Minimum 8 chars, 1 uppercase, 1 number, 1 special char enforced"
+          ],
+          "relatedPrompts": ["Master Prompt #7"],
+          "estimatedTime": "2 hours"
+        },
+        {
+          "taskId": "2.3",
+          "taskName": "Authentication APIs",
+          "description": "Implement signup, login, refresh token, and logout endpoints",
+          "details": [
+            "POST /api/v1/auth/signup - validate, create user, generate tokens",
+            "POST /api/v1/auth/login - validate credentials, generate tokens",
+            "POST /api/v1/auth/refresh - generate new access token",
+            "POST /api/v1/auth/logout - invalidate refresh token",
+            "JWT access token: 15 min expiry",
+            "JWT refresh token: 7 days expiry",
+            "Rate limiting on auth endpoints"
+          ],
+          "dependencies": ["2.2"],
+          "acceptanceCriteria": [
+            "All auth endpoints working correctly",
+            "Tokens generated with proper expiry",
+            "Rate limiting active",
+            "Proper validation on all endpoints"
+          ],
+          "relatedPrompts": ["Master Prompt #6"],
+          "estimatedTime": "4 hours"
+        },
+        {
+          "taskId": "2.4",
+          "taskName": "Auth Middleware & Route Protection",
+          "description": "Create JWT authentication middleware for protected routes",
+          "details": [
+            "Create auth middleware in src/middleware/auth.ts",
+            "Extract and verify JWT from Authorization header",
+            "Decode user ID and attach to req.user",
+            "Handle token expiration and invalid tokens",
+            "Create requireAuth middleware wrapper",
+            "Create requireRole(['admin']) for RBAC"
+          ],
+          "dependencies": ["2.3"],
+          "acceptanceCriteria": [
+            "Protected routes require valid token",
+            "Invalid/expired tokens return 401",
+            "User info available in req.user",
+            "Role-based access control works"
+          ],
+          "relatedPrompts": ["Master Prompt #8"],
+          "estimatedTime": "2 hours"
+        },
+        {
+          "taskId": "2.5",
+          "taskName": "Email Verification System",
+          "description": "Implement email verification flow",
+          "details": [
+            "Add verificationToken and emailVerified to User schema",
+            "Generate verification token on signup",
+            "POST /api/v1/auth/verify-email/:token endpoint",
+            "POST /api/v1/auth/resend-verification endpoint",
+            "Create email templates (can use console.log for now)",
+            "24-hour token expiry"
+          ],
+          "dependencies": ["2.3"],
+          "acceptanceCriteria": [
+            "Verification tokens generated correctly",
+            "Email verification endpoint works",
+            "Resend functionality with rate limiting",
+            "Expired tokens rejected"
+          ],
+          "relatedPrompts": ["Master Prompt #18"],
+          "estimatedTime": "3 hours"
+        },
+        {
+          "taskId": "2.6",
+          "taskName": "Password Reset Flow",
+          "description": "Implement forgot password and reset password functionality",
+          "details": [
+            "POST /api/v1/auth/forgot-password - generate reset token",
+            "POST /api/v1/auth/reset-password - validate token and update password",
+            "Add resetToken and resetTokenExpiry to User schema",
+            "1-hour token expiry",
+            "Email notification (console.log for now)",
+            "Invalidate token after use"
+          ],
+          "dependencies": ["2.3"],
+          "acceptanceCriteria": [
+            "Reset tokens generated securely",
+            "Token expiry enforced",
+            "Password updated successfully",
+            "Token invalidated after reset"
+          ],
+          "relatedPrompts": ["Master Prompt #13"],
+          "estimatedTime": "2.5 hours"
+        }
+      ]
+    },
+    {
+      "phaseNumber": 3,
+      "phaseName": "Core Application Features - Plan Generation",
+      "duration": "Week 2-3",
+      "description": "Implement core plan and PRD generation functionality",
+      "tasks": [
+        {
+          "taskId": "3.1",
+          "taskName": "Plan Schema Design",
+          "description": "Design and implement Plan model for storing generated plans",
+          "details": [
+            "Create Plan schema in src/models/Plan.ts",
+            "Fields: userId (ref to User), ideaText, generatedPlan (JSON), status (enum: pending, completed, failed), visibility, isDeleted, timestamps",
+            "Add indexes on userId, createdAt, status",
+            "Create cascade rules on user delete"
+          ],
+          "dependencies": ["2.1"],
+          "acceptanceCriteria": [
+            "Plan model created with all fields",
+            "Proper relationships to User",
+            "Indexes optimized for queries"
+          ],
+          "relatedPrompts": ["Master Prompt #21"],
+          "estimatedTime": "1.5 hours"
+        },
+        {
+          "taskId": "3.2",
+          "taskName": "API Key Management System",
+          "description": "Implement secure API key storage and management",
+          "details": [
+            "Create APIKey schema: userId, encryptedKey, keyType, status, usageStats",
+            "Install crypto for encryption (use AES-256)",
+            "Create encryption/decryption utilities",
+            "POST /api/v1/api-keys - add new key (encrypt before save)",
+            "GET /api/v1/api-keys - retrieve keys (show last 4 chars only)",
+            "PUT /api/v1/api-keys/:id - update key",
+            "DELETE /api/v1/api-keys/:id - remove key"
+          ],
+          "dependencies": ["2.1"],
+          "acceptanceCriteria": [
+            "API keys encrypted in database",
+            "Only last 4 characters shown to user",
+            "CRUD operations work securely",
+            "User can have multiple keys"
+          ],
+          "relatedPrompts": ["PRD API Key Management Section"],
+          "estimatedTime": "3 hours"
+        },
+        {
+          "taskId": "3.3",
+          "taskName": "Gemini API Integration Service",
+          "description": "Create service to interact with Gemini API",
+          "details": [
+            "Create src/services/geminiService.ts",
+            "Install @google/generative-ai package",
+            "Implement promptBuilder utility for plan generation",
+            "Implement API call with user's decrypted key",
+            "Add retry logic for failed requests",
+            "Handle rate limiting and quota errors",
+            "Parse and structure API response",
+            "Add request/response logging"
+          ],
+          "dependencies": ["3.2"],
+          "acceptanceCriteria": [
+            "Successfully calls Gemini API",
+            "Handles all error scenarios",
+            "Retry logic works",
+            "Responses properly parsed"
+          ],
+          "relatedPrompts": ["PRD AI Service Module"],
+          "estimatedTime": "4 hours"
+        },
+        {
+          "taskId": "3.4",
+          "taskName": "Plan Generation Endpoint",
+          "description": "Implement POST /api/v1/plans endpoint for plan creation",
+          "details": [
+            "Create route, controller, service structure",
+            "Validate user has active API key",
+            "Accept ideaText in request body (max 5000 chars)",
+            "Create Plan record with status: pending",
+            "Call Gemini service to generate plan",
+            "Update Plan with generated content or error",
+            "Return Plan with ID and generated content",
+            "Rate limit: 10 requests per hour per user"
+          ],
+          "dependencies": ["3.3"],
+          "acceptanceCriteria": [
+            "Endpoint accepts and validates input",
+            "Plan generated successfully",
+            "Errors handled gracefully",
+            "Rate limiting works",
+            "Plan saved to database"
+          ],
+          "relatedPrompts": ["Master Prompt #22"],
+          "estimatedTime": "3 hours"
+        },
+        {
+          "taskId": "3.5",
+          "taskName": "Plan CRUD Operations",
+          "description": "Implement GET, UPDATE, DELETE operations for plans",
+          "details": [
+            "GET /api/v1/plans - list user's plans with pagination",
+            "GET /api/v1/plans/:id - get single plan (verify ownership)",
+            "PUT /api/v1/plans/:id - update plan content",
+            "DELETE /api/v1/plans/:id - soft delete (set isDeleted: true)",
+            "Add filtering by status",
+            "Add sorting by createdAt",
+            "Implement pagination (20 items per page)"
+          ],
+          "dependencies": ["3.4"],
+          "acceptanceCriteria": [
+            "All CRUD operations work",
+            "Pagination working correctly",
+            "Ownership verification on all operations",
+            "Soft delete implemented"
+          ],
+          "relatedPrompts": ["Master Prompts #23, #24, #25"],
+          "estimatedTime": "3 hours"
+        }
+      ]
+    },
+    {
+      "phaseNumber": 4,
+      "phaseName": "PRD Generation & Export Features",
+      "duration": "Week 3-4",
+      "description": "Implement PRD generation and document export functionality",
+      "tasks": [
+        {
+          "taskId": "4.1",
+          "taskName": "PRD Schema Design",
+          "description": "Design and implement PRD model",
+          "details": [
+            "Create PRD schema in src/models/PRD.ts",
+            "Fields: userId, planId (ref to Plan), content (JSON), version, metadata (wordCount, generationDuration), timestamps",
+            "Add indexes on userId, planId",
+            "Create relationship to Plan model"
+          ],
+          "dependencies": ["3.1"],
+          "acceptanceCriteria": [
+            "PRD model created with all fields",
+            "Proper relationships established",
+            "Version tracking implemented"
+          ],
+          "relatedPrompts": ["PRD Database Schema"],
+          "estimatedTime": "1.5 hours"
+        },
+        {
+          "taskId": "4.2",
+          "taskName": "PRD Generation Service",
+          "description": "Create service to generate PRD from plan",
+          "details": [
+            "Create src/services/prdService.ts",
+            "Build PRD-specific prompt using plan content",
+            "Call Gemini API with PRD generation instructions",
+            "Structure response into PRD sections: vision, user stories, functional requirements, technical architecture, etc.",
+            "Calculate metadata (word count, sections)",
+            "Format content for easy consumption"
+          ],
+          "dependencies": ["3.3", "4.1"],
+          "acceptanceCriteria": [
+            "PRD generated with all standard sections",
+            "Content well-structured",
+            "Metadata calculated correctly",
+            "Professional formatting"
+          ],
+          "relatedPrompts": ["PRD PRD Generation"],
+          "estimatedTime": "3 hours"
+        },
+        {
+          "taskId": "4.3",
+          "taskName": "PRD Generation Endpoint",
+          "description": "Implement POST /api/v1/plans/:id/generate-prd",
+          "details": [
+            "Verify plan ownership",
+            "Check plan is completed (not pending/failed)",
+            "Call PRD service with plan content",
+            "Create PRD record in database",
+            "Return generated PRD",
+            "Handle errors appropriately"
+          ],
+          "dependencies": ["4.2"],
+          "acceptanceCriteria": [
+            "PRD generated from valid plan",
+            "Ownership verified",
+            "PRD saved to database",
+            "Error handling complete"
+          ],
+          "relatedPrompts": ["PRD API Endpoints"],
+          "estimatedTime": "2 hours"
+        },
+        {
+          "taskId": "4.4",
+          "taskName": "PRD CRUD Operations",
+          "description": "Implement GET operations for PRDs",
+          "details": [
+            "GET /api/v1/prds - list user's PRDs with pagination",
+            "GET /api/v1/prds/:id - get single PRD (verify ownership)",
+            "Add filtering by planId",
+            "Include related plan data in response",
+            "Implement pagination"
+          ],
+          "dependencies": ["4.3"],
+          "acceptanceCriteria": [
+            "PRD listing works with pagination",
+            "Single PRD retrieval works",
+            "Ownership verified",
+            "Related data included"
+          ],
+          "relatedPrompts": ["Master Prompt #23"],
+          "estimatedTime": "2 hours"
+        },
+        {
+          "taskId": "4.5",
+          "taskName": "Export Functionality",
+          "description": "Implement PDF and Markdown export for plans and PRDs",
+          "details": [
+            "Install puppeteer or pdfkit for PDF generation",
+            "Install marked or similar for Markdown",
+            "GET /api/v1/plans/:id/export?format=pdf|markdown|json",
+            "GET /api/v1/prds/:id/export?format=pdf|markdown|json",
+            "Format content appropriately for each format",
+            "Add table of contents for PDF",
+            "Return file for download"
+          ],
+          "dependencies": ["3.5", "4.4"],
+          "acceptanceCriteria": [
+            "PDF export generates proper document",
+            "Markdown export formatted correctly",
+            "JSON export includes all data",
+            "Files download successfully"
+          ],
+          "relatedPrompts": ["Master Prompt #40"],
+          "estimatedTime": "4 hours"
+        }
+      ]
+    },
+    {
+      "phaseNumber": 5,
+      "phaseName": "User Profile & Dashboard",
+      "duration": "Week 4",
+      "description": "Implement user profile management and dashboard",
+      "tasks": [
+        {
+          "taskId": "5.1",
+          "taskName": "Profile Management APIs",
+          "description": "Implement user profile CRUD operations",
+          "details": [
+            "GET /api/v1/users/me - get current user profile",
+            "PUT /api/v1/users/me - update profile (name, email)",
+            "PATCH /api/v1/users/me/password - change password",
+            "Add email change verification flow",
+            "Validate current password before changes",
+            "Update lastModified timestamp"
+          ],
+          "dependencies": ["2.1"],
+          "acceptanceCriteria": [
+            "Profile retrieval works",
+            "Profile updates validated",
+            "Password change requires current password",
+            "Email changes verified"
+          ],
+          "relatedPrompts": ["Master Prompt #14"],
+          "estimatedTime": "2.5 hours"
+        },
+        {
+          "taskId": "5.2",
+          "taskName": "Dashboard Statistics API",
+          "description": "Create endpoint for dashboard statistics",
+          "details": [
+            "GET /api/v1/dashboard/stats endpoint",
+            "Count total plans created",
+            "Count total PRDs generated",
+            "Calculate this month's activity",
+            "Get recent plans (last 5)",
+            "Return summary data"
+          ],
+          "dependencies": ["3.5", "4.4"],
+          "acceptanceCriteria": [
+            "Statistics calculated correctly",
+            "Performance optimized",
+            "Recent activity included",
+            "Data cached appropriately"
+          ],
+          "relatedPrompts": ["Master Prompt #16"],
+          "estimatedTime": "2 hours"
+        },
+        {
+          "taskId": "5.3",
+          "taskName": "Search Functionality",
+          "description": "Implement search for plans and PRDs",
+          "details": [
+            "GET /api/v1/search?q=query&type=plan|prd",
+            "Create text indexes on Plan.ideaText and PRD.content",
+            "Implement full-text search with MongoDB $text",
+            "Add relevance scoring",
+            "Limit to user's own content",
+            "Return search results with highlights"
+          ],
+          "dependencies": ["3.5", "4.4"],
+          "acceptanceCriteria": [
+            "Search returns relevant results",
+            "Fast query performance",
+            "Results limited to user's content",
+            "Minimum 2 characters required"
+          ],
+          "relatedPrompts": ["Master Prompt #27"],
+          "estimatedTime": "2.5 hours"
+        },
+        {
+          "taskId": "5.4",
+          "taskName": "Filtering and Sorting",
+          "description": "Add advanced filtering and sorting to list endpoints",
+          "details": [
+            "Add query params: status, sortBy, order to plans endpoint",
+            "Support multiple filters simultaneously",
+            "Implement sorting on: createdAt, updatedAt, ideaText",
+            "Combine with pagination",
+            "Optimize queries with proper indexes"
+          ],
+          "dependencies": ["3.5"],
+          "acceptanceCriteria": [
+            "Filters work individually and combined",
+            "Sorting works on all specified fields",
+            "Performance remains good",
+            "Works with pagination"
+          ],
+          "relatedPrompts": ["Master Prompts #28, #29"],
+          "estimatedTime": "2 hours"
+        }
+      ]
+    },
+    {
+      "phaseNumber": 6,
+      "phaseName": "Frontend Integration",
+      "duration": "Week 5",
+      "description": "Connect frontend from Lovable to backend APIs",
+      "tasks": [
+        {
+          "taskId": "6.1",
+          "taskName": "API Client Setup",
+          "description": "Setup Axios and API configuration in frontend",
+          "details": [
+            "Install axios in frontend project",
+            "Create src/services/api.ts with base configuration",
+            "Setup axios interceptors for auth token injection",
+            "Add response error handler",
+            "Create environment variables for API_URL",
+            "Setup request/response logging (dev only)"
+          ],
+          "dependencies": [],
+          "acceptanceCriteria": [
+            "Axios configured with base URL",
+            "Auth tokens automatically attached",
+            "Errors handled globally",
+            "Environment variables working"
+          ],
+          "relatedPrompts": ["PRD API Communication"],
+          "estimatedTime": "2 hours"
+        },
+        {
+          "taskId": "6.2",
+          "taskName": "Authentication Integration",
+          "description": "Connect frontend auth pages to backend",
+          "details": [
+            "Create auth service in src/services/authService.ts",
+            "Implement signup, login, logout, refresh token functions",
+            "Store tokens in localStorage or httpOnly cookies",
+            "Create useAuth hook for auth state management",
+            "Implement token refresh logic",
+            "Add protected route wrapper component"
+          ],
+          "dependencies": ["6.1"],
+          "acceptanceCriteria": [
+            "Users can signup successfully",
+            "Login redirects to dashboard",
+            "Tokens stored securely",
+            "Protected routes enforce authentication",
+            "Token refresh works automatically"
+          ],
+          "relatedPrompts": ["Master Prompts #11, #12"],
+          "estimatedTime": "4 hours"
+        },
+        {
+          "taskId": "6.3",
+          "taskName": "Plan Generation Integration",
+          "description": "Connect plan generation UI to backend",
+          "details": [
+            "Create planService.ts with API calls",
+            "Implement createPlan function",
+            "Add loading states during generation",
+            "Handle success and error responses",
+            "Display generated plan in UI",
+            "Add ability to regenerate",
+            "Implement plan listing with pagination"
+          ],
+          "dependencies": ["6.2"],
+          "acceptanceCriteria": [
+            "Plan generation works end-to-end",
+            "Loading states show during API call",
+            "Generated plan displays correctly",
+            "Error messages shown appropriately",
+            "Plan list loads with pagination"
+          ],
+          "relatedPrompts": ["Frontend Integration"],
+          "estimatedTime": "4 hours"
+        },
+        {
+          "taskId": "6.4",
+          "taskName": "PRD Generation Integration",
+          "description": "Connect PRD generation UI to backend",
+          "details": [
+            "Create prdService.ts with API calls",
+            "Implement generatePRD function",
+            "Add PRD display component",
+            "Implement section navigation",
+            "Add export functionality (trigger download)",
+            "Handle PRD listing and retrieval"
+          ],
+          "dependencies": ["6.3"],
+          "acceptanceCriteria": [
+            "PRD generation triggered from plan view",
+            "PRD displays in structured format",
+            "Navigation between sections works",
+            "Export buttons trigger downloads",
+            "PRD list shows user's documents"
+          ],
+          "relatedPrompts": ["Frontend Integration"],
+          "estimatedTime": "4 hours"
+        },
+        {
+          "taskId": "6.5",
+          "taskName": "Profile and Settings Integration",
+          "description": "Connect profile and API key management UI to backend",
+          "details": [
+            "Create userService.ts and apiKeyService.ts",
+            "Implement profile update functionality",
+            "Add password change form with validation",
+            "Implement API key CRUD operations",
+            "Add API key test/verify button",
+            "Show usage statistics if available"
+          ],
+          "dependencies": ["6.2"],
+          "acceptanceCriteria": [
+            "Profile updates save successfully",
+            "Password change works with validation",
+            "API keys can be added/updated/removed",
+            "Keys shown with masking (last 4 chars)",
+            "Test button verifies API key validity"
+          ],
+          "relatedPrompts": ["Master Prompts #14, #17"],
+          "estimatedTime": "3 hours"
+        },
+        {
+          "taskId": "6.6",
+          "taskName": "Search and Filter Integration",
+          "description": "Implement search and filtering in frontend",
+          "details": [
+            "Add search input with debounce (300ms)",
+            "Implement search API calls",
+            "Add filter dropdowns/checkboxes",
+            "Connect filters to API query params",
+            "Add sorting controls",
+            "Update URL with search/filter params",
+            "Maintain state across navigation"
+          ],
+          "dependencies": ["6.3"],
+          "acceptanceCriteria": [
+            "Search returns relevant results",
+            "Debounce prevents excessive API calls",
+            "Filters work individually and combined",
+            "Sorting updates results correctly",
+            "URL reflects current search/filter state"
+          ],
+          "relatedPrompts": ["Master Prompts #27, #28, #29"],
+          "estimatedTime": "3 hours"
+        }
+      ]
+    },
+    {
+      "phaseNumber": 7,
+      "phaseName": "Polish & Optimization",
+      "duration": "Week 5-6",
+      "description": "Enhance UX with loading states, error handling, and performance improvements",
+      "tasks": [
+        {
+          "taskId": "7.1",
+          "taskName": "Loading States & Skeletons",
+          "description": "Implement comprehensive loading indicators",
+          "details": [
+            "Add skeleton screens for list views",
+            "Show spinners on buttons during submission",
+            "Add progress indicators for plan generation",
+            "Implement loading overlays where appropriate",
+            "Use React Suspense for code splitting",
+            "Ensure no layout shift during loading"
+          ],
+          "dependencies": ["6.6"],
+          "acceptanceCriteria": [
+            "All async operations show loading state",
+            "Skeleton screens match final content layout",
+            "No sudden layout shifts",
+            "Loading indicators are accessible"
+          ],
+          "relatedPrompts": ["Master Prompt #42"],
+          "estimatedTime": "3 hours"
+        },
+        {
+          "taskId": "7.2",
+          "taskName": "Error Handling & Toast Notifications",
+          "description": "Implement user-friendly error handling and notifications",
+          "details": [
+            "Install react-hot-toast or sonner",
+            "Add toast notifications for all actions",
+            "Implement error boundaries for React errors",
+            "Show inline form errors",
+            "Create user-friendly error messages",
+            "Add retry mechanisms for failed operations"
+          ],
+          "dependencies": ["6.6"],
+          "acceptanceCriteria": [
+            "All user actions show feedback",
+            "Success toasts appear with green checkmark",
+            "Error toasts show actionable messages",
+            "Form errors display inline",
+            "App doesn't crash on errors"
+          ],
+          "relatedPrompts": ["Master Prompt #44"],
+          "estimatedTime": "2.5 hours"
+        },
+        {
+          "taskId": "7.3",
+          "taskName": "Empty States",
+          "description": "Design and implement empty state components",
+          "details": [
+            "Create EmptyState component",
+            "Design empty state for no plans",
+            "Design empty state for no PRDs",
+            "Design empty state for search with no results",
+            "Add appropriate CTAs in empty states",
+            "Include helpful illustrations/icons"
+          ],
+          "dependencies": ["6.6"],
+          "acceptanceCriteria": [
+            "Empty states appear when appropriate",
+            "Clear messaging about what to do next",
+            "CTAs navigate to relevant actions",
+            "Visually consistent with design system"
+          ],
+          "relatedPrompts": ["Master Prompt #43"],
+          "estimatedTime": "2 hours"
+        },
+        {
+          "taskId": "7.4",
+          "taskName": "Mobile Responsiveness",
+          "description": "Ensure all pages work well on mobile devices",
+          "details": [
+            "Test all pages on mobile breakpoints",
+            "Convert sidebar to bottom nav on mobile",
+            "Make buttons touch-friendly (min 44px)",
+            "Stack layouts vertically on small screens",
+            "Test gestures (swipe, pull to refresh)",
+            "Optimize text sizes for readability"
+          ],
+          "dependencies": ["7.3"],
+          "acceptanceCriteria": [
+            "All pages responsive on 320px+ screens",
+            "Touch targets appropriately sized",
+            "No horizontal scrolling",
+            "Navigation accessible on all screen sizes",
+            "Forms usable on mobile"
+          ],
+          "relatedPrompts": ["Master Prompt #45"],
+          "estimatedTime": "4 hours"
+        },
+        {
+          "taskId": "7.5",
+          "taskName": "Performance Optimization",
+          "description": "Optimize frontend and backend performance",
+          "details": [
+            "Implement code splitting with React.lazy",
+            "Add image lazy loading",
+            "Debounce search inputs",
+            "Optimize database queries (add indexes)",
+            "Enable gzip compression on backend",
+            "Analyze and reduce bundle size",
+            "Add React.memo where beneficial"
+          ],
+          "dependencies": ["7.4"],
+          "acceptanceCriteria": [
+            "Initial page load under 3 seconds",
+            "API responses under 500ms",
+            "Bundle size reduced by 20%+",
+            "Database queries optimized",
+            "Lighthouse score above 85"
+          ],
+          "relatedPrompts": ["Master Prompt #47"],
+          "estimatedTime": "4 hours"
+        },
+        {
+          "taskId": "7.6",
+          "taskName": "Dark Mode Implementation",
+          "description": "Add dark mode support throughout application",
+          "details": [
+            "Configure Tailwind dark mode with class strategy",
+            "Create ThemeProvider with Context",
+            "Add theme toggle button in header",
+            "Style all components for dark mode",
+            "Save user preference in localStorage",
+            "Detect system preference on first load"
+          ],
+          "dependencies": ["7.5"],
+          "acceptanceCriteria": [
+            "Theme switches smoothly",
+            "All components styled for both modes",
+            "Preference persists across sessions",
+            "System preference detected initially",
+            "Good contrast ratios in both modes"
+          ],
+          "relatedPrompts": ["Master Prompt #46"],
+          "estimatedTime": "3 hours"
+        }
+      ]
+    },
+    {
+      "phaseNumber": 8,
+      "phaseName": "Testing & Quality Assurance",
+      "duration": "Week 6",
+      "description": "Implement comprehensive testing strategy",
+      "tasks": [
+        {
+          "taskId": "8.1",
+          "taskName": "Backend Unit Tests",
+          "description": "Write unit tests for backend services",
+          "details": [
+            "Setup Jest and ts-jest",
+            "Write tests for auth service (password hashing, comparison)",
+            "Write tests for plan service (generation, CRUD)",
+            "Write tests for PRD service",
+            "Write tests for utility functions",
+            "Aim for 80%+ coverage on services"
+          ],
+          "dependencies": [],
+          "acceptanceCriteria": [
+            "All services have unit tests",
+            "Tests pass consistently",
+            "Coverage above 80% on critical code",
+            "Mocking implemented for external dependencies"
+          ],
+          "relatedPrompts": ["Master Prompt #71"],
+          "estimatedTime": "6 hours"
+        },
+        {
+          "taskId": "8.2",
+          "taskName": "API Integration Tests",
+          "description": "Write integration tests for API endpoints",
+          "details": [
+            "Install supertest for API testing",
+            "Setup test database",
+            "Write tests for auth endpoints (signup, login, refresh)",
+            "Write tests for plan endpoints (create, read, update, delete)",
+            "Write tests for PRD endpoints",
+            "Test error scenarios and edge cases"
+          ],
+          "dependencies": ["8.1"],
+          "acceptanceCriteria": [
+            "All API endpoints have integration tests",
+            "Tests use separate test database",
+            "Both success and error cases covered",
+            "Tests run in CI pipeline",
+            "Database cleaned between tests"
+          ],
+          "relatedPrompts": ["Master Prompt #72"],
+          "estimatedTime": "6 hours"
+        },
+        {
+          "taskId": "8.3",
+          "taskName": "Frontend Component Tests",
+          "description": "Write tests for React components",
+          "details": [
+            "Setup React Testing Library",
+            "Write tests for auth components",
+            "Write tests for plan generation components",
+            "Write tests for form validation",
+            "Test user interactions (clicks, typing)",
+            "Test loading and error states"
+          ],
+          "dependencies": [],
+          "acceptanceCriteria": [
+            "Key components have tests",
+            "User interactions tested",
+            "Accessibility queries used",
+            "Tests focus on behavior not implementation",
+            "Mock API calls in tests"
+          ],
+          "relatedPrompts": ["Master Prompt #73"],
+          "estimatedTime": "6 hours"
+        },
+        {
+          "taskId": "8.4",
+          "taskName": "End-to-End Tests",
+          "description": "Write E2E tests for critical user flows",
+          "details": [
+            "Setup Playwright",
+            "Write E2E test for signup flow",
+            "Write E2E test for login flow",
+            "Write E2E test for plan generation flow",
+            "Write E2E test for PRD generation flow",
+            "Run tests in headless mode for CI"
+          ],
+          "dependencies": ["8.3"],
+          "acceptanceCriteria": [
+            "Critical user flows have E2E tests",
+            "Tests run reliably in CI",
+            "Screenshots captured on failure",
+            "Tests cover happy path and key error scenarios"
+          ],
+          "relatedPrompts": ["Master Prompt #74"],
+          "estimatedTime": "5 hours"
+        },
+        {
+          "taskId": "8.5",
+          "taskName": "Security Testing",
+          "description": "Perform security testing and hardening",
+          "details": [
+            "Test authentication with invalid tokens",
+            "Test authorization (accessing other users' data)",
+            "Verify CORS configuration",
+            "Test rate limiting effectiveness",
+            "Run npm audit and fix vulnerabilities",
+            "Test XSS prevention",
+            "Verify API key encryption"
+          ],
+          "dependencies": [],
+          "acceptanceCriteria": [
+            "No unauthorized access possible",
+            "Rate limiting prevents abuse",
+            "No critical security vulnerabilities",
+            "Sensitive data properly encrypted",
+            "Security headers configured"
+          ],
+          "relatedPrompts": ["Master Prompts #49, #76"],
+          "estimatedTime": "4 hours"
+        }
+      ]
+    },
+    {
+      "phaseNumber": 9,
+      "phaseName": "Deployment & Launch",
+      "duration": "Week 7",
+      "description": "Deploy application to production and launch",
+      "tasks": [
+        {
+          "taskId": "9.1",
+          "taskName": "Backend Deployment Setup",
+          "description": "Deploy backend to Railway or Render",
+          "details": [
+            "Create Railway/Render account",
+            "Connect GitHub repository",
+            "Configure environment variables in platform",
+            "Setup MongoDB Atlas production database",
+            "Configure CORS for production frontend URL",
+            "Setup custom domain (optional)",
+            "Test all endpoints in production"
+          ],
+          "dependencies": [],
+          "acceptanceCriteria": [
+            "Backend deployed and accessible",
+            "All environment variables configured",
+            "Database connected successfully",
+            "CORS allows frontend requests",
+            "Health check endpoint responds"
+          ],
+          "relatedPrompts": ["Master Prompt #53"],
+          "estimatedTime": "3 hours"
+        },
+        {
+          "taskId": "9.2",
+          "taskName": "Frontend Deployment Setup",
+          "description": "Deploy frontend to Vercel",
+          "details": [
+            "Create Vercel account",
+            "Import GitHub repository",
+            "Configure build settings",
+            "Add environment variable: VITE_API_URL (production backend URL)",
+            "Enable automatic deployments",
+            "Setup custom domain (optional)",
+            "Configure redirects and rewrites"
+          ],
+          "dependencies": ["9.1"],
+          "acceptanceCriteria": [
+            "Frontend deployed and accessible",
+            "Environment variables configured",
+            "API calls reach production backend",
+            "HTTPS enabled automatically",
+            "Automatic deployments working"
+          ],
+          "relatedPrompts": ["Master Prompt #54"],
+          "estimatedTime": "2 hours"
+        },
+        {
+          "taskId": "9.3",
+          "taskName": "Database Migration & Backup",
+          "description": "Setup production database and backup strategy",
+          "details": [
+            "Run any necessary database migrations",
+            "Enable automatic backups in MongoDB Atlas",
+            "Configure backup retention (30 days)",
+            "Test database restore procedure",
+            "Document backup and restore process",
+            "Setup monitoring for database health"
+          ],
+          "dependencies": ["9.1"],
+          "acceptanceCriteria": [
+            "Database migrations applied successfully",
+            "Automatic backups enabled",
+            "Restore procedure tested and documented",
+            "Database monitoring active"
+          ],
+          "relatedPrompts": ["Master Prompts #55, #58"],
+          "estimatedTime": "2 hours"
+        },
+        {
+          "taskId": "9.4",
+          "taskName": "Monitoring & Logging Setup",
+          "description": "Setup error tracking and monitoring",
+          "details": [
+            "Setup Sentry for error tracking (backend and frontend)",
+            "Configure error notifications (email/Slack)",
+            "Add performance monitoring",
+            "Setup log aggregation",
+            "Create alerts for critical errors",
+            "Add uptime monitoring (optional: UptimeRobot)"
+          ],
+          "dependencies": ["9.2"],
+          "acceptanceCriteria": [
+            "Errors tracked in Sentry",
+            "Notifications working",
+            "Performance metrics visible",
+            "Alerts configured for critical issues",
+            "Uptime monitoring active"
+          ],
+          "relatedPrompts": ["Master Prompt #57"],
+          "estimatedTime": "3 hours"
+        },
+        {
+          "taskId": "9.5",
+          "taskName": "CI/CD Pipeline Setup",
+          "description": "Setup automated deployment pipeline",
+          "details": [
+            "Create GitHub Actions workflow",
+            "Add steps: install, lint, test, build",
+            "Configure automatic deployment on main branch push",
+            "Add staging environment (optional)",
+            "Setup branch protection rules",
+            "Configure status checks required for merge"
+          ],
+          "dependencies": ["9.2"],
+          "acceptanceCriteria": [
+            "CI/CD pipeline runs on every push",
+            "Tests must pass before deployment",
+            "Deployments automatic on main branch",
+            "Failed deployments don't affect production",
+            "Status visible in GitHub"
+          ],
+          "relatedPrompts": ["Master Prompt #56"],
+          "estimatedTime": "3 hours"
+        },
+        {
+          "taskId": "9.6",
+          "taskName": "Production Readiness Checklist",
+          "description": "Final checks before launch",
+          "details": [
+            "Verify all environment variables set correctly",
+            "Test complete user flows in production",
+            "Check HTTPS enabled on both frontend and backend",
+            "Verify rate limiting is active",
+            "Test email functionality (if implemented)",
+            "Check error pages display correctly",
+            "Test on multiple devices and browsers",
+            "Review security headers",
+            "Update documentation with production URLs"
+          ],
+          "dependencies": ["9.5"],
+          "acceptanceCriteria": [
+            "All items on checklist verified",
+            "No critical bugs in production",
+            "Security measures active",
+            "Documentation updated",
+            "Application ready for users"
+          ],
+          "relatedPrompts": ["Master Prompt #60"],
+          "estimatedTime": "3 hours"
+        }
+      ]
+    },
+    {
+      "phaseNumber": 10,
+      "phaseName": "Post-Launch & Iteration",
+      "duration": "Week 8+",
+      "description": "Monitor, gather feedback, and iterate on the product",
+      "tasks": [
+        {
+          "taskId": "10.1",
+          "taskName": "User Feedback Collection",
+          "description": "Setup mechanisms to collect user feedback",
+          "details": [
+            "Add feedback form in application",
+            "Setup email for support inquiries",
+            "Create user survey (optional: Typeform)",
+            "Monitor social media mentions",
+            "Track feature requests",
+            "Analyze user behavior with analytics"
+          ],
+          "dependencies": [],
+          "acceptanceCriteria": [
+            "Feedback mechanism accessible to users",
+            "Support email monitored regularly",
+            "User feedback tracked and organized",
+            "Analytics providing insights"
+          ],
+          "relatedPrompts": ["Master Prompt #79"],
+          "estimatedTime": "2 hours"
+        },
+        {
+          "taskId": "10.2",
+          "taskName": "Performance Monitoring",
+          "description": "Monitor and optimize application performance",
+          "details": [
+            "Review API response times weekly",
+            "Check database query performance",
+            "Monitor error rates",
+            "Track user engagement metrics",
+            "Identify and fix performance bottlenecks",
+            "Optimize slow queries"
+          ],
+          "dependencies": ["9.4"],
+          "acceptanceCriteria": [
+            "Performance metrics tracked regularly",
+            "Response times within acceptable range",
+            "Error rates below 1%",
+            "Performance optimizations implemented as needed"
+          ],
+          "relatedPrompts": ["Master Prompt #75"],
+          "estimatedTime": "Ongoing"
+        },
+        {
+          "taskId": "10.3",
+          "taskName": "Bug Fixes & Maintenance",
+          "description": "Address bugs and maintain application health",
+          "details": [
+            "Triage and prioritize reported bugs",
+            "Fix critical bugs within 24 hours",
+            "Fix high priority bugs within 1 week",
+            "Update dependencies monthly",
+            "Run security audits quarterly",
+            "Review and update documentation"
+          ],
+          "dependencies": ["10.1"],
+          "acceptanceCriteria": [
+            "Critical bugs resolved quickly",
+            "Regular maintenance performed",
+            "Dependencies kept up to date",
+            "Documentation reflects current state"
+          ],
+          "relatedPrompts": ["Master Prompt #80"],
+          "estimatedTime": "Ongoing"
+        },
+        {
+          "taskId": "10.4",
+          "taskName": "Feature Enhancements",
+          "description": "Plan and implement new features based on feedback",
+          "details": [
+            "Prioritize feature requests",
+            "Plan feature implementation",
+            "Develop features in separate branches",
+            "Test thoroughly before release",
+            "Document new features",
+            "Announce new features to users"
+          ],
+          "dependencies": ["10.1"],
+          "acceptanceCriteria": [
+            "Features aligned with user needs",
+            "New features properly tested",
+            "Documentation updated",
+            "Users informed of new capabilities"
+          ],
+          "relatedPrompts": ["Master Prompt #79"],
+          "estimatedTime": "Ongoing"
+        }
+      ]
+    }
+  ],
+  "additionalResources": {
+    "documentation": [
+      "MongoDB: https://docs.mongodb.com",
+      "Express: https://expressjs.com",
+      "React: https://react.dev",
+      "Tailwind CSS: https://tailwindcss.com",
+      "Gemini API: https://ai.google.dev/docs"
+    ],
+    "tools": [
+      "Postman/Thunder Client: API testing",
+      "MongoDB Compass: Database GUI",
+      "Vercel: Frontend hosting",
+      "Railway/Render: Backend hosting",
+      "Sentry: Error tracking",
+      "GitHub Actions: CI/CD"
+    ]
+  },
+  "criticalNotes": {
+    "security": [
+      "Never commit .env files",
+      "Always hash passwords before storage",
+      "Encrypt API keys in database",
+      "Use HTTPS in production",
+      "Implement rate limiting on all public endpoints",
+      "Validate all user inputs"
+    ],
+    "performance": [
+      "Add database indexes on frequently queried fields",
+      "Implement pagination on all list endpoints",
+      "Cache Gemini API responses when appropriate",
+      "Use code splitting in frontend",
+      "Optimize images and assets"
+    ],
+    "userExperience": [
+      "Show loading states for all async operations",
+      "Provide clear error messages",
+      "Implement empty states",
+      "Make application responsive",
+      "Add keyboard shortcuts for power users"
+    ]
+  }
+}

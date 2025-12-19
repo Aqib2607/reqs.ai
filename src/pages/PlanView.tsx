@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,61 +14,75 @@ import {
   Download,
   Copy,
   Check,
+  Loader2,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { planService } from "@/services/planService";
+import { prdService } from "@/services/prdService";
 
-const planSections = [
-  {
-    title: "Executive Summary",
-    content: "A comprehensive e-commerce platform designed to provide seamless shopping experiences with AI-powered recommendations, secure payments, and real-time inventory management.",
-  },
-  {
-    title: "Target Audience",
-    content: "Online shoppers aged 25-45, small to medium business owners looking to expand their digital presence, and retail companies seeking modern e-commerce solutions.",
-  },
-  {
-    title: "Core Features",
-    content: `• Product catalog with advanced filtering and search
-• AI-powered product recommendations
-• Secure checkout with multiple payment options
-• User accounts with order history and wishlists
-• Real-time inventory management
-• Admin dashboard for store management
-• Mobile-responsive design
-• Integration with major shipping providers`,
-  },
-  {
-    title: "Technical Stack",
-    content: `Frontend: React with TypeScript, Tailwind CSS
-Backend: Node.js with Express
-Database: PostgreSQL with Redis caching
-Authentication: JWT with OAuth2 support
-Payment: Stripe integration
-Hosting: AWS with CDN distribution`,
-  },
-  {
-    title: "Timeline",
-    content: `Phase 1 (Weeks 1-4): Core infrastructure and authentication
-Phase 2 (Weeks 5-8): Product catalog and search functionality
-Phase 3 (Weeks 9-12): Checkout and payment integration
-Phase 4 (Weeks 13-16): Admin dashboard and analytics
-Phase 5 (Weeks 17-20): Testing, optimization, and launch`,
-  },
-  {
-    title: "Success Metrics",
-    content: `• Page load time < 2 seconds
-• 99.9% uptime SLA
-• Conversion rate > 3%
-• Customer satisfaction score > 4.5/5
-• Cart abandonment rate < 60%`,
-  },
-];
+// Helper to parse the Markdown/Text plan into sections (rough heuristic if structure is consistent)
+// Or we just display the raw text if parsing is too complex for now.
+// For now, let's treat the whole plan as one section or try to split by headers.
+const parsePlanContent = (content: string) => {
+  if (!content) return [];
+
+  // Simple split by markdown headers (## Title)
+  const sections = content.split(/^#+\s+(.+)$/gm);
+
+  // If no headers found, return as one block
+  if (sections.length === 1) {
+    return [{ title: "Project Plan", content: sections[0] }];
+  }
+
+  const result = [];
+  // Sections array will look like: ["", "Title 1", "Content 1", "Title 2", "Content 2", ...]
+  for (let i = 1; i < sections.length; i += 2) {
+    result.push({
+      title: sections[i].trim(),
+      content: sections[i + 1].trim(),
+    });
+  }
+  return result;
+};
 
 const PlanView = () => {
+  const { id } = useParams<{ id: string }>();
+  const [plan, setPlan] = useState<any>(null);
+  const [sections, setSections] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [expandedSections, setExpandedSections] = useState<number[]>([0, 1, 2]);
   const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchPlan = async () => {
+      if (!id) return;
+      try {
+        setLoading(true);
+        const response = await planService.getPlan(id);
+        if (response.status === 'success') {
+          setPlan(response.data.plan);
+          if (response.data.plan.generatedPlan) {
+            setSections(parsePlanContent(response.data.plan.generatedPlan));
+            // Expand all by default if reasonable count
+            setExpandedSections([0, 1, 2, 3, 4, 5].slice(0, 6));
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch plan", error);
+        toast({
+          title: "Error",
+          description: "Could not load plan details.",
+          variant: "destructive"
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPlan();
+  }, [id, toast]);
 
   const toggleSection = (index: number) => {
     setExpandedSections((prev) =>
@@ -79,8 +93,8 @@ const PlanView = () => {
   };
 
   const handleCopy = () => {
-    const content = planSections.map((s) => `${s.title}\n${s.content}`).join("\n\n");
-    navigator.clipboard.writeText(content);
+    if (!plan?.generatedPlan) return;
+    navigator.clipboard.writeText(plan.generatedPlan);
     setCopied(true);
     toast({
       title: "Copied to clipboard",
@@ -89,13 +103,59 @@ const PlanView = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleGeneratePRD = () => {
+  const handleGeneratePRD = async () => {
+    if (!plan || !plan._id) return;
+
     toast({
       title: "Generating PRD...",
-      description: "Your PRD will be ready in a moment.",
+      description: "This may take a few moments.",
     });
-    setTimeout(() => navigate("/prd"), 1500);
+
+    try {
+      const result = await prdService.generatePRD(plan._id);
+      if (result.status === 'success') {
+        toast({
+          title: "PRD Generated!",
+          description: "Redirecting to view PRD.",
+        });
+        // The result.data.prd contains the new PRD
+        navigate(`/prd/${result.data.prd._id}`);
+      }
+    } catch (error: any) {
+      console.error("PRD generation failed", error);
+      toast({
+        title: "Generation failed",
+        description: error.response?.data?.message || "Could not generate PRD.",
+        variant: "destructive"
+      });
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-10 h-10 animate-spin mx-auto mb-4 text-primary" />
+          <p className="text-muted-foreground">Loading plan...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!plan) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Plan not found</h1>
+          <Button onClick={() => navigate('/dashboard')}>Go to Dashboard</Button>
+        </div>
+      </div>
+    );
+  }
+
+  const displayTitle = plan.ideaText && plan.ideaText.length > 50
+    ? plan.ideaText.substring(0, 50) + "..."
+    : (plan.ideaText || "Project Plan");
 
   return (
     <div className="min-h-screen bg-background">
@@ -151,59 +211,67 @@ const PlanView = () => {
         >
           {/* Title */}
           <div className="mb-8 text-center">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: "spring" }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-4"
-            >
-              <Check className="w-4 h-4 text-green-500" />
-              <span className="text-sm font-medium">Plan Generated Successfully</span>
-            </motion.div>
-            <h1 className="text-3xl font-bold mb-2">E-Commerce Platform</h1>
+            {plan.status === 'completed' && (
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: "spring" }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-4"
+              >
+                <Check className="w-4 h-4 text-green-500" />
+                <span className="text-sm font-medium">Plan Generated Successfully</span>
+              </motion.div>
+            )}
+            <h1 className="text-3xl font-bold mb-2">{displayTitle}</h1>
             <p className="text-muted-foreground">Project Plan Overview</p>
           </div>
 
           {/* Plan Sections */}
           <div className="space-y-4">
-            {planSections.map((section, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-card rounded-2xl border border-border overflow-hidden card-shadow"
-              >
-                <button
-                  onClick={() => toggleSection(index)}
-                  className="w-full p-6 flex items-center justify-between hover:bg-muted/50 transition-colors"
+            {sections.length > 0 ? (
+              sections.map((section, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="bg-card rounded-2xl border border-border overflow-hidden card-shadow"
                 >
-                  <h2 className="text-lg font-semibold">{section.title}</h2>
-                  {expandedSections.includes(index) ? (
-                    <ChevronUp className="w-5 h-5 text-muted-foreground" />
-                  ) : (
-                    <ChevronDown className="w-5 h-5 text-muted-foreground" />
-                  )}
-                </button>
-                <AnimatePresence>
-                  {expandedSections.includes(index) && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="px-6 pb-6">
-                        <div className="prose prose-sm max-w-none text-muted-foreground whitespace-pre-line">
-                          {section.content}
+                  <button
+                    onClick={() => toggleSection(index)}
+                    className="w-full p-6 flex items-center justify-between hover:bg-muted/50 transition-colors"
+                  >
+                    <h2 className="text-lg font-semibold">{section.title}</h2>
+                    {expandedSections.includes(index) ? (
+                      <ChevronUp className="w-5 h-5 text-muted-foreground" />
+                    ) : (
+                      <ChevronDown className="w-5 h-5 text-muted-foreground" />
+                    )}
+                  </button>
+                  <AnimatePresence>
+                    {expandedSections.includes(index) && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-6 pb-6">
+                          <div className="prose prose-sm max-w-none text-muted-foreground whitespace-pre-line">
+                            {section.content}
+                          </div>
                         </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              ))
+            ) : (
+              <div className="text-center p-8 bg-muted rounded-xl">
+                <p>No content generated for this plan yet.</p>
+              </div>
+            )}
           </div>
 
           {/* Action Buttons */}

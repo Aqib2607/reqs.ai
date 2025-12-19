@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,154 +15,102 @@ import {
   Layers,
   Target,
   ChevronRight,
+  Loader2,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { prdService } from "@/services/prdService";
 
-const prdSections = [
-  {
-    id: "overview",
-    icon: Target,
-    title: "Product Overview",
-    content: `## Vision Statement
-Our e-commerce platform aims to revolutionize online shopping by providing an intuitive, AI-powered experience that anticipates customer needs and delivers personalized recommendations.
+// Helper to parse PRD content into sections
+// We expect Markdown content.
+const parsePRDContent = (content: string) => {
+  if (!content) return [];
 
-## Problem Statement
-Current e-commerce solutions often lack personalization, leading to poor user experiences and low conversion rates. Customers struggle to find relevant products, and businesses lose potential sales.
+  // Basic parsing: Split by headers "## Title"
+  // This depends on the Gemini prompt output format.
+  // Assuming the prompt returns "## [Section Title]" format.
 
-## Solution
-A modern, AI-driven e-commerce platform that learns from user behavior to provide personalized shopping experiences, streamlined checkout processes, and intelligent inventory management.`,
-  },
-  {
-    id: "users",
-    icon: Users,
-    title: "User Personas",
-    content: `## Primary Users
+  const sections: any[] = [];
+  const lines = content.split('\n');
+  let currentSection: any = null;
 
-### Sarah - The Busy Professional
-- Age: 32
-- Tech-savvy online shopper
-- Values convenience and fast delivery
-- Expects personalized recommendations
+  lines.forEach(line => {
+    if (line.trim().startsWith('## ')) {
+      if (currentSection) {
+        sections.push(currentSection);
+      }
+      const title = line.replace('## ', '').trim();
+      // Heuristic to pick an icon
+      let icon = FileText;
+      if (title.toLowerCase().includes('overview') || title.toLowerCase().includes('vision')) icon = Target;
+      else if (title.toLowerCase().includes('user') || title.toLowerCase().includes('persona')) icon = Users;
+      else if (title.toLowerCase().includes('feature') || title.toLowerCase().includes('requirement')) icon = Layers;
+      else if (title.toLowerCase().includes('tech') || title.toLowerCase().includes('architecture')) icon = Code;
+      else if (title.toLowerCase().includes('timeline') || title.toLowerCase().includes('roadmap')) icon = Calendar;
 
-### Mike - The Small Business Owner
-- Age: 45
-- Looking to expand online presence
-- Needs easy-to-manage store interface
-- Focused on cost-effectiveness
+      currentSection = {
+        id: title.toLowerCase().replace(/[^a-z0-9]/g, '-'),
+        icon: icon,
+        title: title,
+        content: ''
+      };
+    } else {
+      if (currentSection) {
+        currentSection.content += line + '\n';
+      } else {
+        // Content before first header? Maybe Introduction
+        if (line.trim()) {
+          currentSection = {
+            id: 'introduction',
+            icon: FileText,
+            title: 'Introduction',
+            content: line + '\n'
+          };
+        }
+      }
+    }
+  });
+  if (currentSection) sections.push(currentSection);
 
-### Emma - The Retail Manager
-- Age: 38
-- Manages multiple product categories
-- Needs robust analytics and reporting
-- Values automation and efficiency`,
-  },
-  {
-    id: "features",
-    icon: Layers,
-    title: "Feature Specifications",
-    content: `## Core Features
-
-### 1. Smart Product Discovery
-- AI-powered search with natural language processing
-- Visual search using image recognition
-- Personalized product recommendations
-- Advanced filtering and sorting options
-
-### 2. Seamless Checkout
-- One-click purchasing for returning customers
-- Multiple payment gateway integrations
-- Address auto-completion
-- Order tracking and notifications
-
-### 3. User Account Management
-- Social login integration
-- Wishlist and favorites
-- Order history and reordering
-- Subscription management
-
-### 4. Admin Dashboard
-- Real-time analytics and reporting
-- Inventory management
-- Order processing workflow
-- Customer support tools`,
-  },
-  {
-    id: "technical",
-    icon: Code,
-    title: "Technical Requirements",
-    content: `## Architecture Overview
-
-### Frontend
-- **Framework**: React 18 with TypeScript
-- **Styling**: Tailwind CSS with custom design system
-- **State Management**: TanStack Query + Zustand
-- **Build Tool**: Vite
-
-### Backend
-- **Runtime**: Node.js 20 LTS
-- **Framework**: Express.js with TypeScript
-- **API Design**: RESTful with GraphQL for complex queries
-
-### Database
-- **Primary**: PostgreSQL 15
-- **Caching**: Redis for session and query caching
-- **Search**: Elasticsearch for product search
-
-### Infrastructure
-- **Cloud Provider**: AWS
-- **CDN**: CloudFront
-- **Container Orchestration**: ECS with Fargate
-- **CI/CD**: GitHub Actions
-
-### Security
-- JWT-based authentication
-- OAuth 2.0 for social login
-- PCI DSS compliance for payments
-- Regular security audits`,
-  },
-  {
-    id: "timeline",
-    icon: Calendar,
-    title: "Development Timeline",
-    content: `## Project Phases
-
-### Phase 1: Foundation (Weeks 1-4)
-- [ ] Project setup and infrastructure
-- [ ] Authentication system
-- [ ] Database schema design
-- [ ] CI/CD pipeline
-
-### Phase 2: Core Features (Weeks 5-8)
-- [ ] Product catalog management
-- [ ] Search and filtering
-- [ ] User account features
-- [ ] Shopping cart functionality
-
-### Phase 3: Checkout & Payments (Weeks 9-12)
-- [ ] Payment gateway integration
-- [ ] Order management system
-- [ ] Email notifications
-- [ ] Shipping integration
-
-### Phase 4: Admin & Analytics (Weeks 13-16)
-- [ ] Admin dashboard
-- [ ] Analytics and reporting
-- [ ] Inventory management
-- [ ] Customer support tools
-
-### Phase 5: Polish & Launch (Weeks 17-20)
-- [ ] Performance optimization
-- [ ] Security audit
-- [ ] User acceptance testing
-- [ ] Production deployment`,
-  },
-];
+  return sections;
+};
 
 const PRDView = () => {
-  const [activeSection, setActiveSection] = useState("overview");
+  const { id } = useParams<{ id: string }>();
+  const [prd, setPrd] = useState<any>(null);
+  const [prdSections, setPrdSections] = useState<any[]>([]);
+  const [activeSection, setActiveSection] = useState("");
+  const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchPRD = async () => {
+      if (!id) return;
+      try {
+        setLoading(true);
+        const response = await prdService.getPRD(id);
+        if (response.status === 'success') {
+          setPrd(response.data.prd);
+          if (response.data.prd.content) {
+            const sections = parsePRDContent(response.data.prd.content);
+            setPrdSections(sections);
+            if (sections.length > 0) setActiveSection(sections[0].id);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to load PRD", error);
+        toast({
+          title: "Error",
+          description: "Could not load PRD.",
+          variant: 'destructive'
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPRD();
+  }, [id, toast]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -170,6 +118,8 @@ const PRDView = () => {
         id: s.id,
         offset: document.getElementById(s.id)?.offsetTop || 0,
       }));
+
+      if (sections.length === 0) return;
 
       const scrollPosition = window.scrollY + 200;
 
@@ -183,11 +133,11 @@ const PRDView = () => {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [prdSections]);
 
   const handleCopy = () => {
-    const content = prdSections.map((s) => `# ${s.title}\n\n${s.content}`).join("\n\n---\n\n");
-    navigator.clipboard.writeText(content);
+    if (!prd?.content) return;
+    navigator.clipboard.writeText(prd.content);
     setCopied(true);
     toast({
       title: "Copied to clipboard",
@@ -196,12 +146,52 @@ const PRDView = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleExport = async (format: 'pdf' | 'markdown' | 'json') => {
+    try {
+      toast({ title: "Exporting...", description: "Preparing your download." });
+      const response = await prdService.exportPRD(prd._id, format);
+
+      // Create download link
+      const blob = new Blob([response.data], { type: format === 'pdf' ? 'application/pdf' : 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `prd-${prd.title || 'export'}.${format === 'markdown' ? 'md' : format}`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      toast({
+        title: "Export Failed",
+        description: "Could not export PRD.",
+        variant: 'destructive'
+      });
+    }
+  };
+
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-10 h-10 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!prd) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center flex-col">
+        <h1 className="text-2xl font-bold mb-4">PRD Not Found</h1>
+        <Button onClick={() => navigate('/dashboard')}>Go Home</Button>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -213,7 +203,7 @@ const PRDView = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => navigate("/plan")}
+                onClick={() => navigate(`/plan/${prd.planId}`)} // Navigate back to plan
               >
                 <ArrowLeft className="w-5 h-5" />
               </Button>
@@ -230,7 +220,7 @@ const PRDView = () => {
                 {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                 <span className="hidden sm:inline">{copied ? "Copied" : "Copy Markdown"}</span>
               </Button>
-              <Button variant="gradient" size="sm" className="gap-2">
+              <Button variant="gradient" size="sm" className="gap-2" onClick={() => handleExport('pdf')}>
                 <Download className="w-4 h-4" />
                 <span className="hidden sm:inline">Export PDF</span>
               </Button>
@@ -241,7 +231,7 @@ const PRDView = () => {
 
       <div className="flex">
         {/* Sidebar Navigation */}
-        <aside className="hidden lg:block w-64 sticky top-16 h-[calc(100vh-4rem)] border-r border-border bg-card p-6">
+        <aside className="hidden lg:block w-64 sticky top-16 h-[calc(100vh-4rem)] border-r border-border bg-card p-6 overflow-y-auto">
           <h3 className="text-sm font-semibold text-muted-foreground mb-4">Contents</h3>
           <nav className="space-y-1">
             {prdSections.map((section) => {
@@ -250,11 +240,10 @@ const PRDView = () => {
                 <button
                   key={section.id}
                   onClick={() => scrollToSection(section.id)}
-                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left text-sm transition-colors ${
-                    activeSection === section.id
+                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left text-sm transition-colors ${activeSection === section.id
                       ? "bg-primary/10 text-primary font-medium"
                       : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                  }`}
+                    }`}
                 >
                   <Icon className="w-4 h-4" />
                   {section.title}
@@ -286,8 +275,8 @@ const PRDView = () => {
                 <FileText className="w-4 h-4 text-primary" />
                 <span className="text-sm font-medium">Product Requirements Document</span>
               </motion.div>
-              <h1 className="text-4xl font-bold mb-2">E-Commerce Platform</h1>
-              <p className="text-muted-foreground">Version 1.0 • Generated on {new Date().toLocaleDateString()}</p>
+              <h1 className="text-4xl font-bold mb-2">{prd.title || "Untitled PRD"}</h1>
+              <p className="text-muted-foreground">Version {prd.version || "1.0"} • Generated on {new Date(prd.createdAt).toLocaleDateString()}</p>
             </div>
 
             {/* Document Sections */}
@@ -309,47 +298,10 @@ const PRDView = () => {
                       </div>
                       <h2 className="text-2xl font-bold">{section.title}</h2>
                     </div>
-                    <div className="prose prose-sm max-w-none dark:prose-invert">
-                      {section.content.split("\n").map((line, i) => {
-                        if (line.startsWith("## ")) {
-                          return (
-                            <h3 key={i} className="text-lg font-semibold mt-6 mb-3">
-                              {line.replace("## ", "")}
-                            </h3>
-                          );
-                        }
-                        if (line.startsWith("### ")) {
-                          return (
-                            <h4 key={i} className="text-base font-medium mt-4 mb-2">
-                              {line.replace("### ", "")}
-                            </h4>
-                          );
-                        }
-                        if (line.startsWith("- ")) {
-                          return (
-                            <li key={i} className="text-muted-foreground ml-4">
-                              {line.replace("- ", "")}
-                            </li>
-                          );
-                        }
-                        if (line.startsWith("**")) {
-                          const parts = line.split("**");
-                          return (
-                            <p key={i} className="text-muted-foreground">
-                              <strong>{parts[1]}</strong>
-                              {parts[2]}
-                            </p>
-                          );
-                        }
-                        if (line.trim()) {
-                          return (
-                            <p key={i} className="text-muted-foreground">
-                              {line}
-                            </p>
-                          );
-                        }
-                        return null;
-                      })}
+                    {/* Render content with simple formatting */}
+                    <div className="prose prose-sm max-w-none dark:prose-invert whitespace-pre-wrap">
+                      {/* Check if content is just raw text or needs simple formatting */}
+                      {section.content}
                     </div>
                   </motion.section>
                 );
@@ -368,7 +320,7 @@ const PRDView = () => {
                 Export this PRD and share it with your team.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
-                <Button variant="hero" className="gap-2">
+                <Button variant="hero" className="gap-2" onClick={() => handleExport('pdf')}>
                   <Download className="w-4 h-4" />
                   Export as PDF
                 </Button>
