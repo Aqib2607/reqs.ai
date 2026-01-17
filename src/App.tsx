@@ -21,6 +21,15 @@ const Profile = lazy(() => import("./pages/Profile"));
 const Settings = lazy(() => import("./pages/Settings"));
 const HowItWorks = lazy(() => import("./pages/HowItWorks"));
 const Features = lazy(() => import("./pages/Features"));
+const Pricing = lazy(() => import("./pages/Pricing"));
+const Changelog = lazy(() => import("./pages/Changelog"));
+const Documentation = lazy(() => import("./pages/Documentation"));
+const APIReference = lazy(() => import("./pages/APIReference"));
+const Blog = lazy(() => import("./pages/Blog"));
+const Support = lazy(() => import("./pages/Support"));
+const PrivacyPolicy = lazy(() => import("./pages/Legal").then(m => ({ default: m.PrivacyPolicy })));
+const TermsOfService = lazy(() => import("./pages/Legal").then(m => ({ default: m.TermsOfService })));
+const CookiePolicy = lazy(() => import("./pages/Legal").then(m => ({ default: m.CookiePolicy })));
 const Testimonials = lazy(() => import("./pages/Testimonials"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -49,6 +58,15 @@ const App = () => (
                   <Route path="/signup" element={<Signup />} />
                   <Route path="/how-it-works" element={<HowItWorks />} />
                   <Route path="/features" element={<Features />} />
+                  <Route path="/pricing" element={<Pricing />} />
+                  <Route path="/changelog" element={<Changelog />} />
+                  <Route path="/docs" element={<Documentation />} />
+                  <Route path="/api" element={<APIReference />} />
+                  <Route path="/blog" element={<Blog />} />
+                  <Route path="/support" element={<Support />} />
+                  <Route path="/privacy" element={<PrivacyPolicy />} />
+                  <Route path="/terms" element={<TermsOfService />} />
+                  <Route path="/cookies" element={<CookiePolicy />} />
                   <Route path="/testimonials" element={<Testimonials />} />
 
                   {/* Protected Routes */}

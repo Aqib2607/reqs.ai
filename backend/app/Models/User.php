@@ -22,7 +22,25 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'status',
+        'last_login_at',
     ];
+
+    public function plans()
+    {
+        return $this->hasMany(Plan::class);
+    }
+
+    public function prdDocuments()
+    {
+        return $this->hasMany(PRDDocument::class);
+    }
+
+    public function apiKeys()
+    {
+        return $this->hasMany(ApiKey::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.

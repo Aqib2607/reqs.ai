@@ -13,10 +13,6 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ],
-      "*": [
-        "./backend/node_modules/*",
-        "*"
       ]
     },
     "noImplicitAny": false,
