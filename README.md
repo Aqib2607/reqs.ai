@@ -21,7 +21,7 @@ AI-powered project plan and PRD generator for developers. Transform your project
 
 1. Clone the repository:
    ```sh
-   git clone <repository-url>
+   git clone https://github.com/Aqib2607/reqs.ai
    ```
 
 2. Install dependencies:
