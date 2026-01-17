@@ -17,6 +17,7 @@ import {
   ChevronRight,
   Loader2,
 } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { useToast } from "@/hooks/use-toast";
 
 // Helper to parse PRD content into sections
@@ -240,6 +241,7 @@ const PRDView = () => {
                 <Download className="w-4 h-4" />
                 <span className="hidden sm:inline">Export</span>
               </Button>
+              <ThemeToggle />
             </div>
           </div>
         </div>

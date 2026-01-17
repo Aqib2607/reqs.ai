@@ -16,6 +16,7 @@ import {
   Check,
   Loader2,
 } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { useToast } from "@/hooks/use-toast";
 
 // Helper to parse the Markdown/Text plan into sections
@@ -215,6 +216,7 @@ const PlanView = () => {
                 <FileText className="w-4 h-4" />
                 <span className="hidden sm:inline">Generate PRD</span>
               </Button>
+              <ThemeToggle />
             </div>
           </div>
         </div>

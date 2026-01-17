@@ -12,6 +12,7 @@ import {
     Loader2,
     MessageSquare,
 } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import FeedbackForm from "@/components/FeedbackForm";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
@@ -90,10 +91,11 @@ const Settings = () => {
                                 <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
                                     <Sparkles className="w-5 h-5 text-primary-foreground" />
                                 </div>
-                                <span className="text-xl font-bold gradient-text hidden sm:inline">Reqs.ai</span>
-                            </Link>
-                        </div>
+                            <span className="text-xl font-bold gradient-text hidden sm:inline">Reqs.ai</span>
+                        </Link>
                     </div>
+                    <ThemeToggle />
+                </div>
                 </div>
             </header>
 

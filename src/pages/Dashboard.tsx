@@ -14,6 +14,7 @@ import {
   ChevronRight,
   Send,
 } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { DashboardSkeleton } from "@/components/loading/DashboardSkeleton";
@@ -195,6 +196,10 @@ const Dashboard = () => {
 
         {/* Navigation */}
         <div className="space-y-2 pt-4 border-t border-border">
+          <div className="flex items-center justify-between px-2 py-2">
+            <span className="text-sm font-medium text-muted-foreground">Theme</span>
+            <ThemeToggle />
+          </div>
           <Button variant="ghost" className="w-full justify-start gap-2">
             <User className="w-4 h-4" />
             Profile
@@ -228,9 +233,12 @@ const Dashboard = () => {
             </div>
             <span className="text-xl font-bold gradient-text">Reqs.ai</span>
           </Link>
-          <Button variant="ghost" size="icon">
-            <User className="w-5 h-5" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Button variant="ghost" size="icon">
+              <User className="w-5 h-5" />
+            </Button>
+          </div>
         </header>
 
         {/* Content */}
