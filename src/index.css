@@ -39,7 +39,8 @@
     --primary: 359 99% 29%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 100% 12%;
+    --secondary: 359 80% 45%;
+    /* Vibrant Red for CTA in Light Mode */
     --secondary-foreground: 0 0% 100%;
 
     --muted: 0 0% 96%;
