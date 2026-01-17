@@ -30,7 +30,7 @@ const PageLoader = () => (
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider defaultTheme="dark" storageKey="reqs-theme">
+    <ThemeProvider defaultTheme="light" storageKey="reqs-theme">
       <TooltipProvider>
         <Toaster />
         <Sonner />
