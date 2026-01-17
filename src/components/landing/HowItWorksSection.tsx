@@ -50,9 +50,9 @@ const HowItWorksSection = () => {
         {/* Steps */}
         <div className="relative max-w-5xl mx-auto">
           {/* Connecting Line */}
-          <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-primary via-secondary to-primary -translate-y-1/2">
+          <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-border via-foreground/20 to-border -translate-y-1/2">
             <motion.div
-              className="absolute top-1/2 w-4 h-4 rounded-full bg-primary -translate-y-1/2"
+              className="absolute top-1/2 w-4 h-4 rounded-full bg-foreground -translate-y-1/2"
               animate={{ left: ["0%", "100%", "0%"] }}
               transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
             />
@@ -62,9 +62,9 @@ const HowItWorksSection = () => {
             {steps.map((step, index) => (
               <motion.div
                 key={index}
-                initial={{ 
-                  opacity: 0, 
-                  x: index % 2 === 0 ? -30 : 30 
+                initial={{
+                  opacity: 0,
+                  x: index % 2 === 0 ? -30 : 30
                 }}
                 animate={isInView ? { opacity: 1, x: 0 } : {}}
                 transition={{ duration: 0.5, delay: index * 0.15 }}
@@ -72,10 +72,10 @@ const HowItWorksSection = () => {
               >
                 <div className="flex flex-col items-center text-center">
                   {/* Step Number */}
-                  <div className="w-8 h-8 rounded-full gradient-bg flex items-center justify-center text-primary-foreground font-bold text-sm mb-4 relative z-10">
+                  <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center text-white font-bold text-sm mb-4 relative z-10">
                     {index + 1}
                   </div>
-                  
+
                   {/* Card */}
                   <div className="w-full p-6 rounded-2xl bg-card card-shadow border border-border/50 hover:card-shadow-hover transition-all duration-300">
                     <div className="w-14 h-14 rounded-xl bg-muted flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform">

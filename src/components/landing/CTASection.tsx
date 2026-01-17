@@ -27,12 +27,12 @@ const CTASection = () => {
 
   return (
     <section className="py-24 relative overflow-hidden" ref={ref}>
-      {/* Gradient Background */}
-      <div className="absolute inset-0 gradient-bg opacity-90" />
-      
+      {/* Dark Background */}
+      <div className="absolute inset-0 bg-secondary" />
+
       {/* Animated shapes */}
       <motion.div
-        className="absolute top-0 left-0 w-96 h-96 rounded-full bg-primary-foreground/10 blur-3xl"
+        className="absolute top-0 left-0 w-96 h-96 rounded-full bg-muted blur-3xl"
         animate={{
           scale: [1, 1.2, 1],
           x: [0, 50, 0],
@@ -44,7 +44,7 @@ const CTASection = () => {
         }}
       />
       <motion.div
-        className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-primary-foreground/10 blur-3xl"
+        className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-muted blur-3xl"
         animate={{
           scale: [1.2, 1, 1.2],
           x: [0, -50, 0],

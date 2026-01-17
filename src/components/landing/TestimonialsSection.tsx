@@ -87,7 +87,7 @@ const TestimonialsSection = () => {
                     {/* Stars */}
                     <div className="flex justify-center gap-1 mb-6">
                       {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-5 h-5 fill-primary text-primary" />
+                        <Star key={i} className="w-5 h-5 fill-yellow-500 text-yellow-500" />
                       ))}
                     </div>
 
@@ -98,7 +98,7 @@ const TestimonialsSection = () => {
 
                     {/* Author */}
                     <div className="flex items-center justify-center gap-4">
-                      <div className="w-12 h-12 rounded-full gradient-bg flex items-center justify-center text-primary-foreground font-semibold">
+                      <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center text-white font-semibold">
                         {testimonial.avatar}
                       </div>
                       <div className="text-left">
@@ -122,11 +122,10 @@ const TestimonialsSection = () => {
                 <button
                   key={index}
                   onClick={() => setCurrentIndex(index)}
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    index === currentIndex
-                      ? "w-8 gradient-bg"
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${index === currentIndex
+                      ? "w-8 bg-foreground"
                       : "bg-muted-foreground/30"
-                  }`}
+                    }`}
                 />
               ))}
             </div>

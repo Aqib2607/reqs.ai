@@ -8,11 +8,11 @@ const Footer = () => {
         <div className="grid md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="md:col-span-1">
-            <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-primary-foreground" />
+            <Link to="/" className="flex items-center gap-2 mb-4 group">
+              <div className="w-8 h-8 shrink-0 rounded-lg bg-black flex items-center justify-center border border-white/10">
+                <Sparkles className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold gradient-text">Reqs.ai</span>
+              <span className="text-xl font-bold text-foreground">Reqs.ai</span>
             </Link>
             <p className="text-muted-foreground text-sm">
               Transform your ideas into detailed project plans with AI-powered intelligence.

@@ -25,10 +25,10 @@ const HeroSection = () => {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
       {/* Animated Background */}
       <div className="absolute inset-0 gradient-hero-bg" />
-      
+
       {/* Floating Elements */}
       <motion.div
-        className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-primary/10 blur-3xl"
+        className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-muted blur-3xl"
         animate={{
           y: [0, -30, 0],
           scale: [1, 1.1, 1],
@@ -40,7 +40,7 @@ const HeroSection = () => {
         }}
       />
       <motion.div
-        className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-secondary/10 blur-3xl"
+        className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-muted blur-3xl"
         animate={{
           y: [0, 30, 0],
           scale: [1.1, 1, 1.1],
@@ -73,8 +73,8 @@ const HeroSection = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight"
           >
-            <span className="gradient-text">{displayText}</span>
-            <span className="animate-pulse">|</span>
+            <span className="text-foreground">{displayText}</span>
+            <span className="animate-pulse text-primary">|</span>
           </motion.h1>
 
           {/* Subtitle */}
