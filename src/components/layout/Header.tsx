@@ -31,19 +31,19 @@ const Header = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
             <Link
-              to="/#features"
+              to="/features"
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
               Features
             </Link>
             <Link
-              to="/#how-it-works"
+              to="/how-it-works"
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
               How it Works
             </Link>
             <Link
-              to="/#testimonials"
+              to="/testimonials"
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
               Testimonials
@@ -88,21 +88,21 @@ const Header = () => {
           >
             <div className="flex flex-col gap-4">
               <Link
-                to="/#features"
+                to="/features"
                 className="text-muted-foreground hover:text-foreground transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Features
               </Link>
               <Link
-                to="/#how-it-works"
+                to="/how-it-works"
                 className="text-muted-foreground hover:text-foreground transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 How it Works
               </Link>
               <Link
-                to="/#testimonials"
+                to="/testimonials"
                 className="text-muted-foreground hover:text-foreground transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >

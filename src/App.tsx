@@ -17,7 +17,11 @@ const Signup = lazy(() => import("./pages/Signup"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const PlanView = lazy(() => import("./pages/PlanView"));
 const PRDView = lazy(() => import("./pages/PRDView"));
+const Profile = lazy(() => import("./pages/Profile"));
 const Settings = lazy(() => import("./pages/Settings"));
+const HowItWorks = lazy(() => import("./pages/HowItWorks"));
+const Features = lazy(() => import("./pages/Features"));
+const Testimonials = lazy(() => import("./pages/Testimonials"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -43,6 +47,9 @@ const App = () => (
                   <Route path="/" element={<Index />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
+                  <Route path="/how-it-works" element={<HowItWorks />} />
+                  <Route path="/features" element={<Features />} />
+                  <Route path="/testimonials" element={<Testimonials />} />
 
                   {/* Protected Routes */}
                   <Route element={<ProtectedRoute />}>
@@ -51,6 +58,7 @@ const App = () => (
                     <Route path="/plan/:id" element={<PlanView />} />
                     <Route path="/prd" element={<PRDView />} />
                     <Route path="/prd/:id" element={<PRDView />} />
+                    <Route path="/profile" element={<Profile />} />
                     <Route path="/settings" element={<Settings />} />
                   </Route>
 

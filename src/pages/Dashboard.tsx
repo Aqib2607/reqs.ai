@@ -41,12 +41,12 @@ const Dashboard = () => {
       try {
         const plans = JSON.parse(localStorage.getItem('plans') || '[]');
         const prds = JSON.parse(localStorage.getItem('prds') || '[]');
-        
+
         setStats({
           totalPlans: plans.length,
           totalPRDs: prds.length
         });
-        
+
         // Get recent plans (last 5)
         setRecentActivity(plans.slice(-5).reverse());
       } catch (error) {
@@ -88,7 +88,7 @@ const Dashboard = () => {
         ideaText: idea,
         createdAt: new Date().toISOString()
       };
-      
+
       const plans = JSON.parse(localStorage.getItem('plans') || '[]');
       plans.push({
         ...newPlan,
@@ -200,7 +200,11 @@ const Dashboard = () => {
             <span className="text-sm font-medium text-muted-foreground">Theme</span>
             <ThemeToggle />
           </div>
-          <Button variant="ghost" className="w-full justify-start gap-2">
+          <Button
+            variant="ghost"
+            className="w-full justify-start gap-2"
+            onClick={() => navigate("/profile")}
+          >
             <User className="w-4 h-4" />
             Profile
           </Button>
