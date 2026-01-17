@@ -11,7 +11,7 @@ export function ThemeToggle() {
     return (
         <button
             onClick={toggleTheme}
-            className="relative p-2 rounded-lg bg-accent hover:bg-accent/80 transition-all duration-200 ease-in-out border border-input"
+            className="relative p-2 rounded-lg bg-background hover:bg-accent hover:text-accent-foreground transition-all duration-200 ease-in-out border border-input text-foreground"
             aria-label="Toggle theme"
         >
             <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
