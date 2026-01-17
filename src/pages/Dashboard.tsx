@@ -16,8 +16,6 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
-import { planService } from "@/services/planService";
-import { userService } from "@/services/userService";
 import { DashboardSkeleton } from "@/components/loading/DashboardSkeleton";
 
 interface Plan {
@@ -37,30 +35,32 @@ const Dashboard = () => {
   const { user, logout } = useAuth();
 
   useEffect(() => {
-    const fetchData = async () => {
+    // Load data from localStorage
+    const loadData = () => {
       try {
-        const statsData = await userService.getDashboardStats();
-        if (statsData.status === 'success') {
-          setStats({
-            totalPlans: statsData.data.totalPlans,
-            totalPRDs: statsData.data.totalPRDs
-          });
-          setRecentActivity(statsData.data.recentPlans || []);
-        }
+        const plans = JSON.parse(localStorage.getItem('plans') || '[]');
+        const prds = JSON.parse(localStorage.getItem('prds') || '[]');
+        
+        setStats({
+          totalPlans: plans.length,
+          totalPRDs: prds.length
+        });
+        
+        // Get recent plans (last 5)
+        setRecentActivity(plans.slice(-5).reverse());
       } catch (error) {
-        console.error("Failed to fetch dashboard data:", error);
+        console.error("Failed to load dashboard data:", error);
       } finally {
         setIsLoadingData(false);
       }
     };
-    fetchData();
+    loadData();
   }, []);
 
   if (isLoadingData) {
     return (
       <div className="min-h-screen bg-background">
         <header className="lg:hidden flex items-center justify-between p-4 border-b border-border">
-          {/* Minimal header for mobile while loading */}
           <div className="w-8 h-8 rounded-lg bg-muted animate-pulse"></div>
         </header>
         <DashboardSkeleton />
@@ -81,23 +81,31 @@ const Dashboard = () => {
     setIsGenerating(true);
 
     try {
-      const result = await planService.createPlan({
+      // Mock plan generation - store in localStorage
+      const newPlan: Plan = {
+        _id: 'plan-' + Date.now(),
         ideaText: idea,
-        visibility: 'private'
+        createdAt: new Date().toISOString()
+      };
+      
+      const plans = JSON.parse(localStorage.getItem('plans') || '[]');
+      plans.push({
+        ...newPlan,
+        status: 'completed',
+        generatedPlan: `# Project Plan for: ${idea}\n\n## Overview\nThis is a generated plan for your project idea.\n\n## Goals\n- Define the core features\n- Plan the architecture\n- Set milestones\n\n## Timeline\n- Week 1-2: Planning and Design\n- Week 3-4: Development\n- Week 5: Testing and Launch`
       });
+      localStorage.setItem('plans', JSON.stringify(plans));
 
       toast({
         title: "Plan generated!",
         description: "Your project plan is ready.",
       });
 
-      // The createPlan controller returns { status: 'success', data: { plan: ... } }
-      navigate(`/plan/${result.data.plan._id}`);
-    } catch (err: unknown) {
-      const error = err as { response?: { data?: { message?: string } } };
+      navigate(`/plan/${newPlan._id}`);
+    } catch (err) {
       toast({
         title: "Generation failed",
-        description: error.response?.data?.message || "Could not generate plan",
+        description: "Could not generate plan",
         variant: "destructive",
       });
     } finally {

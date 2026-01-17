@@ -17,12 +17,8 @@ import {
   Loader2,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { planService } from "@/services/planService";
-import { prdService } from "@/services/prdService";
 
-// Helper to parse the Markdown/Text plan into sections (rough heuristic if structure is consistent)
-// Or we just display the raw text if parsing is too complex for now.
-// For now, let's treat the whole plan as one section or try to split by headers.
+// Helper to parse the Markdown/Text plan into sections
 const parsePlanContent = (content: string) => {
   if (!content) return [];
 
@@ -35,11 +31,10 @@ const parsePlanContent = (content: string) => {
   }
 
   const result = [];
-  // Sections array will look like: ["", "Title 1", "Content 1", "Title 2", "Content 2", ...]
   for (let i = 1; i < sections.length; i += 2) {
     result.push({
       title: sections[i].trim(),
-      content: sections[i + 1].trim(),
+      content: sections[i + 1]?.trim() || '',
     });
   }
   return result;
@@ -69,16 +64,17 @@ const PlanView = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    const fetchPlan = async () => {
+    const fetchPlan = () => {
       if (!id) return;
       try {
         setLoading(true);
-        const response = await planService.getPlan(id);
-        if (response.status === 'success') {
-          setPlan(response.data);
-          if (response.data.generatedPlan) {
-            setSections(parsePlanContent(response.data.generatedPlan));
-            // Expand all by default if reasonable count
+        const plans = JSON.parse(localStorage.getItem('plans') || '[]');
+        const foundPlan = plans.find((p: Plan) => p._id === id);
+        
+        if (foundPlan) {
+          setPlan(foundPlan);
+          if (foundPlan.generatedPlan) {
+            setSections(parsePlanContent(foundPlan.generatedPlan));
             setExpandedSections([0, 1, 2, 3, 4, 5].slice(0, 6));
           }
         }
@@ -125,21 +121,30 @@ const PlanView = () => {
     });
 
     try {
-      const result = await prdService.generatePRD(plan._id);
-      if (result.status === 'success') {
-        toast({
-          title: "PRD Generated!",
-          description: "Redirecting to view PRD.",
-        });
-        // The result.data.prd contains the new PRD
-        navigate(`/prd/${result.data.prd._id}`);
-      }
-    } catch (err: unknown) {
-      const error = err as { response?: { data?: { message?: string } } };
-      console.error("PRD generation failed", error);
+      // Mock PRD generation
+      const newPRD = {
+        _id: 'prd-' + Date.now(),
+        planId: plan._id,
+        title: plan.ideaText,
+        content: `## Overview\n\nThis PRD outlines the requirements for: ${plan.ideaText}\n\n## User Stories\n\n- As a user, I want to...\n- As an admin, I want to...\n\n## Technical Requirements\n\n- React frontend\n- API backend\n- Database storage\n\n## Timeline\n\nEstimated 4-6 weeks for MVP.`,
+        version: '1.0',
+        createdAt: new Date().toISOString()
+      };
+
+      const prds = JSON.parse(localStorage.getItem('prds') || '[]');
+      prds.push(newPRD);
+      localStorage.setItem('prds', JSON.stringify(prds));
+
+      toast({
+        title: "PRD Generated!",
+        description: "Redirecting to view PRD.",
+      });
+      navigate(`/prd/${newPRD._id}`);
+    } catch (err) {
+      console.error("PRD generation failed", err);
       toast({
         title: "Generation failed",
-        description: error.response?.data?.message || "Could not generate PRD.",
+        description: "Could not generate PRD.",
         variant: "destructive"
       });
     }

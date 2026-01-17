@@ -8,27 +8,19 @@ import {
     Sparkles,
     ArrowLeft,
     User,
-    Key,
     Save,
-    Trash2,
-    Plus,
     Loader2,
     MessageSquare,
 } from "lucide-react";
 import FeedbackForm from "@/components/FeedbackForm";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
-import { userService } from "@/services/userService";
-import { apiKeyService } from "@/services/apiKeyService";
 
 const Settings = () => {
-    const { user, login } = useAuth(); // Assuming login updates user context if needed, or we might need a refreshUser function
+    const { user } = useAuth();
     const [activeTab, setActiveTab] = useState("profile");
     const [profileData, setProfileData] = useState({ name: "", email: "" });
     const [passwords, setPasswords] = useState({ current: "", new: "", confirm: "" });
-    const [apiKeys, setApiKeys] = useState<{ _id: string, label: string, last4: string }[]>([]);
-    const [newKey, setNewKey] = useState("");
-    const [keyLabel, setKeyLabel] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const { toast } = useToast();
@@ -39,35 +31,18 @@ const Settings = () => {
         }
     }, [user]);
 
-    useEffect(() => {
-        if (activeTab === "api-keys") {
-            fetchApiKeys();
-        }
-    }, [activeTab]);
-
-    const fetchApiKeys = async () => {
-        try {
-            const response = await apiKeyService.getKeys();
-            if (response.status === 'success') {
-                setApiKeys(response.data);
-            }
-        } catch (error) {
-            console.error("Failed to fetch API keys", error);
-        }
-    };
-
     const handleProfileUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
         try {
-            await userService.updateProfile(profileData);
+            // Mock profile update - update localStorage
+            const updatedUser = { ...user, ...profileData };
+            localStorage.setItem('user', JSON.stringify(updatedUser));
             toast({ title: "Profile updated", description: "Your profile has been updated successfully." });
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (error: any) {
-            const message = error.response?.data?.message || "Could not update profile";
+        } catch (error) {
             toast({
                 title: "Update failed",
-                description: message,
+                description: "Could not update profile",
                 variant: "destructive",
             });
         } finally {
@@ -83,56 +58,17 @@ const Settings = () => {
         }
         setIsLoading(true);
         try {
-            await userService.updatePassword({
-                currentPassword: passwords.current,
-                password: passwords.new,
-                passwordConfirm: passwords.confirm
-            });
+            // Mock password update
             toast({ title: "Password updated", description: "Your password has been changed." });
             setPasswords({ current: "", new: "", confirm: "" });
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (error: any) {
-            const message = error.response?.data?.message || "Could not update password";
+        } catch (error) {
             toast({
                 title: "Update failed",
-                description: message,
+                description: "Could not update password",
                 variant: "destructive",
             });
         } finally {
             setIsLoading(false);
-        }
-    };
-
-    const handleAddKey = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!newKey) return;
-        setIsLoading(true);
-        try {
-            await apiKeyService.addKey(newKey, keyLabel || "My API Key");
-            toast({ title: "API Key added", description: "Your API key has been stored securely." });
-            setNewKey("");
-            setKeyLabel("");
-            fetchApiKeys();
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (error: any) {
-            const message = error.response?.data?.message || "Could not add API key";
-            toast({
-                title: "Failed to add key",
-                description: message,
-                variant: "destructive",
-            });
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const handleDeleteKey = async (id: string) => {
-        try {
-            await apiKeyService.deleteKey(id);
-            toast({ title: "API Key deleted", description: "The API key has been removed." });
-            fetchApiKeys();
-        } catch (error) {
-            toast({ title: "Error", description: "Could not delete API key", variant: "destructive" });
         }
     };
 
@@ -172,14 +108,6 @@ const Settings = () => {
                         >
                             <User className="w-4 h-4" />
                             Profile Settings
-                        </Button>
-                        <Button
-                            variant={activeTab === "api-keys" ? "secondary" : "ghost"}
-                            className="w-full justify-start gap-2"
-                            onClick={() => setActiveTab("api-keys")}
-                        >
-                            <Key className="w-4 h-4" />
-                            API Keys
                         </Button>
                         <Button
                             variant={activeTab === "feedback" ? "secondary" : "ghost"}
@@ -260,76 +188,6 @@ const Settings = () => {
                             </div>
                         )}
 
-                        {activeTab === "api-keys" && (
-                            <div className="space-y-8">
-                                <div>
-                                    <h2 className="text-2xl font-bold mb-4">API Keys</h2>
-                                    <p className="text-muted-foreground mb-6">
-                                        Manage your Gemini API keys here. We encrypt them securely.
-                                    </p>
-
-                                    <form onSubmit={handleAddKey} className="glass p-6 rounded-xl space-y-4 mb-8">
-                                        <h3 className="font-semibold">Add New Key</h3>
-                                        <div className="grid gap-4 sm:grid-cols-2">
-                                            <div className="space-y-2">
-                                                <Label htmlFor="key-label">Label (Optional)</Label>
-                                                <Input
-                                                    id="key-label"
-                                                    placeholder="e.g. My Personal Key"
-                                                    value={keyLabel}
-                                                    onChange={(e) => setKeyLabel(e.target.value)}
-                                                />
-                                            </div>
-                                            <div className="space-y-2">
-                                                <Label htmlFor="api-key">API Key</Label>
-                                                <Input
-                                                    id="api-key"
-                                                    type="password"
-                                                    placeholder="Paste your Gemini API key"
-                                                    value={newKey}
-                                                    onChange={(e) => setNewKey(e.target.value)}
-                                                />
-                                            </div>
-                                        </div>
-                                        <Button type="submit" disabled={isLoading || !newKey}>
-                                            <Plus className="w-4 h-4 mr-2" />
-                                            Add Key
-                                        </Button>
-                                    </form>
-
-                                    <div className="space-y-4">
-                                        <h3 className="font-semibold">Your Keys</h3>
-                                        {apiKeys.length === 0 ? (
-                                            <p className="text-muted-foreground italic">No API keys added yet.</p>
-                                        ) : (
-                                            <div className="space-y-2">
-                                                {apiKeys.map((key) => (
-                                                    <div key={key._id} className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
-                                                        <div className="flex items-center gap-3">
-                                                            <Key className="w-5 h-5 text-primary" />
-                                                            <div>
-                                                                <p className="font-medium">{key.label || "Unnamed Key"}</p>
-                                                                <p className="text-xs text-muted-foreground">Ends in ...{key.last4}</p>
-                                                            </div>
-                                                        </div>
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="icon"
-                                                            className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                                                            onClick={() => handleDeleteKey(key._id)}
-                                                        >
-                                                            <Trash2 className="w-4 h-4" />
-                                                        </Button>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-
                         {activeTab === "feedback" && (
                             <div className="space-y-8">
                                 <div>
@@ -346,7 +204,6 @@ const Settings = () => {
                     </main>
                 </div>
             </div>
-
         </div>
     );
 };

@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { authService } from '../services/authService';
 
 interface User {
     _id: string;
@@ -11,8 +10,8 @@ interface User {
 interface AuthContextType {
     user: User | null;
     isLoading: boolean;
-    login: (data: any) => Promise<void>;
-    signup: (data: any) => Promise<void>;
+    login: (data: { email: string; password: string }) => Promise<void>;
+    signup: (data: { name: string; email: string; password: string }) => Promise<void>;
     logout: () => void;
 }
 
@@ -23,44 +22,45 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // Check if user is already logged in
-        const checkAuth = async () => {
-            const token = localStorage.getItem('token');
-            if (token) {
-                try {
-                    const res = await authService.getMe();
-                    if (res.status === 'success' && res.data) {
-                        setUser(res.data);
-                    }
-                } catch (error) {
-                    console.error('Auth check failed:', error);
-                    localStorage.removeItem('token');
-                }
+        // Check if user is already logged in from localStorage
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            try {
+                setUser(JSON.parse(storedUser));
+            } catch (error) {
+                console.error('Failed to parse stored user:', error);
+                localStorage.removeItem('user');
             }
-            setIsLoading(false);
-        };
-
-        checkAuth();
+        }
+        setIsLoading(false);
     }, []);
 
-    const login = async (data: any) => {
-        const res = await authService.login(data);
-        if (res.status === 'success') {
-            localStorage.setItem('token', res.token);
-            setUser(res.data.user);
-        }
+    const login = async (data: { email: string; password: string }) => {
+        // Mock login - in real app, this would call an API
+        const mockUser: User = {
+            _id: 'mock-user-id',
+            name: data.email.split('@')[0],
+            email: data.email,
+            role: 'user'
+        };
+        localStorage.setItem('user', JSON.stringify(mockUser));
+        setUser(mockUser);
     };
 
-    const signup = async (data: any) => {
-        const res = await authService.signup(data);
-        if (res.status === 'success') {
-            localStorage.setItem('token', res.token);
-            setUser(res.data.user);
-        }
+    const signup = async (data: { name: string; email: string; password: string }) => {
+        // Mock signup - in real app, this would call an API
+        const mockUser: User = {
+            _id: 'mock-user-id-' + Date.now(),
+            name: data.name,
+            email: data.email,
+            role: 'user'
+        };
+        localStorage.setItem('user', JSON.stringify(mockUser));
+        setUser(mockUser);
     };
 
     const logout = () => {
-        authService.logout();
+        localStorage.removeItem('user');
         setUser(null);
     };
 

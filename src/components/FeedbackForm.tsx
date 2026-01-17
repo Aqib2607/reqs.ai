@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import { submitFeedback, FeedbackData } from '../services/feedbackService';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Label } from './ui/label';
 import { useToast } from './ui/use-toast';
 
+type FeedbackType = 'bug' | 'feature' | 'general';
+
 const FeedbackForm = () => {
-    const [type, setType] = useState<FeedbackData['type']>('general');
+    const [type, setType] = useState<FeedbackType>('general');
     const [message, setMessage] = useState('');
     const [rating, setRating] = useState<number | undefined>(undefined);
     const [email, setEmail] = useState('');
@@ -19,8 +20,14 @@ const FeedbackForm = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
+        
+        // Mock submission - store in localStorage
         try {
-            await submitFeedback({ type, message, rating, email });
+            const feedbackData = { type, message, rating, email, timestamp: new Date().toISOString() };
+            const existingFeedback = JSON.parse(localStorage.getItem('feedback') || '[]');
+            existingFeedback.push(feedbackData);
+            localStorage.setItem('feedback', JSON.stringify(existingFeedback));
+            
             toast({
                 title: "Feedback Submitted",
                 description: "Thank you for your feedback!",
@@ -49,7 +56,7 @@ const FeedbackForm = () => {
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="space-y-2">
                         <Label htmlFor="type">Type</Label>
-                        <Select onValueChange={(v: any) => setType(v)} defaultValue={type}>
+                        <Select onValueChange={(v: FeedbackType) => setType(v)} defaultValue={type}>
                             <SelectTrigger id="type">
                                 <SelectValue placeholder="Select type" />
                             </SelectTrigger>
