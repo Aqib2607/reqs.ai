@@ -157,7 +157,7 @@ const PRDView = () => {
     try {
       let content = prd.content;
       let mimeType = 'text/plain';
-      let extension = format;
+      let extension: string = format;
       
       if (format === 'json') {
         content = JSON.stringify(prd, null, 2);
