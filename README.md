@@ -47,4 +47,4 @@ AI-powered project plan and PRD generator for developers. Transform your project
 
 ## License
 
-All rights reserved.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
