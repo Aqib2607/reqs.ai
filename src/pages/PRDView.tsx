@@ -18,20 +18,14 @@ import {
   Loader2,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { prdService } from "@/services/prdService";
 
 // Helper to parse PRD content into sections
-// We expect Markdown content.
 const parsePRDContent = (content: string) => {
   if (!content) return [];
 
-  // Basic parsing: Split by headers "## Title"
-  // This depends on the Gemini prompt output format.
-  // Assuming the prompt returns "## [Section Title]" format.
-
-  const sections: any[] = [];
+  const sections: { id: string; icon: typeof FileText; title: string; content: string }[] = [];
   const lines = content.split('\n');
-  let currentSection: any = null;
+  let currentSection: { id: string; icon: typeof FileText; title: string; content: string } | null = null;
 
   lines.forEach(line => {
     if (line.trim().startsWith('## ')) {
@@ -39,7 +33,6 @@ const parsePRDContent = (content: string) => {
         sections.push(currentSection);
       }
       const title = line.replace('## ', '').trim();
-      // Heuristic to pick an icon
       let icon = FileText;
       if (title.toLowerCase().includes('overview') || title.toLowerCase().includes('vision')) icon = Target;
       else if (title.toLowerCase().includes('user') || title.toLowerCase().includes('persona')) icon = Users;
@@ -57,7 +50,6 @@ const parsePRDContent = (content: string) => {
       if (currentSection) {
         currentSection.content += line + '\n';
       } else {
-        // Content before first header? Maybe Introduction
         if (line.trim()) {
           currentSection = {
             id: 'introduction',
@@ -74,10 +66,19 @@ const parsePRDContent = (content: string) => {
   return sections;
 };
 
+interface PRD {
+  _id: string;
+  planId: string;
+  title: string;
+  content: string;
+  version: string;
+  createdAt: string;
+}
+
 const PRDView = () => {
   const { id } = useParams<{ id: string }>();
-  const [prd, setPrd] = useState<any>(null);
-  const [prdSections, setPrdSections] = useState<any[]>([]);
+  const [prd, setPrd] = useState<PRD | null>(null);
+  const [prdSections, setPrdSections] = useState<{ id: string; icon: typeof FileText; title: string; content: string }[]>([]);
   const [activeSection, setActiveSection] = useState("");
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
@@ -85,15 +86,17 @@ const PRDView = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    const fetchPRD = async () => {
+    const fetchPRD = () => {
       if (!id) return;
       try {
         setLoading(true);
-        const response = await prdService.getPRD(id);
-        if (response.status === 'success') {
-          setPrd(response.data.prd);
-          if (response.data.prd.content) {
-            const sections = parsePRDContent(response.data.prd.content);
+        const prds = JSON.parse(localStorage.getItem('prds') || '[]');
+        const foundPRD = prds.find((p: PRD) => p._id === id);
+        
+        if (foundPRD) {
+          setPrd(foundPRD);
+          if (foundPRD.content) {
+            const sections = parsePRDContent(foundPRD.content);
             setPrdSections(sections);
             if (sections.length > 0) setActiveSection(sections[0].id);
           }
@@ -147,19 +150,32 @@ const PRDView = () => {
   };
 
   const handleExport = async (format: 'pdf' | 'markdown' | 'json') => {
+    if (!prd) return;
+    
+    toast({ title: "Exporting...", description: "Preparing your download." });
+    
     try {
-      toast({ title: "Exporting...", description: "Preparing your download." });
-      const response = await prdService.exportPRD(prd._id, format);
-
-      // Create download link
-      const blob = new Blob([response.data], { type: format === 'pdf' ? 'application/pdf' : 'text/plain' });
+      let content = prd.content;
+      let mimeType = 'text/plain';
+      let extension = format;
+      
+      if (format === 'json') {
+        content = JSON.stringify(prd, null, 2);
+        mimeType = 'application/json';
+      } else if (format === 'markdown') {
+        extension = 'md';
+      }
+      
+      const blob = new Blob([content], { type: mimeType });
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `prd-${prd.title || 'export'}.${format === 'markdown' ? 'md' : format}`);
+      link.setAttribute('download', `prd-${prd.title || 'export'}.${extension}`);
       document.body.appendChild(link);
       link.click();
       link.remove();
+      
+      toast({ title: "Export Complete", description: `PRD exported as ${format.toUpperCase()}.` });
     } catch (error) {
       toast({
         title: "Export Failed",
@@ -169,8 +185,8 @@ const PRDView = () => {
     }
   };
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -203,7 +219,7 @@ const PRDView = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => navigate(`/plan/${prd.planId}`)} // Navigate back to plan
+                onClick={() => navigate(`/plan/${prd.planId}`)}
               >
                 <ArrowLeft className="w-5 h-5" />
               </Button>
@@ -220,9 +236,9 @@ const PRDView = () => {
                 {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                 <span className="hidden sm:inline">{copied ? "Copied" : "Copy Markdown"}</span>
               </Button>
-              <Button variant="gradient" size="sm" className="gap-2" onClick={() => handleExport('pdf')}>
+              <Button variant="gradient" size="sm" className="gap-2" onClick={() => handleExport('markdown')}>
                 <Download className="w-4 h-4" />
-                <span className="hidden sm:inline">Export PDF</span>
+                <span className="hidden sm:inline">Export</span>
               </Button>
             </div>
           </div>
@@ -298,9 +314,7 @@ const PRDView = () => {
                       </div>
                       <h2 className="text-2xl font-bold">{section.title}</h2>
                     </div>
-                    {/* Render content with simple formatting */}
                     <div className="prose prose-sm max-w-none dark:prose-invert whitespace-pre-wrap">
-                      {/* Check if content is just raw text or needs simple formatting */}
                       {section.content}
                     </div>
                   </motion.section>
@@ -320,9 +334,9 @@ const PRDView = () => {
                 Export this PRD and share it with your team.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
-                <Button variant="hero" className="gap-2" onClick={() => handleExport('pdf')}>
+                <Button variant="hero" className="gap-2" onClick={() => handleExport('markdown' as const)}>
                   <Download className="w-4 h-4" />
-                  Export as PDF
+                  Export as Markdown
                 </Button>
                 <Button variant="glass" className="gap-2" onClick={handleCopy}>
                   <Copy className="w-4 h-4" />

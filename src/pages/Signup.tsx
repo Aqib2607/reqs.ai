@@ -53,8 +53,7 @@ const Signup = () => {
       await signup({
         name,
         email,
-        password,
-        passwordConfirm: confirmPassword
+        password
       });
 
       toast({
