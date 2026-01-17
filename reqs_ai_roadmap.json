@@ -28,7 +28,9 @@
             "Development server runs successfully",
             "Health check endpoint responds at GET /api/health"
           ],
-          "relatedPrompts": ["Master Prompt #1"],
+          "relatedPrompts": [
+            "Master Prompt #1"
+          ],
           "estimatedTime": "2-3 hours"
         },
         {
@@ -41,13 +43,17 @@
             "Add environment validation on startup",
             "Setup separate configs for dev/staging/prod"
           ],
-          "dependencies": ["1.1"],
+          "dependencies": [
+            "1.1"
+          ],
           "acceptanceCriteria": [
             "Environment variables load correctly",
             "Application fails gracefully if required vars missing",
             ".env.example matches all required variables"
           ],
-          "relatedPrompts": ["Master Prompt #2"],
+          "relatedPrompts": [
+            "Master Prompt #2"
+          ],
           "estimatedTime": "1 hour"
         },
         {
@@ -62,13 +68,17 @@
             "Add database connection status logging",
             "Create connection status endpoint"
           ],
-          "dependencies": ["1.2"],
+          "dependencies": [
+            "1.2"
+          ],
           "acceptanceCriteria": [
             "Successfully connects to MongoDB Atlas",
             "Handles connection failures gracefully",
             "Connection status endpoint returns DB health"
           ],
-          "relatedPrompts": ["Master Prompt #3"],
+          "relatedPrompts": [
+            "Master Prompt #3"
+          ],
           "estimatedTime": "2 hours"
         },
         {
@@ -83,13 +93,17 @@
             "Define HTTP status code constants",
             "Organize routes by feature"
           ],
-          "dependencies": ["1.3"],
+          "dependencies": [
+            "1.3"
+          ],
           "acceptanceCriteria": [
             "API responds at /api/v1/ endpoints",
             "All responses follow standard format",
             "Error handling works consistently"
           ],
-          "relatedPrompts": ["Master Prompt #4"],
+          "relatedPrompts": [
+            "Master Prompt #4"
+          ],
           "estimatedTime": "2 hours"
         },
         {
@@ -104,13 +118,17 @@
             "Add error logging",
             "Handle validation and JWT errors"
           ],
-          "dependencies": ["1.4"],
+          "dependencies": [
+            "1.4"
+          ],
           "acceptanceCriteria": [
             "All errors caught and handled consistently",
             "Development shows stack trace, production shows friendly messages",
             "Error responses follow standard format"
           ],
-          "relatedPrompts": ["Master Prompt #9"],
+          "relatedPrompts": [
+            "Master Prompt #9"
+          ],
           "estimatedTime": "2 hours"
         }
       ]
@@ -132,13 +150,17 @@
             "Add password strength requirements",
             "Create indexes on email field"
           ],
-          "dependencies": ["1.3"],
+          "dependencies": [
+            "1.3"
+          ],
           "acceptanceCriteria": [
             "User model created with all fields",
             "Email uniqueness enforced",
             "Proper indexes created"
           ],
-          "relatedPrompts": ["Master Prompt #5"],
+          "relatedPrompts": [
+            "Master Prompt #5"
+          ],
           "estimatedTime": "1.5 hours"
         },
         {
@@ -153,13 +175,17 @@
             "Implement password strength validator",
             "Never return password in API responses"
           ],
-          "dependencies": ["2.1"],
+          "dependencies": [
+            "2.1"
+          ],
           "acceptanceCriteria": [
             "Passwords hashed before storage",
             "Password comparison works securely",
             "Minimum 8 chars, 1 uppercase, 1 number, 1 special char enforced"
           ],
-          "relatedPrompts": ["Master Prompt #7"],
+          "relatedPrompts": [
+            "Master Prompt #7"
+          ],
           "estimatedTime": "2 hours"
         },
         {
@@ -175,14 +201,18 @@
             "JWT refresh token: 7 days expiry",
             "Rate limiting on auth endpoints"
           ],
-          "dependencies": ["2.2"],
+          "dependencies": [
+            "2.2"
+          ],
           "acceptanceCriteria": [
             "All auth endpoints working correctly",
             "Tokens generated with proper expiry",
             "Rate limiting active",
             "Proper validation on all endpoints"
           ],
-          "relatedPrompts": ["Master Prompt #6"],
+          "relatedPrompts": [
+            "Master Prompt #6"
+          ],
           "estimatedTime": "4 hours"
         },
         {
@@ -197,14 +227,18 @@
             "Create requireAuth middleware wrapper",
             "Create requireRole(['admin']) for RBAC"
           ],
-          "dependencies": ["2.3"],
+          "dependencies": [
+            "2.3"
+          ],
           "acceptanceCriteria": [
             "Protected routes require valid token",
             "Invalid/expired tokens return 401",
             "User info available in req.user",
             "Role-based access control works"
           ],
-          "relatedPrompts": ["Master Prompt #8"],
+          "relatedPrompts": [
+            "Master Prompt #8"
+          ],
           "estimatedTime": "2 hours"
         },
         {
@@ -219,14 +253,18 @@
             "Create email templates (can use console.log for now)",
             "24-hour token expiry"
           ],
-          "dependencies": ["2.3"],
+          "dependencies": [
+            "2.3"
+          ],
           "acceptanceCriteria": [
             "Verification tokens generated correctly",
             "Email verification endpoint works",
             "Resend functionality with rate limiting",
             "Expired tokens rejected"
           ],
-          "relatedPrompts": ["Master Prompt #18"],
+          "relatedPrompts": [
+            "Master Prompt #18"
+          ],
           "estimatedTime": "3 hours"
         },
         {
@@ -241,14 +279,18 @@
             "Email notification (console.log for now)",
             "Invalidate token after use"
           ],
-          "dependencies": ["2.3"],
+          "dependencies": [
+            "2.3"
+          ],
           "acceptanceCriteria": [
             "Reset tokens generated securely",
             "Token expiry enforced",
             "Password updated successfully",
             "Token invalidated after reset"
           ],
-          "relatedPrompts": ["Master Prompt #13"],
+          "relatedPrompts": [
+            "Master Prompt #13"
+          ],
           "estimatedTime": "2.5 hours"
         }
       ]
@@ -269,13 +311,17 @@
             "Add indexes on userId, createdAt, status",
             "Create cascade rules on user delete"
           ],
-          "dependencies": ["2.1"],
+          "dependencies": [
+            "2.1"
+          ],
           "acceptanceCriteria": [
             "Plan model created with all fields",
             "Proper relationships to User",
             "Indexes optimized for queries"
           ],
-          "relatedPrompts": ["Master Prompt #21"],
+          "relatedPrompts": [
+            "Master Prompt #21"
+          ],
           "estimatedTime": "1.5 hours"
         },
         {
@@ -291,14 +337,18 @@
             "PUT /api/v1/api-keys/:id - update key",
             "DELETE /api/v1/api-keys/:id - remove key"
           ],
-          "dependencies": ["2.1"],
+          "dependencies": [
+            "2.1"
+          ],
           "acceptanceCriteria": [
             "API keys encrypted in database",
             "Only last 4 characters shown to user",
             "CRUD operations work securely",
             "User can have multiple keys"
           ],
-          "relatedPrompts": ["PRD API Key Management Section"],
+          "relatedPrompts": [
+            "PRD API Key Management Section"
+          ],
           "estimatedTime": "3 hours"
         },
         {
@@ -315,14 +365,18 @@
             "Parse and structure API response",
             "Add request/response logging"
           ],
-          "dependencies": ["3.2"],
+          "dependencies": [
+            "3.2"
+          ],
           "acceptanceCriteria": [
             "Successfully calls Gemini API",
             "Handles all error scenarios",
             "Retry logic works",
             "Responses properly parsed"
           ],
-          "relatedPrompts": ["PRD AI Service Module"],
+          "relatedPrompts": [
+            "PRD AI Service Module"
+          ],
           "estimatedTime": "4 hours"
         },
         {
@@ -339,7 +393,9 @@
             "Return Plan with ID and generated content",
             "Rate limit: 10 requests per hour per user"
           ],
-          "dependencies": ["3.3"],
+          "dependencies": [
+            "3.3"
+          ],
           "acceptanceCriteria": [
             "Endpoint accepts and validates input",
             "Plan generated successfully",
@@ -347,7 +403,9 @@
             "Rate limiting works",
             "Plan saved to database"
           ],
-          "relatedPrompts": ["Master Prompt #22"],
+          "relatedPrompts": [
+            "Master Prompt #22"
+          ],
           "estimatedTime": "3 hours"
         },
         {
@@ -363,14 +421,18 @@
             "Add sorting by createdAt",
             "Implement pagination (20 items per page)"
           ],
-          "dependencies": ["3.4"],
+          "dependencies": [
+            "3.4"
+          ],
           "acceptanceCriteria": [
             "All CRUD operations work",
             "Pagination working correctly",
             "Ownership verification on all operations",
             "Soft delete implemented"
           ],
-          "relatedPrompts": ["Master Prompts #23, #24, #25"],
+          "relatedPrompts": [
+            "Master Prompts #23, #24, #25"
+          ],
           "estimatedTime": "3 hours"
         }
       ]
@@ -391,13 +453,17 @@
             "Add indexes on userId, planId",
             "Create relationship to Plan model"
           ],
-          "dependencies": ["3.1"],
+          "dependencies": [
+            "3.1"
+          ],
           "acceptanceCriteria": [
             "PRD model created with all fields",
             "Proper relationships established",
             "Version tracking implemented"
           ],
-          "relatedPrompts": ["PRD Database Schema"],
+          "relatedPrompts": [
+            "PRD Database Schema"
+          ],
           "estimatedTime": "1.5 hours"
         },
         {
@@ -412,14 +478,19 @@
             "Calculate metadata (word count, sections)",
             "Format content for easy consumption"
           ],
-          "dependencies": ["3.3", "4.1"],
+          "dependencies": [
+            "3.3",
+            "4.1"
+          ],
           "acceptanceCriteria": [
             "PRD generated with all standard sections",
             "Content well-structured",
             "Metadata calculated correctly",
             "Professional formatting"
           ],
-          "relatedPrompts": ["PRD PRD Generation"],
+          "relatedPrompts": [
+            "PRD PRD Generation"
+          ],
           "estimatedTime": "3 hours"
         },
         {
@@ -434,14 +505,18 @@
             "Return generated PRD",
             "Handle errors appropriately"
           ],
-          "dependencies": ["4.2"],
+          "dependencies": [
+            "4.2"
+          ],
           "acceptanceCriteria": [
             "PRD generated from valid plan",
             "Ownership verified",
             "PRD saved to database",
             "Error handling complete"
           ],
-          "relatedPrompts": ["PRD API Endpoints"],
+          "relatedPrompts": [
+            "PRD API Endpoints"
+          ],
           "estimatedTime": "2 hours"
         },
         {
@@ -455,14 +530,18 @@
             "Include related plan data in response",
             "Implement pagination"
           ],
-          "dependencies": ["4.3"],
+          "dependencies": [
+            "4.3"
+          ],
           "acceptanceCriteria": [
             "PRD listing works with pagination",
             "Single PRD retrieval works",
             "Ownership verified",
             "Related data included"
           ],
-          "relatedPrompts": ["Master Prompt #23"],
+          "relatedPrompts": [
+            "Master Prompt #23"
+          ],
           "estimatedTime": "2 hours"
         },
         {
@@ -478,14 +557,19 @@
             "Add table of contents for PDF",
             "Return file for download"
           ],
-          "dependencies": ["3.5", "4.4"],
+          "dependencies": [
+            "3.5",
+            "4.4"
+          ],
           "acceptanceCriteria": [
             "PDF export generates proper document",
             "Markdown export formatted correctly",
             "JSON export includes all data",
             "Files download successfully"
           ],
-          "relatedPrompts": ["Master Prompt #40"],
+          "relatedPrompts": [
+            "Master Prompt #40"
+          ],
           "estimatedTime": "4 hours"
         }
       ]
@@ -508,14 +592,18 @@
             "Validate current password before changes",
             "Update lastModified timestamp"
           ],
-          "dependencies": ["2.1"],
+          "dependencies": [
+            "2.1"
+          ],
           "acceptanceCriteria": [
             "Profile retrieval works",
             "Profile updates validated",
             "Password change requires current password",
             "Email changes verified"
           ],
-          "relatedPrompts": ["Master Prompt #14"],
+          "relatedPrompts": [
+            "Master Prompt #14"
+          ],
           "estimatedTime": "2.5 hours"
         },
         {
@@ -530,14 +618,19 @@
             "Get recent plans (last 5)",
             "Return summary data"
           ],
-          "dependencies": ["3.5", "4.4"],
+          "dependencies": [
+            "3.5",
+            "4.4"
+          ],
           "acceptanceCriteria": [
             "Statistics calculated correctly",
             "Performance optimized",
             "Recent activity included",
             "Data cached appropriately"
           ],
-          "relatedPrompts": ["Master Prompt #16"],
+          "relatedPrompts": [
+            "Master Prompt #16"
+          ],
           "estimatedTime": "2 hours"
         },
         {
@@ -552,14 +645,19 @@
             "Limit to user's own content",
             "Return search results with highlights"
           ],
-          "dependencies": ["3.5", "4.4"],
+          "dependencies": [
+            "3.5",
+            "4.4"
+          ],
           "acceptanceCriteria": [
             "Search returns relevant results",
             "Fast query performance",
             "Results limited to user's content",
             "Minimum 2 characters required"
           ],
-          "relatedPrompts": ["Master Prompt #27"],
+          "relatedPrompts": [
+            "Master Prompt #27"
+          ],
           "estimatedTime": "2.5 hours"
         },
         {
@@ -573,14 +671,18 @@
             "Combine with pagination",
             "Optimize queries with proper indexes"
           ],
-          "dependencies": ["3.5"],
+          "dependencies": [
+            "3.5"
+          ],
           "acceptanceCriteria": [
             "Filters work individually and combined",
             "Sorting works on all specified fields",
             "Performance remains good",
             "Works with pagination"
           ],
-          "relatedPrompts": ["Master Prompts #28, #29"],
+          "relatedPrompts": [
+            "Master Prompts #28, #29"
+          ],
           "estimatedTime": "2 hours"
         }
       ]
@@ -589,7 +691,7 @@
       "phaseNumber": 6,
       "phaseName": "Frontend Integration",
       "duration": "Week 5",
-      "description": "Connect frontend from Lovable to backend APIs",
+      "description": "Connect frontend to backend APIs",
       "tasks": [
         {
           "taskId": "6.1",
@@ -610,7 +712,9 @@
             "Errors handled globally",
             "Environment variables working"
           ],
-          "relatedPrompts": ["PRD API Communication"],
+          "relatedPrompts": [
+            "PRD API Communication"
+          ],
           "estimatedTime": "2 hours"
         },
         {
@@ -625,7 +729,9 @@
             "Implement token refresh logic",
             "Add protected route wrapper component"
           ],
-          "dependencies": ["6.1"],
+          "dependencies": [
+            "6.1"
+          ],
           "acceptanceCriteria": [
             "Users can signup successfully",
             "Login redirects to dashboard",
@@ -633,7 +739,9 @@
             "Protected routes enforce authentication",
             "Token refresh works automatically"
           ],
-          "relatedPrompts": ["Master Prompts #11, #12"],
+          "relatedPrompts": [
+            "Master Prompts #11, #12"
+          ],
           "estimatedTime": "4 hours"
         },
         {
@@ -649,7 +757,9 @@
             "Add ability to regenerate",
             "Implement plan listing with pagination"
           ],
-          "dependencies": ["6.2"],
+          "dependencies": [
+            "6.2"
+          ],
           "acceptanceCriteria": [
             "Plan generation works end-to-end",
             "Loading states show during API call",
@@ -657,7 +767,9 @@
             "Error messages shown appropriately",
             "Plan list loads with pagination"
           ],
-          "relatedPrompts": ["Frontend Integration"],
+          "relatedPrompts": [
+            "Frontend Integration"
+          ],
           "estimatedTime": "4 hours"
         },
         {
@@ -672,7 +784,9 @@
             "Add export functionality (trigger download)",
             "Handle PRD listing and retrieval"
           ],
-          "dependencies": ["6.3"],
+          "dependencies": [
+            "6.3"
+          ],
           "acceptanceCriteria": [
             "PRD generation triggered from plan view",
             "PRD displays in structured format",
@@ -680,7 +794,9 @@
             "Export buttons trigger downloads",
             "PRD list shows user's documents"
           ],
-          "relatedPrompts": ["Frontend Integration"],
+          "relatedPrompts": [
+            "Frontend Integration"
+          ],
           "estimatedTime": "4 hours"
         },
         {
@@ -695,7 +811,9 @@
             "Add API key test/verify button",
             "Show usage statistics if available"
           ],
-          "dependencies": ["6.2"],
+          "dependencies": [
+            "6.2"
+          ],
           "acceptanceCriteria": [
             "Profile updates save successfully",
             "Password change works with validation",
@@ -703,7 +821,9 @@
             "Keys shown with masking (last 4 chars)",
             "Test button verifies API key validity"
           ],
-          "relatedPrompts": ["Master Prompts #14, #17"],
+          "relatedPrompts": [
+            "Master Prompts #14, #17"
+          ],
           "estimatedTime": "3 hours"
         },
         {
@@ -719,7 +839,9 @@
             "Update URL with search/filter params",
             "Maintain state across navigation"
           ],
-          "dependencies": ["6.3"],
+          "dependencies": [
+            "6.3"
+          ],
           "acceptanceCriteria": [
             "Search returns relevant results",
             "Debounce prevents excessive API calls",
@@ -727,7 +849,9 @@
             "Sorting updates results correctly",
             "URL reflects current search/filter state"
           ],
-          "relatedPrompts": ["Master Prompts #27, #28, #29"],
+          "relatedPrompts": [
+            "Master Prompts #27, #28, #29"
+          ],
           "estimatedTime": "3 hours"
         }
       ]
@@ -750,14 +874,18 @@
             "Use React Suspense for code splitting",
             "Ensure no layout shift during loading"
           ],
-          "dependencies": ["6.6"],
+          "dependencies": [
+            "6.6"
+          ],
           "acceptanceCriteria": [
             "All async operations show loading state",
             "Skeleton screens match final content layout",
             "No sudden layout shifts",
             "Loading indicators are accessible"
           ],
-          "relatedPrompts": ["Master Prompt #42"],
+          "relatedPrompts": [
+            "Master Prompt #42"
+          ],
           "estimatedTime": "3 hours"
         },
         {
@@ -772,7 +900,9 @@
             "Create user-friendly error messages",
             "Add retry mechanisms for failed operations"
           ],
-          "dependencies": ["6.6"],
+          "dependencies": [
+            "6.6"
+          ],
           "acceptanceCriteria": [
             "All user actions show feedback",
             "Success toasts appear with green checkmark",
@@ -780,7 +910,9 @@
             "Form errors display inline",
             "App doesn't crash on errors"
           ],
-          "relatedPrompts": ["Master Prompt #44"],
+          "relatedPrompts": [
+            "Master Prompt #44"
+          ],
           "estimatedTime": "2.5 hours"
         },
         {
@@ -795,14 +927,18 @@
             "Add appropriate CTAs in empty states",
             "Include helpful illustrations/icons"
           ],
-          "dependencies": ["6.6"],
+          "dependencies": [
+            "6.6"
+          ],
           "acceptanceCriteria": [
             "Empty states appear when appropriate",
             "Clear messaging about what to do next",
             "CTAs navigate to relevant actions",
             "Visually consistent with design system"
           ],
-          "relatedPrompts": ["Master Prompt #43"],
+          "relatedPrompts": [
+            "Master Prompt #43"
+          ],
           "estimatedTime": "2 hours"
         },
         {
@@ -817,7 +953,9 @@
             "Test gestures (swipe, pull to refresh)",
             "Optimize text sizes for readability"
           ],
-          "dependencies": ["7.3"],
+          "dependencies": [
+            "7.3"
+          ],
           "acceptanceCriteria": [
             "All pages responsive on 320px+ screens",
             "Touch targets appropriately sized",
@@ -825,7 +963,9 @@
             "Navigation accessible on all screen sizes",
             "Forms usable on mobile"
           ],
-          "relatedPrompts": ["Master Prompt #45"],
+          "relatedPrompts": [
+            "Master Prompt #45"
+          ],
           "estimatedTime": "4 hours"
         },
         {
@@ -841,7 +981,9 @@
             "Analyze and reduce bundle size",
             "Add React.memo where beneficial"
           ],
-          "dependencies": ["7.4"],
+          "dependencies": [
+            "7.4"
+          ],
           "acceptanceCriteria": [
             "Initial page load under 3 seconds",
             "API responses under 500ms",
@@ -849,7 +991,9 @@
             "Database queries optimized",
             "Lighthouse score above 85"
           ],
-          "relatedPrompts": ["Master Prompt #47"],
+          "relatedPrompts": [
+            "Master Prompt #47"
+          ],
           "estimatedTime": "4 hours"
         },
         {
@@ -864,7 +1008,9 @@
             "Save user preference in localStorage",
             "Detect system preference on first load"
           ],
-          "dependencies": ["7.5"],
+          "dependencies": [
+            "7.5"
+          ],
           "acceptanceCriteria": [
             "Theme switches smoothly",
             "All components styled for both modes",
@@ -872,7 +1018,9 @@
             "System preference detected initially",
             "Good contrast ratios in both modes"
           ],
-          "relatedPrompts": ["Master Prompt #46"],
+          "relatedPrompts": [
+            "Master Prompt #46"
+          ],
           "estimatedTime": "3 hours"
         }
       ]
@@ -902,7 +1050,9 @@
             "Coverage above 80% on critical code",
             "Mocking implemented for external dependencies"
           ],
-          "relatedPrompts": ["Master Prompt #71"],
+          "relatedPrompts": [
+            "Master Prompt #71"
+          ],
           "estimatedTime": "6 hours"
         },
         {
@@ -917,7 +1067,9 @@
             "Write tests for PRD endpoints",
             "Test error scenarios and edge cases"
           ],
-          "dependencies": ["8.1"],
+          "dependencies": [
+            "8.1"
+          ],
           "acceptanceCriteria": [
             "All API endpoints have integration tests",
             "Tests use separate test database",
@@ -925,7 +1077,9 @@
             "Tests run in CI pipeline",
             "Database cleaned between tests"
           ],
-          "relatedPrompts": ["Master Prompt #72"],
+          "relatedPrompts": [
+            "Master Prompt #72"
+          ],
           "estimatedTime": "6 hours"
         },
         {
@@ -948,7 +1102,9 @@
             "Tests focus on behavior not implementation",
             "Mock API calls in tests"
           ],
-          "relatedPrompts": ["Master Prompt #73"],
+          "relatedPrompts": [
+            "Master Prompt #73"
+          ],
           "estimatedTime": "6 hours"
         },
         {
@@ -963,14 +1119,18 @@
             "Write E2E test for PRD generation flow",
             "Run tests in headless mode for CI"
           ],
-          "dependencies": ["8.3"],
+          "dependencies": [
+            "8.3"
+          ],
           "acceptanceCriteria": [
             "Critical user flows have E2E tests",
             "Tests run reliably in CI",
             "Screenshots captured on failure",
             "Tests cover happy path and key error scenarios"
           ],
-          "relatedPrompts": ["Master Prompt #74"],
+          "relatedPrompts": [
+            "Master Prompt #74"
+          ],
           "estimatedTime": "5 hours"
         },
         {
@@ -994,7 +1154,9 @@
             "Sensitive data properly encrypted",
             "Security headers configured"
           ],
-          "relatedPrompts": ["Master Prompts #49, #76"],
+          "relatedPrompts": [
+            "Master Prompts #49, #76"
+          ],
           "estimatedTime": "4 hours"
         }
       ]
@@ -1026,7 +1188,9 @@
             "CORS allows frontend requests",
             "Health check endpoint responds"
           ],
-          "relatedPrompts": ["Master Prompt #53"],
+          "relatedPrompts": [
+            "Master Prompt #53"
+          ],
           "estimatedTime": "3 hours"
         },
         {
@@ -1042,7 +1206,9 @@
             "Setup custom domain (optional)",
             "Configure redirects and rewrites"
           ],
-          "dependencies": ["9.1"],
+          "dependencies": [
+            "9.1"
+          ],
           "acceptanceCriteria": [
             "Frontend deployed and accessible",
             "Environment variables configured",
@@ -1050,7 +1216,9 @@
             "HTTPS enabled automatically",
             "Automatic deployments working"
           ],
-          "relatedPrompts": ["Master Prompt #54"],
+          "relatedPrompts": [
+            "Master Prompt #54"
+          ],
           "estimatedTime": "2 hours"
         },
         {
@@ -1065,14 +1233,18 @@
             "Document backup and restore process",
             "Setup monitoring for database health"
           ],
-          "dependencies": ["9.1"],
+          "dependencies": [
+            "9.1"
+          ],
           "acceptanceCriteria": [
             "Database migrations applied successfully",
             "Automatic backups enabled",
             "Restore procedure tested and documented",
             "Database monitoring active"
           ],
-          "relatedPrompts": ["Master Prompts #55, #58"],
+          "relatedPrompts": [
+            "Master Prompts #55, #58"
+          ],
           "estimatedTime": "2 hours"
         },
         {
@@ -1087,7 +1259,9 @@
             "Create alerts for critical errors",
             "Add uptime monitoring (optional: UptimeRobot)"
           ],
-          "dependencies": ["9.2"],
+          "dependencies": [
+            "9.2"
+          ],
           "acceptanceCriteria": [
             "Errors tracked in Sentry",
             "Notifications working",
@@ -1095,7 +1269,9 @@
             "Alerts configured for critical issues",
             "Uptime monitoring active"
           ],
-          "relatedPrompts": ["Master Prompt #57"],
+          "relatedPrompts": [
+            "Master Prompt #57"
+          ],
           "estimatedTime": "3 hours"
         },
         {
@@ -1110,7 +1286,9 @@
             "Setup branch protection rules",
             "Configure status checks required for merge"
           ],
-          "dependencies": ["9.2"],
+          "dependencies": [
+            "9.2"
+          ],
           "acceptanceCriteria": [
             "CI/CD pipeline runs on every push",
             "Tests must pass before deployment",
@@ -1118,7 +1296,9 @@
             "Failed deployments don't affect production",
             "Status visible in GitHub"
           ],
-          "relatedPrompts": ["Master Prompt #56"],
+          "relatedPrompts": [
+            "Master Prompt #56"
+          ],
           "estimatedTime": "3 hours"
         },
         {
@@ -1136,7 +1316,9 @@
             "Review security headers",
             "Update documentation with production URLs"
           ],
-          "dependencies": ["9.5"],
+          "dependencies": [
+            "9.5"
+          ],
           "acceptanceCriteria": [
             "All items on checklist verified",
             "No critical bugs in production",
@@ -1144,7 +1326,9 @@
             "Documentation updated",
             "Application ready for users"
           ],
-          "relatedPrompts": ["Master Prompt #60"],
+          "relatedPrompts": [
+            "Master Prompt #60"
+          ],
           "estimatedTime": "3 hours"
         }
       ]
@@ -1174,7 +1358,9 @@
             "User feedback tracked and organized",
             "Analytics providing insights"
           ],
-          "relatedPrompts": ["Master Prompt #79"],
+          "relatedPrompts": [
+            "Master Prompt #79"
+          ],
           "estimatedTime": "2 hours"
         },
         {
@@ -1189,14 +1375,18 @@
             "Identify and fix performance bottlenecks",
             "Optimize slow queries"
           ],
-          "dependencies": ["9.4"],
+          "dependencies": [
+            "9.4"
+          ],
           "acceptanceCriteria": [
             "Performance metrics tracked regularly",
             "Response times within acceptable range",
             "Error rates below 1%",
             "Performance optimizations implemented as needed"
           ],
-          "relatedPrompts": ["Master Prompt #75"],
+          "relatedPrompts": [
+            "Master Prompt #75"
+          ],
           "estimatedTime": "Ongoing"
         },
         {
@@ -1211,14 +1401,18 @@
             "Run security audits quarterly",
             "Review and update documentation"
           ],
-          "dependencies": ["10.1"],
+          "dependencies": [
+            "10.1"
+          ],
           "acceptanceCriteria": [
             "Critical bugs resolved quickly",
             "Regular maintenance performed",
             "Dependencies kept up to date",
             "Documentation reflects current state"
           ],
-          "relatedPrompts": ["Master Prompt #80"],
+          "relatedPrompts": [
+            "Master Prompt #80"
+          ],
           "estimatedTime": "Ongoing"
         },
         {
@@ -1233,14 +1427,18 @@
             "Document new features",
             "Announce new features to users"
           ],
-          "dependencies": ["10.1"],
+          "dependencies": [
+            "10.1"
+          ],
           "acceptanceCriteria": [
             "Features aligned with user needs",
             "New features properly tested",
             "Documentation updated",
             "Users informed of new capabilities"
           ],
-          "relatedPrompts": ["Master Prompt #79"],
+          "relatedPrompts": [
+            "Master Prompt #79"
+          ],
           "estimatedTime": "Ongoing"
         }
       ]
