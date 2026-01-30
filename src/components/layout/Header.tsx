@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Sparkles } from "lucide-react";
+import { Menu, X, Sparkles, LogIn } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 const Header = () => {
@@ -50,18 +50,19 @@ const Header = () => {
             </Link>
           </div>
 
-          {/* Auth Buttons */}
-          <div className="hidden md:flex items-center gap-4">
+          {/* Right Side - Theme Toggle & Login Icon */}
+          <div className="hidden md:flex items-center gap-3">
             <ThemeToggle />
             {!isAuthPage && (
-              <>
-                <Link to="/login">
-                  <Button variant="ghost">Log in</Button>
-                </Link>
-                <Link to="/signup">
-                  <Button variant="gradient">Get Started Free</Button>
-                </Link>
-              </>
+              <Link to="/login">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="w-9 h-9 rounded-full hover:bg-accent"
+                >
+                  <LogIn className="w-5 h-5" />
+                </Button>
+              </Link>
             )}
           </div>
 
@@ -109,16 +110,19 @@ const Header = () => {
                 Testimonials
               </Link>
               {!isAuthPage && (
-                <div className="flex flex-col gap-2 pt-4 border-t border-border">
-                  <div className="flex items-center justify-between px-2">
+                <div className="flex items-center justify-between pt-4 border-t border-border">
+                  <div className="flex items-center gap-2">
                     <span className="text-sm font-medium">Theme</span>
                     <ThemeToggle />
                   </div>
                   <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-                    <Button variant="ghost" className="w-full">Log in</Button>
-                  </Link>
-                  <Link to="/signup" onClick={() => setIsMenuOpen(false)}>
-                    <Button variant="gradient" className="w-full">Get Started Free</Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="w-9 h-9 rounded-full hover:bg-accent"
+                    >
+                      <LogIn className="w-5 h-5" />
+                    </Button>
                   </Link>
                 </div>
               )}

@@ -26,51 +26,32 @@ const CTASection = () => {
   };
 
   return (
-    <section className="py-24 relative overflow-hidden" ref={ref}>
-      {/* Premium Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-secondary via-secondary to-primary/80 opacity-95" />
-
-      {/* Animated shapes */}
-      <motion.div
-        className="absolute top-0 left-0 w-96 h-96 rounded-full bg-primary/20 blur-3xl"
-        animate={{
-          scale: [1, 1.2, 1],
-          x: [0, 50, 0],
-        }}
-        transition={{
-          duration: 10,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-      />
-      <motion.div
-        className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-primary/20 blur-3xl"
-        animate={{
-          scale: [1.2, 1, 1.2],
-          x: [0, -50, 0],
-        }}
-        transition={{
-          duration: 10,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-      />
+    <section className="py-16 sm:py-20 lg:py-24 xl:py-28 relative overflow-hidden bg-primary" ref={ref}>
+      {/* Premium tech background with subtle pattern */}
+      <div className="absolute inset-0 bg-primary">
+        <img
+          src="https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=1920&q=90&auto=format&fit=crop"
+          alt="Premium technology pattern"
+          className="w-full h-full object-cover opacity-8 mix-blend-overlay"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/95 to-primary" />
+      </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="max-w-2xl mx-auto text-center"
+          className="max-w-2xl xl:max-w-3xl mx-auto text-center px-4 sm:px-0"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-primary-foreground">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-5xl font-display font-light mb-4 text-primary-foreground px-2 sm:px-0">
             Ready to Transform Your Project Planning?
           </h2>
-          <p className="text-primary-foreground/80 text-lg mb-8">
+          <p className="text-primary-foreground/80 text-base sm:text-lg md:text-xl lg:text-lg mb-8 px-2 sm:px-4">
             Join thousands of developers and product managers who are already using Reqs.ai to build better products.
           </p>
 
-          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md xl:max-w-lg mx-auto px-4 sm:px-0">
             <Input
               type="email"
               placeholder="Enter your email"
@@ -80,9 +61,9 @@ const CTASection = () => {
             />
             <Button
               type="submit"
-              variant="secondary"
+              variant="outline"
               size="lg"
-              className="h-12 bg-primary-foreground text-primary hover:bg-primary-foreground/90 group"
+              className="h-12 bg-primary-foreground text-primary hover:bg-primary-foreground/90 group border-primary-foreground/20"
               disabled={isSubmitted}
             >
               {isSubmitted ? (

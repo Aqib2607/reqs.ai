@@ -13,11 +13,22 @@ import {
   Zap,
   ChevronRight,
   Send,
+  Search,
+  Bell,
 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { DashboardSkeleton } from "@/components/loading/DashboardSkeleton";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface Plan {
   _id: string;
@@ -126,9 +137,9 @@ const Dashboard = () => {
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 mb-8">
           <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
-            <Sparkles className="w-5 h-5 text-primary-foreground" />
+            <Sparkles className="w-5 h-5 text-primary-foreground dark:text-foreground" />
           </div>
-          <span className="text-xl font-bold gradient-text">Reqs.ai</span>
+          <span className="text-xl font-bold text-foreground">Reqs.ai</span>
         </Link>
 
         {/* Stats */}
@@ -136,7 +147,7 @@ const Dashboard = () => {
           <div className="p-4 rounded-xl bg-muted">
             <div className="flex items-center gap-3 mb-2">
               <FileText className="w-5 h-5 text-primary" />
-              <span className="text-sm text-muted-foreground">Plans Generated</span>
+              <span className="text-sm text-foreground">Plans Generated</span>
             </div>
             <motion.p
               initial={{ opacity: 0 }}
@@ -148,8 +159,8 @@ const Dashboard = () => {
           </div>
           <div className="p-4 rounded-xl bg-muted">
             <div className="flex items-center gap-3 mb-2">
-              <Zap className="w-5 h-5 text-secondary" />
-              <span className="text-sm text-muted-foreground">PRDs Created</span>
+              <Zap className="w-5 h-5 text-secondary-foreground dark:text-secondary" />
+              <span className="text-sm text-foreground">PRDs Created</span>
             </div>
             <motion.p
               initial={{ opacity: 0 }}
@@ -174,7 +185,7 @@ const Dashboard = () => {
                 title={plan.ideaText}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium truncate w-32">
+                  <span className="text-sm font-medium truncate w-32 text-foreground">
                     {plan.ideaText && plan.ideaText.length > 20
                       ? plan.ideaText.substring(0, 20) + "..."
                       : (plan.ideaText || "Untitled Plan")}
@@ -195,47 +206,65 @@ const Dashboard = () => {
         </div>
 
         {/* Navigation */}
-        <div className="space-y-2 pt-4 border-t border-border">
-          <div className="flex items-center justify-between px-2 py-2">
-            <span className="text-sm font-medium text-muted-foreground">Theme</span>
-            <ThemeToggle />
-          </div>
-          <Button
-            variant="ghost"
-            className="w-full justify-start gap-2"
-            onClick={() => navigate("/profile")}
-          >
-            <User className="w-4 h-4" />
-            Profile
-          </Button>
-          <Button
-            variant="ghost"
-            className="w-full justify-start gap-2"
-            onClick={() => navigate("/settings")}
-          >
-            <Settings className="w-4 h-4" />
-            Settings
-          </Button>
-          <Button
-            variant="ghost"
-            className="w-full justify-start gap-2 text-destructive hover:text-destructive"
-            onClick={logout}
-          >
-            <LogOut className="w-4 h-4" />
-            Log out
-          </Button>
-        </div>
+        {/* Navigation - Removed and moved to Navbar */}
       </motion.aside>
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col">
+        {/* Desktop Header */}
+        <header className="hidden lg:flex items-center justify-between p-6 border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-10">
+          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <span className="hover:text-foreground cursor-pointer transition-colors">Reqs.ai</span>
+            <ChevronRight className="w-4 h-4" />
+            <span className="text-foreground font-medium">Dashboard</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                placeholder="Search projects..."
+                className="w-64 pl-9 bg-muted/50 border-none focus-visible:ring-1 focus-visible:ring-primary/20 transition-all hover:bg-muted"
+              />
+            </div>
+            <div className="h-6 w-px bg-border mx-2"></div>
+            <ThemeToggle />
+            <Button variant="ghost" size="icon" className="rounded-full relative">
+              <Bell className="w-5 h-5 text-foreground" />
+              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-primary rounded-full ring-2 ring-background"></span>
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <div className="h-8 w-8 rounded-full gradient-bg flex items-center justify-center text-primary-foreground font-bold text-xs ring-2 ring-border ml-2 cursor-pointer hover:ring-primary transition-all">
+                  {user?.name?.charAt(0) || "U"}
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate("/profile")} className="cursor-pointer">
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate("/settings")} className="cursor-pointer">
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={logout} className="cursor-pointer text-destructive focus:text-destructive">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </header>
         {/* Mobile Header */}
         <header className="lg:hidden flex items-center justify-between p-4 border-b border-border">
           <Link to="/" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-primary-foreground" />
+              <Sparkles className="w-5 h-5 text-primary-foreground dark:text-foreground" />
             </div>
-            <span className="text-xl font-bold gradient-text">Reqs.ai</span>
+            <span className="text-xl font-bold text-foreground">Reqs.ai</span>
           </Link>
           <div className="flex items-center gap-2">
             <ThemeToggle />
@@ -246,12 +275,73 @@ const Dashboard = () => {
         </header>
 
         {/* Content */}
-        <div className="flex-1 flex items-center justify-center p-6 lg:p-12">
+        <div className="flex-1 flex items-center justify-center p-6 lg:p-12 relative overflow-hidden">
+          {/* Background Elements */}
+          <div className="absolute inset-0 z-0 pointer-events-none">
+            <div className="absolute inset-0 bg-gradient-to-br from-background/40 via-background/70 to-background z-10" />
+            <img
+              src="https://images.unsplash.com/photo-1639322537228-f710d846310a?w=1920&q=90&auto=format&fit=crop"
+              alt="Background"
+              className="w-full h-full object-cover opacity-30"
+            />
+          </div>
+
+          <motion.div
+            className="absolute -top-32 -right-32 w-96 h-96 opacity-20 pointer-events-none blur-3xl bg-primary/20 rounded-full"
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.1, 0.3, 0.1],
+            }}
+            transition={{
+              duration: 10,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+
+          <motion.div
+            className="absolute top-10 right-10 w-48 h-48 opacity-25 pointer-events-none"
+            animate={{
+              y: [0, -20, 0],
+              rotate: [0, 5, 0],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          >
+            <img
+              src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&q=90&auto=format&fit=crop"
+              alt="Element"
+              className="w-full h-full object-cover rounded-3xl shadow-2xl"
+            />
+          </motion.div>
+
+          <motion.div
+            className="absolute bottom-10 left-10 w-40 h-40 opacity-20 pointer-events-none"
+            animate={{
+              y: [0, 15, 0],
+              rotate: [0, -5, 0],
+            }}
+            transition={{
+              duration: 10,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          >
+            <img
+              src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&q=90&auto=format&fit=crop"
+              alt="Element"
+              className="w-full h-full object-cover rounded-3xl shadow-2xl"
+            />
+          </motion.div>
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="w-full max-w-2xl"
+            className="w-full max-w-2xl relative z-20"
           >
             {/* Welcome Message */}
             <div className="text-center mb-8">
@@ -261,10 +351,10 @@ const Dashboard = () => {
                 transition={{ delay: 0.2, type: "spring" }}
                 className="w-16 h-16 rounded-2xl gradient-bg flex items-center justify-center mx-auto mb-4"
               >
-                <Sparkles className="w-8 h-8 text-primary-foreground" />
+                <Sparkles className="w-8 h-8 text-primary-foreground dark:text-foreground" />
               </motion.div>
-              <h1 className="text-3xl font-bold mb-2">
-                Welcome back, <span className="gradient-text">{user?.name || "Developer"}</span>
+              <h1 className="text-3xl font-bold mb-2 text-foreground">
+                Welcome back, <span className="text-foreground">{user?.name || "Developer"}</span>
               </h1>
               <p className="text-muted-foreground">
                 What would you like to build today?
@@ -295,7 +385,7 @@ const Dashboard = () => {
               className="mt-6"
             >
               <Button
-                variant="hero"
+                variant="gradient"
                 size="xl"
                 className="w-full"
                 onClick={handleGenerate}

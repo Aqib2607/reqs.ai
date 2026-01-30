@@ -78,7 +78,7 @@ const Signup = () => {
       <div className="hidden lg:flex lg:w-1/2 gradient-bg relative overflow-hidden items-center justify-center p-12">
         {/* Animated Shapes */}
         <motion.div
-          className="absolute top-20 right-20 w-32 h-32 rounded-full bg-primary-foreground/10"
+          className="absolute top-20 right-20 w-32 h-32 rounded-full bg-white/5"
           animate={{
             scale: [1, 1.3, 1],
             rotate: [0, 180, 0],
@@ -86,7 +86,7 @@ const Signup = () => {
           transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute bottom-20 left-20 w-40 h-40 rounded-3xl bg-primary-foreground/10"
+          className="absolute bottom-20 left-20 w-40 h-40 rounded-3xl bg-white/5"
           animate={{
             scale: [1.2, 1, 1.2],
             rotate: [0, -180, 0],
@@ -94,7 +94,7 @@ const Signup = () => {
           transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute top-1/3 right-1/3 w-20 h-20 rounded-xl bg-primary-foreground/10"
+          className="absolute top-1/3 right-1/3 w-20 h-20 rounded-xl bg-white/5"
           animate={{
             y: [0, 40, 0],
             x: [0, -30, 0],
@@ -103,17 +103,17 @@ const Signup = () => {
         />
 
         {/* Content */}
-        <div className="relative z-10 text-center text-primary-foreground">
+        <div className="relative z-10 text-center text-white">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="w-20 h-20 rounded-2xl bg-primary-foreground/20 flex items-center justify-center mx-auto mb-8">
+            <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-8">
               <Sparkles className="w-10 h-10" />
             </div>
             <h2 className="text-3xl font-bold mb-4">Start Building Today</h2>
-            <p className="text-primary-foreground/80 text-lg max-w-md">
+            <p className="text-white/80 text-lg max-w-md">
               Join thousands of developers transforming ideas into reality with AI-powered planning.
             </p>
           </motion.div>

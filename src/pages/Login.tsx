@@ -45,7 +45,7 @@ const Login = () => {
       <div className="hidden lg:flex lg:w-1/2 gradient-bg relative overflow-hidden items-center justify-center p-12">
         {/* Animated Shapes */}
         <motion.div
-          className="absolute top-20 left-20 w-32 h-32 rounded-full bg-primary-foreground/10"
+          className="absolute top-20 left-20 w-32 h-32 rounded-full bg-white/5"
           animate={{
             scale: [1, 1.2, 1],
             rotate: [0, 90, 0],
@@ -53,7 +53,7 @@ const Login = () => {
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute bottom-32 right-20 w-48 h-48 rounded-2xl bg-primary-foreground/10"
+          className="absolute bottom-32 right-20 w-48 h-48 rounded-2xl bg-white/5"
           animate={{
             scale: [1.2, 1, 1.2],
             rotate: [0, -90, 0],
@@ -61,7 +61,7 @@ const Login = () => {
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute top-1/2 left-1/3 w-24 h-24 rounded-lg bg-primary-foreground/10"
+          className="absolute top-1/2 left-1/3 w-24 h-24 rounded-lg bg-white/5"
           animate={{
             y: [0, -30, 0],
             x: [0, 20, 0],
@@ -70,17 +70,17 @@ const Login = () => {
         />
 
         {/* Content */}
-        <div className="relative z-10 text-center text-primary-foreground">
+        <div className="relative z-10 text-center text-white">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="w-20 h-20 rounded-2xl bg-primary-foreground/20 flex items-center justify-center mx-auto mb-8">
+            <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-8">
               <Sparkles className="w-10 h-10" />
             </div>
             <h2 className="text-3xl font-bold mb-4">Welcome to Reqs.ai</h2>
-            <p className="text-primary-foreground/80 text-lg max-w-md">
+            <p className="text-white/80 text-lg max-w-md">
               Transform your ideas into detailed project plans with AI-powered intelligence.
             </p>
           </motion.div>

@@ -30,7 +30,7 @@ const HowItWorksSection = () => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="how-it-works" className="py-24 gradient-hero-bg" ref={ref}>
+    <section id="how-it-works" className="py-16 sm:py-20 lg:py-24 xl:py-28 gradient-hero-bg" ref={ref}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
@@ -39,8 +39,8 @@ const HowItWorksSection = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-            How <span className="gradient-text">Reqs.ai</span> Works
+          <h2 className="text-3xl sm:text-4xl font-display font-light tracking-tight mb-4">
+            How <span className="text-foreground">Reqs.ai</span> Works
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             Four simple steps to transform your ideas into actionable project plans.
@@ -58,7 +58,7 @@ const HowItWorksSection = () => {
             />
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 lg:gap-6 xl:gap-8">
             {steps.map((step, index) => (
               <motion.div
                 key={index}
@@ -77,9 +77,23 @@ const HowItWorksSection = () => {
                   </div>
 
                   {/* Card */}
-                  <div className="w-full p-6 rounded-2xl bg-card card-shadow border border-border/50 hover:card-shadow-hover transition-all duration-300">
-                    <div className="w-14 h-14 rounded-xl bg-muted flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform">
-                      <step.icon className="w-7 h-7 text-primary" />
+                  <div className="w-full p-6 rounded-2xl bg-card card-shadow border border-border/50 hover:card-shadow-hover transition-all duration-300 group">
+                    {/* Step Image */}
+                    <div className="mb-5 overflow-hidden rounded-xl h-40 sm:h-44 md:h-40 bg-gradient-to-br from-muted/40 to-muted/20">
+                      <img
+                        src={
+                          index === 0 ? "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=500&q=90&auto=format&fit=crop" :
+                            index === 1 ? "https://images.unsplash.com/photo-1655720406770-12ea329b5b61?w=500&q=90&auto=format&fit=crop" :
+                              index === 2 ? "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=500&q=90&auto=format&fit=crop" :
+                                "https://images.unsplash.com/photo-1516849841032-87cbac4d88f7?w=500&q=90&auto=format&fit=crop"
+                        }
+                        alt={step.title}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    </div>
+
+                    <div className="w-14 h-14 rounded-xl bg-black/90 flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform shadow-lg">
+                      <step.icon className="w-7 h-7 text-white" />
                     </div>
                     <h3 className="text-lg font-semibold mb-2">{step.title}</h3>
                     <p className="text-muted-foreground text-sm">{step.description}</p>

@@ -99,6 +99,44 @@ Transform your project ideas into structured, actionable documents in seconds. R
 
 ---
 
+## 📅 Development Roadmap (University Project)
+
+This project was developed over a 4-week period as part of a university course requirement, focusing on rapid prototyping and AI integration.
+
+### **Week 1: Core Architecture & Authentication**
+*   **Focus:** Establishing the foundation and user baseline.
+*   **Key Deliverables:**
+    *   Initialize backend (Laravel) and frontend (React + TypeScript).
+    *   Design a premium UI system with Tailwind CSS.
+    *   Implement secure User Authentication (Signup/Login) with MySQL.
+    *   Establish seamless API communication between layers.
+
+### **Week 2: Dashboard Experience & AI Planning**
+*   **Focus:** Building the workspace and AI interaction layer.
+*   **Key Deliverables:**
+    *   Develop an immersive Dashboard with sidebar navigation.
+    *   Implement the AI prompt interface for project ideation.
+    *   Integrate Gemini AI for high-quality project plan generation.
+    *   Add real-time feedback and state management.
+
+### **Week 3: PRD Generation & Document Management**
+*   **Focus:** Structured documentation and persistence.
+*   **Key Deliverables:**
+    *   Implement logic to convert project plans into detailed PRDs.
+    *   Design professional templates for AI-generated documentation.
+    *   Enable persistent storage for user-generated documents.
+    *   Create listing views and historical activity trackers.
+
+### **Week 4: Advanced UI/UX & Final Polish**
+*   **Focus:** Premium features and production-ready refinement.
+*   **Key Deliverables:**
+    *   Implement Desktop Navbar with Breadcrumbs and Profile dropdowns.
+    *   Add floating visual assets and animated background elements.
+    *   Optimize Dark/Light mode visibility and contrast.
+    *   Final documentation and performance optimization.
+
+---
+
 ## 📂 Project Structure
 
 ```
