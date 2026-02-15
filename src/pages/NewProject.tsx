@@ -32,17 +32,37 @@ const steps = ["Describe Idea", "Clarify Scope", "Review", "Generate"];
 
 export default function NewProject() {
   const navigate = useNavigate();
-  const { wizardStep, setWizardStep, wizardIdea, setWizardIdea, wizardAnswers, setWizardAnswer, resetWizard } = useAppStore();
+  const { 
+    wizardStep, setWizardStep, wizardIdea, setWizardIdea, 
+    wizardAnswers, setWizardAnswer, resetWizard, createProject 
+  } = useAppStore();
   const [isGenerating, setIsGenerating] = useState(false);
   const [mcqIndex, setMcqIndex] = useState(0);
+  const [projectName, setProjectName] = useState("");
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     setIsGenerating(true);
-    setTimeout(() => {
-      setIsGenerating(false);
+    try {
+      // Build project description from wizard data
+      const description = `${wizardIdea}\n\nType: ${wizardAnswers.type}\nAudience: ${wizardAnswers.audience}\nScale: ${wizardAnswers.scale}\nPriority: ${wizardAnswers.priority}`;
+      
+      // Create project through API
+      const project = await createProject(
+        projectName || "New Project",
+        description
+      );
+      
+      if (project) {
+        // Navigate to PRD editor for this project
+        navigate(`/editor/prd?project=${project.id}`);
+      }
+      
       resetWizard();
-      navigate("/editor/prd");
-    }, 3000);
+    } catch (error) {
+      console.error('Failed to create project:', error);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const progress = ((wizardStep + 1) / steps.length) * 100;
@@ -148,6 +168,15 @@ export default function NewProject() {
           <h2 className="text-xl font-bold mb-6">Review Your Project</h2>
           <div className="space-y-4">
             <div className="p-4 rounded-lg bg-muted/30 border border-border">
+              <div className="text-xs text-muted-foreground mb-2">Project Name (Optional)</div>
+              <input
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+                placeholder="e.g., Task Manager Pro"
+                className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-secondary/50"
+              />
+            </div>
+            <div className="p-4 rounded-lg bg-muted/30 border border-border">
               <div className="text-xs text-muted-foreground mb-1">Project Idea</div>
               <p className="text-sm text-foreground">{wizardIdea}</p>
             </div>
@@ -165,7 +194,10 @@ export default function NewProject() {
             <Button variant="outline" onClick={() => setWizardStep(1)}>
               <ArrowLeft className="mr-2 w-4 h-4" /> Back
             </Button>
-            <Button onClick={() => { setWizardStep(3); handleGenerate(); }} className="gradient-primary text-primary-foreground border-0">
+            <Button 
+              onClick={() => { setWizardStep(3); handleGenerate(); }} 
+              className="bg-secondary hover:bg-secondary/90 text-background font-bold border-0"
+            >
               <Sparkles className="mr-2 w-4 h-4" /> Generate Documents
             </Button>
           </div>

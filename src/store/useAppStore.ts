@@ -1,5 +1,7 @@
 import { create } from 'zustand';
+import { api, Project as ApiProject, ApiKey as ApiApiKey, User, AuthManager } from '@/lib/api';
 
+// UI-friendly type that matches what components expect
 export interface Project {
   id: string;
   name: string;
@@ -20,9 +22,16 @@ export interface ApiKey {
   key: string;
   active: boolean;
   latency: number;
+  priority?: number;
 }
 
 interface AppState {
+  // Auth
+  user: User | null;
+  isAuthenticated: boolean;
+  setUser: (user: User | null) => void;
+  logout: () => Promise<void>;
+
   // Sidebar
   sidebarCollapsed: boolean;
   toggleSidebar: () => void;
@@ -30,6 +39,10 @@ interface AppState {
   // Projects
   projects: Project[];
   currentProject: Project | null;
+  isLoading: boolean;
+  error: string | null;
+  fetchProjects: () => Promise<void>;
+  createProject: (name: string, description: string) => Promise<Project | null>;
   setCurrentProject: (project: Project | null) => void;
 
   // New Project Wizard
@@ -47,51 +60,95 @@ interface AppState {
 
   // API Keys
   apiKeys: ApiKey[];
-  addApiKey: (key: ApiKey) => void;
-  toggleApiKey: (id: string) => void;
-  removeApiKey: (id: string) => void;
+  fetchApiKeys: () => Promise<void>;
+  addApiKey: (provider: string, key: string, name: string, priority?: number) => Promise<void>;
+  toggleApiKey: (id: string) => Promise<void>;
+  removeApiKey: (id: string) => Promise<void>;
 }
 
-const mockProjects: Project[] = [
-  {
-    id: '1',
-    name: 'E-Commerce Platform',
-    description: 'A modern e-commerce platform with AI-powered recommendations',
-    status: 'completed',
-    createdAt: '2026-02-10',
-    documents: { prd: true, design: true, techStack: true },
-  },
-  {
-    id: '2',
-    name: 'Health Tracker App',
-    description: 'Mobile-first health tracking with wearable integration',
-    status: 'generating',
-    createdAt: '2026-02-14',
-    documents: { prd: true, design: false, techStack: false },
-  },
-  {
-    id: '3',
-    name: 'SaaS Analytics Dashboard',
-    description: 'Real-time analytics dashboard for SaaS metrics',
-    status: 'draft',
-    createdAt: '2026-02-15',
-    documents: { prd: false, design: false, techStack: false },
-  },
-];
+// Helper function to transform API project to UI project
+function transformProject(apiProject: ApiProject): Project {
+  return {
+    id: apiProject.id.toString(),
+    name: apiProject.name,
+    description: apiProject.description,
+    status: apiProject.status,
+    createdAt: apiProject.created_at,
+    documents: {
+      prd: !!apiProject.prd_document,
+      design: !!apiProject.design_document,
+      techStack: !!apiProject.tech_stack_document,
+    },
+  };
+}
 
-const mockApiKeys: ApiKey[] = [
-  { id: '1', name: 'OpenAI GPT-4', provider: 'OpenAI', key: 'sk-...xxxx', active: true, latency: 1200 },
-  { id: '2', name: 'Anthropic Claude', provider: 'Anthropic', key: 'sk-ant-...yyyy', active: false, latency: 980 },
-];
+// Helper function to transform API key to UI key
+function transformApiKey(apiKey: ApiApiKey): ApiKey {
+  return {
+    id: apiKey.id.toString(),
+    name: apiKey.name,
+    provider: apiKey.provider,
+    key: apiKey.masked_key,
+    active: apiKey.is_active,
+latency: apiKey.average_latency,
+    priority: apiKey.priority,
+  };
+}
 
-export const useAppStore = create<AppState>((set) => ({
+export const useAppStore = create<AppState>((set, get) => ({
+  // Auth
+  user: AuthManager.getUser(),
+  isAuthenticated: AuthManager.isAuthenticated(),
+  setUser: (user) => set({ user, isAuthenticated: !!user }),
+  logout: async () => {
+    try {
+      await api.logout();
+      set({ user: null, isAuthenticated: false, projects: [], apiKeys: [] });
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  },
+
+  // Sidebar
   sidebarCollapsed: false,
   toggleSidebar: () => set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
 
-  projects: mockProjects,
+  // Projects
+  projects: [],
   currentProject: null,
+  isLoading: false,
+  error: null,
+  
+  fetchProjects: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await api.getProjects();
+      const projects = response.projects.map(transformProject);
+      set({ projects, isLoading: false });
+    } catch (error: any) {
+      set({ error: error.message || 'Failed to fetch projects', isLoading: false });
+    }
+  },
+
+  createProject: async (name: string, description: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await api.createProject(name, description);
+      const newProject = transformProject(response.project);
+      set((state) => ({
+        projects: [newProject, ...state.projects],
+        isLoading: false,
+      }));
+      return newProject;
+    } catch (error: any) {
+      set({ error: error.message || 'Failed to create project', isLoading: false });
+      return null;
+    }
+  },
+
   setCurrentProject: (project) => set({ currentProject: project }),
 
+  // Wizard
   wizardStep: 0,
   wizardIdea: '',
   wizardAnswers: {},
@@ -100,13 +157,61 @@ export const useAppStore = create<AppState>((set) => ({
   setWizardAnswer: (key, value) => set((s) => ({ wizardAnswers: { ...s.wizardAnswers, [key]: value } })),
   resetWizard: () => set({ wizardStep: 0, wizardIdea: '', wizardAnswers: {} }),
 
+  // Document Editor
   activeSection: 'overview',
   setActiveSection: (section) => set({ activeSection: section }),
 
-  apiKeys: mockApiKeys,
-  addApiKey: (key) => set((s) => ({ apiKeys: [...s.apiKeys, key] })),
-  toggleApiKey: (id) => set((s) => ({
-    apiKeys: s.apiKeys.map((k) => k.id === id ? { ...k, active: !k.active } : k),
-  })),
-  removeApiKey: (id) => set((s) => ({ apiKeys: s.apiKeys.filter((k) => k.id !== id) })),
+  // API Keys
+  apiKeys: [],
+  
+  fetchApiKeys: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await api.getApiKeys();
+      const apiKeys = response.api_keys.map(transformApiKey);
+      set({ apiKeys, isLoading: false });
+    } catch (error: any) {
+      set({ error: error.message || 'Failed to fetch API keys', isLoading: false });
+    }
+  },
+
+  addApiKey: async (provider: string, key: string, name: string, priority: number = 10) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await api.addApiKey(provider, key, name, priority);
+      const newKey = transformApiKey(response.api_key);
+      set((state) => ({
+        apiKeys: [...state.apiKeys, newKey],
+        isLoading: false,
+      }));
+    } catch (error: any) {
+      set({ error: error.message || 'Failed to add API key', isLoading: false });
+      throw error;
+    }
+  },
+
+  toggleApiKey: async (id: string) => {
+    const key = get().apiKeys.find((k) => k.id === id);
+    if (!key) return;
+
+    try {
+      await api.updateApiKey(Number(id), { is_active: !key.active });
+      set((state) => ({
+        apiKeys: state.apiKeys.map((k) => (k.id === id ? { ...k, active: !k.active } : k)),
+      }));
+    } catch (error: any) {
+      set({ error: error.message || 'Failed to update API key' });
+    }
+  },
+
+  removeApiKey: async (id: string) => {
+    try {
+      await api.deleteApiKey(Number(id));
+      set((state) => ({
+        apiKeys: state.apiKeys.filter((k) => k.id !== id),
+      }));
+    } catch (error: any) {
+      set({ error: error.message || 'Failed to delete API key' });
+    }
+  },
 }));

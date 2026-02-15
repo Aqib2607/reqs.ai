@@ -1,36 +1,61 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Sparkles, Mail, Github, ArrowRight, Eye, EyeOff, User, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { api } from "@/lib/api";
+import { useAppStore } from "@/store/useAppStore";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { setUser } = useAppStore();
 
   const passwordChecks = [
     { label: "At least 8 characters", met: password.length >= 8 },
     { label: "Contains uppercase letter", met: /[A-Z]/.test(password) },
     { label: "Contains number", met: /\d/.test(password) },
+    { label: "Passwords match", met: password === confirmPassword && password.length > 0 },
   ];
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !email || !password) return;
+    if (!name || !email || !password || !confirmPassword) return;
+    
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+    
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
+    setError(null);
+    
+    try {
+      const response = await api.register(name, email, password, confirmPassword);
+      setUser(response.user);
       toast({ title: "Account created!", description: "Welcome to Reqs.ai. Let's build something great." });
-      window.location.href = "/dashboard";
-    }, 1500);
+      navigate("/dashboard");
+    } catch (err: any) {
+      setError(err.message || "Failed to create account");
+      toast({ 
+        title: "Registration Failed", 
+        description: err.message || "Failed to create account",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleOAuth = (provider: string) => {
-    toast({ title: `${provider} Sign Up`, description: `Redirecting to ${provider}...` });
+    toast({ title: `${provider} Sign Up`, description: `OAuth integration coming soon...` });
   };
 
   return (
@@ -100,6 +125,12 @@ export default function RegisterPage() {
             </div>
           </div>
 
+          {error && (
+            <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+              <p className="text-sm text-destructive">{error}</p>
+            </div>
+          )}
+
           <form onSubmit={handleRegister} className="space-y-4">
             <div>
               <label className="text-sm text-muted-foreground mb-1.5 block">Full Name</label>
@@ -151,30 +182,42 @@ export default function RegisterPage() {
                 <div className="mt-2 space-y-1">
                   {passwordChecks.map((c) => (
                     <div key={c.label} className="flex items-center gap-2 text-xs">
-                      <Check className={`w-3 h-3 ${c.met ? "text-accent" : "text-muted-foreground/40"}`} />
-                      <span className={c.met ? "text-accent" : "text-muted-foreground/60"}>{c.label}</span>
+                      <Check className={`w-3 h-3 ${c.met ? "text-secondary" : "text-muted-foreground/40"}`} />
+                      <span className={c.met ? "text-secondary" : "text-muted-foreground/60"}>{c.label}</span>
                     </div>
                   ))}
                 </div>
               )}
             </div>
+            <div>
+              <label className="text-sm text-muted-foreground mb-1.5 block">Confirm Password</label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full bg-muted/50 border border-border rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-secondary/50"
+                  required
+                />
+              </div>
+            </div>
 
             <Button
               type="submit"
-              disabled={isLoading}
-              className="w-full h-11 gradient-primary text-primary-foreground border-0"
+              disabled={isLoading || !passwordChecks.every((c) => c.met)}
+              className="w-full h-11 bg-secondary hover:bg-secondary/90 text-background font-bold border-0"
             >
               {isLoading ? "Creating account..." : "Create Account"}
-              {!isLoading && <ArrowRight className="ml-2 w-4 h-4" />}
+              <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-muted-foreground">
-            Already have an account?{" "}
-            <Link to="/login" className="text-primary hover:underline font-medium">
-              Sign in
-            </Link>
-          </p>
+          <Link to="/login">
+            <p className="text-center text-sm text-muted-foreground mt-6">
+              Already have an account? <span className="text-secondary hover:underline font-medium">Sign in</span>
+            </p>
+          </Link>
         </div>
       </div>
     </div>

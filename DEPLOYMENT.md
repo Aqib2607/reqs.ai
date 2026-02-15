@@ -3,6 +3,7 @@
 ## Overview
 
 Reqs.ai is a full-stack application with:
+
 - **Frontend**: React + Vite + TypeScript
 - **Backend**: Laravel 12 + PHP 8.3
 
@@ -13,6 +14,7 @@ Since these are different technologies, they need separate deployment strategies
 ## Option 1: Deploy Frontend to Vercel (Recommended for Testing)
 
 ### Prerequisites
+
 - Backend API must be deployed separately and accessible via HTTPS
 
 ### Steps
@@ -22,8 +24,9 @@ Since these are different technologies, they need separate deployment strategies
    - Get your backend API URL (e.g., `https://api.reqs.ai`)
 
 2. **Update Vercel Environment Variable**
-   
+
    In [vercel.json](vercel.json), change:
+
    ```json
    "env": {
      "VITE_API_URL": "https://your-actual-backend-url.com"
@@ -31,20 +34,23 @@ Since these are different technologies, they need separate deployment strategies
    ```
 
 3. **Create Frontend API Client** (Future Enhancement)
-   
+
    Create `src/lib/api.ts`:
+
    ```typescript
    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
    export const API_BASE = `${API_URL}/api`;
    ```
 
 4. **Deploy to Vercel**
+
    ```bash
    npm run build:vercel  # Test build locally
    vercel --prod         # Deploy
    ```
 
 ### What Gets Deployed
+
 - ✅ React frontend (static files)
 - ❌ Laravel backend (not compatible with Vercel)
 
@@ -57,12 +63,14 @@ Railway supports both Node.js and PHP in a monorepo.
 ### Setup
 
 1. **Install Railway CLI**
+
    ```bash
    npm install -g @railway/cli
    railway login
    ```
 
 2. **Create `railway.json`**
+
    ```json
    {
      "build": {
@@ -76,17 +84,20 @@ Railway supports both Node.js and PHP in a monorepo.
    ```
 
 3. **Create `Procfile`**
+
    ```
    web: php artisan serve --host=0.0.0.0 --port=$PORT
    ```
 
 4. **Deploy**
+
    ```bash
    railway init
    railway up
    ```
 
 ### What Gets Deployed
+
 - ✅ React frontend (built into backend/public/)
 - ✅ Laravel backend (serves both API and frontend)
 
@@ -103,12 +114,12 @@ DigitalOcean supports monorepos with multiple components.
    - Connect your GitHub repository
 
 2. **Configure Components**
-   
+
    **Component 1: Backend (PHP)**
    - Build Command: `cd backend && composer install`
    - Run Command: `php artisan serve --host=0.0.0.0 --port=8080`
    - HTTP Port: 8080
-   
+
    **Component 2: Frontend (Static)**
    - Build Command: `npm install && npm run build:vercel`
    - Output Directory: `dist`
@@ -125,6 +136,7 @@ DigitalOcean supports monorepos with multiple components.
 Deploy to any VPS (AWS EC2, DigitalOcean Droplet, Linode).
 
 ### Requirements
+
 - Ubuntu 22.04 or later
 - Nginx or Apache
 - PHP 8.3+
@@ -134,12 +146,14 @@ Deploy to any VPS (AWS EC2, DigitalOcean Droplet, Linode).
 ### Steps
 
 1. **Install Dependencies**
+
    ```bash
    sudo apt update
    sudo apt install -y php8.3 php8.3-fpm php8.3-mysql nginx mysql-server nodejs npm composer
    ```
 
 2. **Clone Repository**
+
    ```bash
    cd /var/www
    git clone https://github.com/Aqib2607/reqs.ai.git
@@ -147,6 +161,7 @@ Deploy to any VPS (AWS EC2, DigitalOcean Droplet, Linode).
    ```
 
 3. **Setup Backend**
+
    ```bash
    cd backend
    composer install --no-dev
@@ -156,6 +171,7 @@ Deploy to any VPS (AWS EC2, DigitalOcean Droplet, Linode).
    ```
 
 4. **Build Frontend**
+
    ```bash
    cd ..
    npm install
@@ -163,6 +179,7 @@ Deploy to any VPS (AWS EC2, DigitalOcean Droplet, Linode).
    ```
 
 5. **Configure Nginx**
+
    ```nginx
    server {
        listen 80;
@@ -188,6 +205,7 @@ Deploy to any VPS (AWS EC2, DigitalOcean Droplet, Linode).
    ```
 
 6. **Start Services**
+
    ```bash
    sudo systemctl restart nginx
    sudo systemctl restart php8.3-fpm
@@ -198,6 +216,7 @@ Deploy to any VPS (AWS EC2, DigitalOcean Droplet, Linode).
 ## Current Configuration
 
 ### Local Development
+
 ```bash
 # Backend (Terminal 1)
 cd backend
@@ -208,6 +227,7 @@ npm run build      # Builds to backend/public/
 ```
 
 ### Vercel Deployment
+
 ```bash
 # Frontend only
 npm run build:vercel  # Builds to dist/
@@ -218,11 +238,13 @@ npm run build:vercel  # Builds to dist/
 ## Recommended Deployment Strategy
 
 **For MVP/Testing:**
+
 1. Deploy backend to **Railway** (free tier available)
 2. Deploy frontend to **Vercel** (free tier available)
 3. Update `vercel.json` with Railway backend URL
 
 **For Production:**
+
 1. Deploy to **Laravel Forge** (managed Laravel hosting)
 2. Or use **DigitalOcean App Platform** (supports both frontend + backend)
 3. Or use **VPS** with Nginx (full control, more setup)
@@ -232,6 +254,7 @@ npm run build:vercel  # Builds to dist/
 ## Environment Variables
 
 ### Backend (.env)
+
 ```env
 APP_ENV=production
 APP_DEBUG=false
@@ -243,6 +266,7 @@ DB_PASSWORD=your-db-password
 ```
 
 ### Frontend (Vercel)
+
 ```env
 VITE_API_URL=https://your-backend-url.com
 ```
@@ -266,14 +290,17 @@ VITE_API_URL=https://your-backend-url.com
 ## Troubleshooting
 
 ### Vercel: "No Output Directory named 'dist' found"
+
 - Run `npm run build:vercel` locally first to test
 - Check `vercel.json` has correct `buildCommand` and `outputDirectory`
 
 ### Backend: CORS Error
+
 - Add frontend domain to `SANCTUM_STATEFUL_DOMAINS` in `.env`
 - Update `config/cors.php` if needed
 
 ### Frontend: API Connection Failed  
+
 - Check `VITE_API_URL` environment variable
 - Verify backend is accessible from frontend domain
 - Check browser console for CORS errors
