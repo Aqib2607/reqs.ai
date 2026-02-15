@@ -249,7 +249,7 @@ class ApiClient {
     section_name: string,
     feedback: string
   ) {
-    return this.request<{ document: any; message: string }>('/document/regenerate', {
+    return this.request<{ document: PrdDocument | DesignDocument | TechStackDocument; message: string }>('/document/regenerate', {
       method: 'POST',
       body: JSON.stringify({ document_type, document_id, section_name, feedback }),
     });
