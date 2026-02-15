@@ -1,0 +1,152 @@
+import { Link } from "react-router-dom";
+import { ArrowRight, Sparkles, FileText, Zap, Shield, Code2, BarChart3 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+const features = [
+  { icon: Sparkles, title: "AI-Powered Generation", description: "Generate comprehensive PRDs and design documents from a simple idea in minutes." },
+  { icon: FileText, title: "Professional Documents", description: "Industry-standard PRDs, design docs, and tech stack recommendations." },
+  { icon: Zap, title: "Instant Iterations", description: "Regenerate, expand, or refine any section with AI assistance." },
+  { icon: Shield, title: "Enterprise Ready", description: "Secure API key management and team collaboration features." },
+  { icon: Code2, title: "Tech Stack Analysis", description: "AI-recommended technology stacks tailored to your project needs." },
+  { icon: BarChart3, title: "Export Anywhere", description: "Download as Markdown, clean PDF, or academic-format PDF." },
+];
+
+const steps = [
+  { step: "01", title: "Describe Your Idea", description: "Enter your project concept in natural language." },
+  { step: "02", title: "Answer Quick Questions", description: "AI asks clarifying MCQs to understand scope and constraints." },
+  { step: "03", title: "AI Generates Documents", description: "Get a complete PRD, design doc, and tech stack in seconds." },
+  { step: "04", title: "Refine & Export", description: "Edit with AI assistance and export in your preferred format." },
+];
+
+export default function LandingPage() {
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Nav */}
+      <nav className="fixed top-0 w-full z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-primary-foreground" />
+            </div>
+            <span className="font-bold text-lg">
+              Reqs<span className="text-accent">.ai</span>
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <Link to="/dashboard">
+              <Button variant="ghost" size="sm">Sign In</Button>
+            </Link>
+            <Link to="/dashboard">
+              <Button size="sm" className="gradient-primary text-primary-foreground border-0">
+                Get Started
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero */}
+      <section className="relative pt-32 pb-20 px-6 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.15),transparent_60%)]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[radial-gradient(circle,hsl(var(--ai-glow)/0.08),transparent_70%)]" />
+        
+        <div className="relative max-w-4xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm mb-8 animate-fade-in">
+            <Sparkles className="w-3.5 h-3.5" />
+            AI-Powered Requirements Engineering
+          </div>
+          
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.1] mb-6 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
+            From Idea to{" "}
+            <span className="gradient-text">Production-Ready</span>{" "}
+            Docs
+          </h1>
+          
+          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+            Generate comprehensive PRDs, design documents, and tech stack recommendations from a single project idea. Powered by AI.
+          </p>
+          
+          <div className="flex items-center justify-center gap-4 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
+            <Link to="/dashboard">
+              <Button size="lg" className="gradient-primary text-primary-foreground border-0 px-8 h-12 text-base">
+                Start Building <ArrowRight className="ml-2 w-4 h-4" />
+              </Button>
+            </Link>
+            <Button variant="outline" size="lg" className="h-12 px-8 text-base">
+              View Demo
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="py-24 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">How It Works</h2>
+            <p className="text-muted-foreground text-lg">Four simple steps from concept to documentation</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {steps.map((s, i) => (
+              <div key={s.step} className="glass-card p-6 hover-lift group" style={{ animationDelay: `${i * 0.1}s` }}>
+                <div className="text-4xl font-black text-primary/20 mb-4 group-hover:text-primary/40 transition-colors">
+                  {s.step}
+                </div>
+                <h3 className="text-lg font-semibold mb-2">{s.title}</h3>
+                <p className="text-sm text-muted-foreground">{s.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features Grid */}
+      <section className="py-24 px-6 border-t border-border/50">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Powerful Features</h2>
+            <p className="text-muted-foreground text-lg">Everything you need to go from idea to implementation</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {features.map((f, i) => (
+              <div key={f.title} className="glass-card p-6 hover-lift group">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:ai-glow transition-all">
+                  <f.icon className="w-5 h-5 text-primary" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">{f.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{f.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-24 px-6">
+        <div className="max-w-3xl mx-auto text-center glass-card p-12 ai-glow">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Build?</h2>
+          <p className="text-muted-foreground text-lg mb-8">
+            Start generating professional project documentation in minutes.
+          </p>
+          <Link to="/dashboard">
+            <Button size="lg" className="gradient-primary text-primary-foreground border-0 px-10 h-12 text-base">
+              Get Started Free <ArrowRight className="ml-2 w-4 h-4" />
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-border/50 py-8 px-6">
+        <div className="max-w-6xl mx-auto flex items-center justify-between text-sm text-muted-foreground">
+          <span>© 2026 Reqs.ai. All rights reserved.</span>
+          <div className="flex gap-6">
+            <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
+            <a href="#" className="hover:text-foreground transition-colors">Terms</a>
+            <a href="#" className="hover:text-foreground transition-colors">Contact</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
