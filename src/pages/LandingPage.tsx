@@ -33,10 +33,10 @@ export default function LandingPage() {
             </span>
           </div>
           <div className="flex items-center gap-3">
-            <Link to="/dashboard">
+            <Link to="/login">
               <Button variant="ghost" size="sm">Sign In</Button>
             </Link>
-            <Link to="/dashboard">
+            <Link to="/register">
               <Button size="sm" className="gradient-primary text-primary-foreground border-0">
                 Get Started
               </Button>
