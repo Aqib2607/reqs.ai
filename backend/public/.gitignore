@@ -1,0 +1,9 @@
+# Ignore built frontend files
+/assets
+/index.html
+
+# Keep Laravel files
+!.htaccess
+!index.php
+!robots.txt
+!favicon.ico
