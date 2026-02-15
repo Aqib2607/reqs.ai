@@ -14,10 +14,11 @@ export function AppLayout() {
       <main
         className={cn(
           "pt-14 min-h-screen transition-all duration-300",
-          sidebarCollapsed ? "ml-16" : "ml-[260px]"
+          "ml-0 md:ml-16 lg:ml-[260px]",
+          !sidebarCollapsed && "lg:ml-[260px]"
         )}
       >
-        <div className="p-6">
+        <div className="p-4 md:p-6">
           <Outlet />
         </div>
       </main>

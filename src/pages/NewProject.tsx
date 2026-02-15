@@ -68,12 +68,12 @@ export default function NewProject() {
   const progress = ((wizardStep + 1) / steps.length) * 100;
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-3xl mx-auto px-4">
       {/* Steps */}
-      <div className="mb-10">
-        <div className="flex items-center justify-between mb-4">
+      <div className="mb-8 md:mb-10">
+        <div className="flex items-center justify-between mb-4 overflow-x-auto pb-2">
           {steps.map((s, i) => (
-            <div key={s} className="flex items-center gap-2">
+            <div key={s} className="flex items-center gap-2 shrink-0">
               <div
                 className={cn(
                   "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all",
@@ -100,8 +100,8 @@ export default function NewProject() {
 
       {/* Step 0: Idea Input */}
       {wizardStep === 0 && (
-        <div className="glass-card p-8 animate-fade-in">
-          <h2 className="text-xl font-bold mb-2">What are you building?</h2>
+        <div className="glass-card p-4 md:p-8 animate-fade-in">
+          <h2 className="text-lg md:text-xl font-bold mb-2">What are you building?</h2>
           <p className="text-muted-foreground text-sm mb-6">Describe your project idea in a few sentences. Be as detailed as you like.</p>
           <textarea
             value={wizardIdea}
@@ -123,11 +123,11 @@ export default function NewProject() {
 
       {/* Step 1: MCQ */}
       {wizardStep === 1 && (
-        <div className="glass-card p-8 animate-fade-in">
+        <div className="glass-card p-4 md:p-8 animate-fade-in">
           <div className="text-xs text-muted-foreground mb-2">
             Question {mcqIndex + 1} of {mcqQuestions.length}
           </div>
-          <h2 className="text-xl font-bold mb-6">{mcqQuestions[mcqIndex].question}</h2>
+          <h2 className="text-lg md:text-xl font-bold mb-6">{mcqQuestions[mcqIndex].question}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {mcqQuestions[mcqIndex].options.map((opt) => (
               <button
@@ -164,8 +164,8 @@ export default function NewProject() {
 
       {/* Step 2: Review */}
       {wizardStep === 2 && (
-        <div className="glass-card p-8 animate-fade-in">
-          <h2 className="text-xl font-bold mb-6">Review Your Project</h2>
+        <div className="glass-card p-4 md:p-8 animate-fade-in">
+          <h2 className="text-lg md:text-xl font-bold mb-6">Review Your Project</h2>
           <div className="space-y-4">
             <div className="p-4 rounded-lg bg-muted/30 border border-border">
               <div className="text-xs text-muted-foreground mb-2">Project Name (Optional)</div>
@@ -206,11 +206,11 @@ export default function NewProject() {
 
       {/* Step 3: Generating */}
       {wizardStep === 3 && (
-        <div className="glass-card p-12 text-center animate-fade-in ai-glow">
-          <div className="w-16 h-16 rounded-full gradient-primary flex items-center justify-center mx-auto mb-6 animate-pulse-glow">
-            <Sparkles className="w-8 h-8 text-primary-foreground" />
+        <div className="glass-card p-8 md:p-12 text-center animate-fade-in ai-glow">
+          <div className="w-12 h-12 md:w-16 md:h-16 rounded-full gradient-primary flex items-center justify-center mx-auto mb-6 animate-pulse-glow">
+            <Sparkles className="w-6 h-6 md:w-8 md:h-8 text-primary-foreground" />
           </div>
-          <h2 className="text-xl font-bold mb-2">Generating Your Documents</h2>
+          <h2 className="text-lg md:text-xl font-bold mb-2">Generating Your Documents</h2>
           <p className="text-muted-foreground text-sm mb-8">AI is analyzing your requirements and creating comprehensive documentation...</p>
           <div className="flex items-center justify-center gap-3">
             <Loader2 className="w-5 h-5 animate-spin text-primary" />

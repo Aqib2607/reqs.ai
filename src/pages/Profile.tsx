@@ -3,16 +3,16 @@ import { Button } from "@/components/ui/button";
 
 export default function Profile() {
   return (
-    <div className="max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-8">Profile Settings</h1>
+    <div className="max-w-2xl mx-auto px-4">
+      <h1 className="text-xl md:text-2xl font-bold mb-6 md:mb-8">Profile Settings</h1>
 
-      <div className="glass-card p-6 mb-6">
-        <div className="flex items-center gap-4 mb-6">
+      <div className="glass-card p-4 md:p-6 mb-6">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 mb-6">
           <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
             <User className="w-8 h-8 text-primary" />
           </div>
-          <div>
-            <h2 className="text-lg font-semibold">John Doe</h2>
+          <div className="text-center sm:text-left">
+            <h2 className="text-base md:text-lg font-semibold">John Doe</h2>
             <p className="text-sm text-muted-foreground">john@example.com</p>
           </div>
         </div>
@@ -39,8 +39,8 @@ export default function Profile() {
         </div>
       </div>
 
-      <div className="glass-card p-6">
-        <h3 className="font-semibold mb-4">Preferences</h3>
+      <div className="glass-card p-4 md:p-6">
+        <h3 className="font-semibold mb-4 text-sm md:text-base">Preferences</h3>
         <div className="space-y-3">
           <div className="flex items-center justify-between py-2">
             <div className="flex items-center gap-3">
