@@ -83,9 +83,7 @@ export default function DocumentEditor() {
   const handleApprove = (id: string) => {
     setApprovedSections((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
+      if (!next.has(id)) {
         next.add(id);
       }
       return next;
@@ -153,7 +151,7 @@ export default function DocumentEditor() {
             </div>
             <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
               <div
-                className="h-full gradient-primary rounded-full transition-all duration-500"
+                className="h-full gradient-primary rounded-full transition-all duration-700 ease-out"
                 style={{ width: `${(approvedSections.size / sections.length) * 100}%` }}
               />
             </div>
@@ -182,6 +180,7 @@ export default function DocumentEditor() {
                   variant={approvedSections.has(currentSection.id) ? "outline" : "default"}
                   className={approvedSections.has(currentSection.id) ? "border-accent/50 text-accent" : "gradient-primary text-primary-foreground border-0"}
                   onClick={() => handleApprove(currentSection.id)}
+                  disabled={approvedSections.has(currentSection.id)}
                 >
                   <Check className="w-3.5 h-3.5 mr-1.5" />
                   {approvedSections.has(currentSection.id) ? "Approved" : "Approve"}

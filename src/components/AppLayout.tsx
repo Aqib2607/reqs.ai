@@ -13,7 +13,7 @@ export function AppLayout() {
       <Topbar />
       <main
         className={cn(
-          "pt-14 min-h-screen transition-all duration-300",
+          "pt-14 pb-20 md:pb-0 min-h-screen transition-all duration-300",
           "ml-0 md:ml-16 lg:ml-[260px]",
           !sidebarCollapsed && "lg:ml-[260px]"
         )}

@@ -43,6 +43,7 @@ interface AppState {
   error: string | null;
   fetchProjects: () => Promise<void>;
   createProject: (name: string, description: string) => Promise<Project | null>;
+  deleteProject: (id: string) => Promise<void>;
   setCurrentProject: (project: Project | null) => void;
 
   // New Project Wizard
@@ -125,8 +126,8 @@ export const useAppStore = create<AppState>((set, get) => ({
       const response = await api.getProjects();
       const projects = response.projects.map(transformProject);
       set({ projects, isLoading: false });
-    } catch (error: any) {
-      set({ error: error.message || 'Failed to fetch projects', isLoading: false });
+    } catch (error: unknown) {
+      set({ error: (error as Error).message || 'Failed to fetch projects', isLoading: false });
     }
   },
 
@@ -140,9 +141,21 @@ export const useAppStore = create<AppState>((set, get) => ({
         isLoading: false,
       }));
       return newProject;
-    } catch (error: any) {
-      set({ error: error.message || 'Failed to create project', isLoading: false });
+    } catch (error: unknown) {
+      set({ error: (error as Error).message || 'Failed to create project', isLoading: false });
       return null;
+    }
+  },
+
+  deleteProject: async (id: string) => {
+    try {
+      await api.deleteProject(Number(id));
+      set((state) => ({
+        projects: state.projects.filter((p) => p.id !== id),
+      }));
+    } catch (error: unknown) {
+      set({ error: (error as Error).message || 'Failed to delete project' });
+      throw error;
     }
   },
 
@@ -170,8 +183,8 @@ export const useAppStore = create<AppState>((set, get) => ({
       const response = await api.getApiKeys();
       const apiKeys = response.api_keys.map(transformApiKey);
       set({ apiKeys, isLoading: false });
-    } catch (error: any) {
-      set({ error: error.message || 'Failed to fetch API keys', isLoading: false });
+    } catch (error: unknown) {
+      set({ error: (error as Error).message || 'Failed to fetch API keys', isLoading: false });
     }
   },
 
@@ -184,8 +197,8 @@ export const useAppStore = create<AppState>((set, get) => ({
         apiKeys: [...state.apiKeys, newKey],
         isLoading: false,
       }));
-    } catch (error: any) {
-      set({ error: error.message || 'Failed to add API key', isLoading: false });
+    } catch (error: unknown) {
+      set({ error: (error as Error).message || 'Failed to add API key', isLoading: false });
       throw error;
     }
   },
@@ -199,8 +212,8 @@ export const useAppStore = create<AppState>((set, get) => ({
       set((state) => ({
         apiKeys: state.apiKeys.map((k) => (k.id === id ? { ...k, active: !k.active } : k)),
       }));
-    } catch (error: any) {
-      set({ error: error.message || 'Failed to update API key' });
+    } catch (error: unknown) {
+      set({ error: (error as Error).message || 'Failed to update API key' });
     }
   },
 
@@ -210,8 +223,8 @@ export const useAppStore = create<AppState>((set, get) => ({
       set((state) => ({
         apiKeys: state.apiKeys.filter((k) => k.id !== id),
       }));
-    } catch (error: any) {
-      set({ error: error.message || 'Failed to delete API key' });
+    } catch (error: unknown) {
+      set({ error: (error as Error).message || 'Failed to delete API key' });
     }
   },
 }));

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Sparkles, FileText, Zap, Shield, Code2, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Navbar } from "@/components/Navbar";
 
 const features = [
   { icon: Sparkles, title: "AI-Powered Generation", description: "Generate comprehensive PRDs and design documents from a simple idea in minutes." },
@@ -21,29 +22,7 @@ const steps = [
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background">
-      {/* Nav */}
-      <nav className="fixed top-0 w-full z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center yellow-glow">
-              <Sparkles className="w-4 h-4 text-secondary" />
-            </div>
-            <span className="font-bold text-lg">
-              Reqs<span className="text-secondary">.ai</span>
-            </span>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link to="/login">
-              <Button variant="ghost" size="sm">Sign In</Button>
-            </Link>
-            <Link to="/register">
-              <Button size="sm" className="gradient-primary text-primary-foreground border-0">
-                Get Started
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navbar activePage="home" />
 
       {/* Hero */}
       <section className="relative pt-32 pb-20 px-6 overflow-hidden">
@@ -69,13 +48,13 @@ export default function LandingPage() {
             Generate comprehensive PRDs, design documents, and tech stack recommendations from a single project idea. Powered by AI.
           </p>
           
-          <div className="flex items-center justify-center gap-4 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
             <Link to="/dashboard">
-              <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-background font-bold border-0 px-8 h-12 text-base yellow-glow">
+              <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-background font-bold border-0 px-6 sm:px-8 h-11 sm:h-12 text-sm sm:text-base yellow-glow w-full sm:w-auto">
                 Start Building <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
             </Link>
-            <Button variant="outline" size="lg" className="h-12 px-8 text-base border-secondary/50 text-secondary hover:bg-secondary/10">
+            <Button variant="outline" size="lg" className="h-11 sm:h-12 px-6 sm:px-8 text-sm sm:text-base border-secondary/50 text-secondary hover:bg-secondary/10 w-full sm:w-auto">
               View Demo
             </Button>
           </div>
