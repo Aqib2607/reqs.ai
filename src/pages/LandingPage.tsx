@@ -97,7 +97,7 @@ export default function LandingPage() {
                 <li className="flex items-center gap-2"><Sparkles className="w-4 h-4 text-secondary" /> Real-time streaming responses</li>
               </ul>
             </div>
-            <div className="relative">
+            <div className="relative max-w-sm md:max-w-none mx-auto">
               <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80" alt="AI Technology" className="rounded-xl shadow-2xl" />
               <div className="absolute inset-0 rounded-xl bg-gradient-to-tr from-primary/20 to-transparent" />
             </div>
@@ -112,7 +112,7 @@ export default function LandingPage() {
             <h2 className="text-3xl md:text-4xl font-bold mb-4">How It Works</h2>
             <p className="text-muted-foreground text-lg">Four simple steps from concept to documentation</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {steps.map((s, i) => (
               <div key={s.step} className="glass-card p-6 hover-lift group" style={{ animationDelay: `${i * 0.1}s` }}>
                 <div className="text-4xl font-black text-secondary/60 mb-4 group-hover:text-secondary group-hover:yellow-glow transition-colors">
@@ -136,7 +136,7 @@ export default function LandingPage() {
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Powerful Features</h2>
             <p className="text-muted-foreground text-lg">Everything you need to go from idea to implementation</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((f, i) => (
               <div key={f.title} className="glass-card p-6 hover-lift group">
                 <div className="w-10 h-10 rounded-lg bg-secondary/20 border border-secondary/40 flex items-center justify-center mb-4 group-hover:yellow-glow transition-all">
@@ -154,7 +154,7 @@ export default function LandingPage() {
       <section className="py-20 px-6 border-t border-border/50">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div className="relative order-2 md:order-1">
+            <div className="relative order-2 md:order-1 max-w-sm md:max-w-none mx-auto">
               <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&q=80" alt="Development" className="rounded-xl shadow-2xl" />
               <div className="absolute inset-0 rounded-xl bg-gradient-to-tl from-secondary/20 to-transparent" />
             </div>
