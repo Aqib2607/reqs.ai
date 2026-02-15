@@ -228,12 +228,12 @@ Base URL: `http://127.0.0.1:8000/api`
 
 ## 📖 Documentation
 
-Comprehensive documentation is available in the `backend/docs/` directory:
+Comprehensive documentation is available in the `backend/` directory:
 
-- **API_DOCUMENTATION.md** - Complete API reference
-- **AI_INTEGRATION.md** - AI orchestration guide
-- **SYSTEM_ARCHITECTURE.md** - Technical architecture
-- **USER_GUIDE.md** - End-user documentation
+- **[README_API.md](backend/README_API.md)** - Complete API reference and usage examples
+- **[SETUP_GUIDE.md](backend/SETUP_GUIDE.md)** - Quick setup and installation guide
+- **[IMPLEMENTATION_SUMMARY.md](backend/IMPLEMENTATION_SUMMARY.md)** - Full system architecture and features
+- **[STATUS.md](backend/STATUS.md)** - Implementation status and deployment readiness
 
 ## 🤝 Contributing
 
