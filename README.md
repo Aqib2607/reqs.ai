@@ -1,73 +1,258 @@
-# Welcome to your Lovable project
+# Reqs.ai - AI-Powered Requirements Engineering
 
-## Project info
+Generate comprehensive PRDs, design documents, and tech stack recommendations from a single project idea. Powered by AI.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## 🚀 Project Overview
 
-## How can I edit this code?
+Reqs.ai transforms your project ideas into production-ready documentation using advanced AI orchestration. Simply describe your concept, answer a few clarifying questions, and receive:
 
-There are several ways of editing your application.
+- **PRD (Product Requirements Document)** - Comprehensive project specifications
+- **Design Document** - Technical architecture and system design
+- **Tech Stack Document** - AI-recommended technologies tailored to your needs
 
-**Use Lovable**
+**Repository**: <https://github.com/Aqib2607/reqs.ai.git>
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+## 🎨 Color Palette
 
-Changes made via Lovable will be committed automatically to this repo.
+- **#080808** - Background (Black)
+- **#387F39** - Primary (Dark Green)
+- **#A2CA71** - Accent (Light Green)
+- **#F4CE14** - Secondary (Yellow)
 
-**Use your preferred IDE**
+## 🛠️ Technology Stack
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+**Frontend:**
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- React 18 with TypeScript
+- Vite (Build tool)
+- shadcn/ui (Component library)
+- Tailwind CSS (Styling)
+- React Router (Routing)
+- Zustand (State management)
 
-Follow these steps:
+**Backend:**
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+- Laravel 12 (PHP 8.3+)
+- MySQL (Database)
+- Laravel Sanctum (API authentication)
+- DomPDF (PDF generation)
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+**AI Providers:**
 
-# Step 3: Install the necessary dependencies.
-npm i
+- OpenAI GPT-4
+- Google Gemini
+- Anthropic Claude
+- Groq
+- OpenRouter
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+## 📋 Prerequisites
+
+- Node.js 18+ & npm
+- PHP 8.3+
+- Composer
+- MySQL 8.0+
+- Git
+
+## 🚀 Installation
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/Aqib2607/reqs.ai.git
+cd reqs.ai
+```
+
+### 2. Frontend Setup
+
+```bash
+# Install dependencies
+npm install
+
+# Build frontend (outputs to backend/public/)
+npm run build
+
+# For development with hot reload
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### 3. Backend Setup
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+# Navigate to backend directory
+cd backend
 
-**Use GitHub Codespaces**
+# Install PHP dependencies
+composer install
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+# Copy environment file
+cp .env.example .env
 
-## What technologies are used for this project?
+# Generate application key
+php artisan key:generate
 
-This project is built with:
+# Configure your database in .env file
+# DB_CONNECTION=mysql
+# DB_HOST=127.0.0.1
+# DB_PORT=3306
+# DB_DATABASE=reqs_ai
+# DB_USERNAME=root
+# DB_PASSWORD=
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+# Run migrations
+php artisan migrate
 
-## How can I deploy this project?
+# Start Laravel development server
+php artisan serve
+```
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+### 4. Configure AI API Keys
 
-## Can I connect a custom domain to my Lovable project?
+Visit `http://127.0.0.1:8000/api-config` after logging in to add your AI provider API keys:
 
-Yes, you can!
+- OpenAI
+- Google Gemini
+- Anthropic Claude
+- Groq
+- OpenRouter
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 🎯 Development
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+### Frontend Development
+
+```bash
+# Development server (port 5173)
+npm run dev
+
+# Build for production
+npm run build
+
+# Run tests
+npm run test
+```
+
+### Backend Development
+
+```bash
+cd backend
+
+# Start server
+php artisan serve
+
+# Run migrations
+php artisan migrate
+
+# Run tests
+php artisan test
+
+# Clear cache
+php artisan cache:clear
+php artisan config:clear
+```
+
+### Quick Rebuild Script
+
+```powershell
+# Windows PowerShell
+./rebuild.ps1
+```
+
+## 📁 Project Structure
+
+```
+reqs.ai/
+├── backend/              # Laravel backend
+│   ├── app/
+│   │   ├── Http/Controllers/
+│   │   ├── Models/
+│   │   └── Services/AI/
+│   ├── database/migrations/
+│   ├── routes/
+│   └── public/          # Frontend build output
+├── src/                 # React frontend
+│   ├── components/
+│   ├── pages/
+│   ├── hooks/
+│   ├── lib/
+│   └── store/
+└── public/
+```
+
+## 🔑 Key Features
+
+- **AI Orchestration** - Automatic failover across 5 AI providers
+- **Deep Research Pipeline** - 5-pass iterative refinement
+- **Secure API Management** - Encrypted key storage
+- **Version History** - Track document changes
+- **Export Options** - Markdown, Clean PDF, Academic PDF
+- **Team Collaboration** - Multi-user support
+- **Real-time Generation** - Streaming AI responses
+
+## 🌐 API Endpoints
+
+Base URL: `http://127.0.0.1:8000/api`
+
+### Authentication
+
+- `POST /register` - Register new user
+- `POST /login` - Login user
+- `POST /logout` - Logout user
+
+### Projects
+
+- `GET /projects` - List all projects
+- `POST /projects` - Create project
+- `GET /projects/{id}` - Get project details
+- `PUT /projects/{id}` - Update project
+- `DELETE /projects/{id}` - Delete project
+
+### Documents
+
+- `POST /documents/generate` - Generate document with AI
+- `POST /documents/regenerate` - Regenerate document section
+- `GET /documents/{id}` - Get document
+- `PUT /documents/{id}` - Update document
+- `GET /documents/{id}/versions` - Get version history
+
+### Export
+
+- `GET /export/{id}/markdown` - Export as Markdown
+- `GET /export/{id}/pdf` - Export as Clean PDF
+- `GET /export/{id}/pdf-academic` - Export as Academic PDF
+
+### API Keys
+
+- `GET /api-keys` - List API keys
+- `POST /api-keys` - Add API key
+- `PUT /api-keys/{id}` - Update API key
+- `DELETE /api-keys/{id}` - Delete API key
+
+## 📖 Documentation
+
+Comprehensive documentation is available in the `backend/docs/` directory:
+
+- **API_DOCUMENTATION.md** - Complete API reference
+- **AI_INTEGRATION.md** - AI orchestration guide
+- **SYSTEM_ARCHITECTURE.md** - Technical architecture
+- **USER_GUIDE.md** - End-user documentation
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is proprietary software. All rights reserved.
+
+## 👥 Authors
+
+- **Aqib Jawwad** - [@Aqib2607](https://github.com/Aqib2607)
+
+## 🙏 Acknowledgments
+
+- OpenAI, Anthropic, Google, Groq, and OpenRouter for AI APIs
+- Laravel and React communities
+- shadcn/ui for beautiful components

@@ -25,11 +25,11 @@ export default function LandingPage() {
       <nav className="fixed top-0 w-full z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-primary-foreground" />
+            <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center yellow-glow">
+              <Sparkles className="w-4 h-4 text-secondary" />
             </div>
             <span className="font-bold text-lg">
-              Reqs<span className="text-accent">.ai</span>
+              Reqs<span className="text-secondary">.ai</span>
             </span>
           </div>
           <div className="flex items-center gap-3">
@@ -51,7 +51,7 @@ export default function LandingPage() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[radial-gradient(circle,hsl(var(--ai-glow)/0.08),transparent_70%)]" />
         
         <div className="relative max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm mb-8 animate-fade-in">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-secondary/20 border border-secondary/40 text-secondary text-sm font-semibold mb-8 animate-fade-in yellow-glow">
             <Sparkles className="w-3.5 h-3.5" />
             AI-Powered Requirements Engineering
           </div>
@@ -68,11 +68,11 @@ export default function LandingPage() {
           
           <div className="flex items-center justify-center gap-4 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
             <Link to="/dashboard">
-              <Button size="lg" className="gradient-primary text-primary-foreground border-0 px-8 h-12 text-base">
+              <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-background font-bold border-0 px-8 h-12 text-base yellow-glow">
                 Start Building <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
             </Link>
-            <Button variant="outline" size="lg" className="h-12 px-8 text-base">
+            <Button variant="outline" size="lg" className="h-12 px-8 text-base border-secondary/50 text-secondary hover:bg-secondary/10">
               View Demo
             </Button>
           </div>
@@ -89,7 +89,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {steps.map((s, i) => (
               <div key={s.step} className="glass-card p-6 hover-lift group" style={{ animationDelay: `${i * 0.1}s` }}>
-                <div className="text-4xl font-black text-primary/20 mb-4 group-hover:text-primary/40 transition-colors">
+                <div className="text-4xl font-black text-secondary/60 mb-4 group-hover:text-secondary group-hover:yellow-glow transition-colors">
                   {s.step}
                 </div>
                 <h3 className="text-lg font-semibold mb-2">{s.title}</h3>
@@ -110,8 +110,8 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((f, i) => (
               <div key={f.title} className="glass-card p-6 hover-lift group">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:ai-glow transition-all">
-                  <f.icon className="w-5 h-5 text-primary" />
+                <div className="w-10 h-10 rounded-lg bg-secondary/20 border border-secondary/40 flex items-center justify-center mb-4 group-hover:yellow-glow transition-all">
+                  <f.icon className="w-5 h-5 text-secondary" />
                 </div>
                 <h3 className="text-lg font-semibold mb-2">{f.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{f.description}</p>
@@ -123,13 +123,13 @@ export default function LandingPage() {
 
       {/* CTA */}
       <section className="py-24 px-6">
-        <div className="max-w-3xl mx-auto text-center glass-card p-12 ai-glow">
+        <div className="max-w-3xl mx-auto text-center glass-card p-12 border-secondary/30 yellow-glow">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Build?</h2>
           <p className="text-muted-foreground text-lg mb-8">
             Start generating professional project documentation in minutes.
           </p>
           <Link to="/dashboard">
-            <Button size="lg" className="gradient-primary text-primary-foreground border-0 px-10 h-12 text-base">
+            <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-background font-bold border-0 px-10 h-12 text-base yellow-glow">
               Get Started Free <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
           </Link>
