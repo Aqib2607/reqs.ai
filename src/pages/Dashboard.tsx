@@ -1,9 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Plus, FileText, Palette, Layers, Clock, CheckCircle2, Loader2 } from "lucide-react";
+import { Plus, FileText, Palette, Layers, Clock, CheckCircle2, Loader2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAppStore } from "@/store/useAppStore";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 
 const statusConfig = {
   draft: { label: "Draft", icon: Clock, className: "text-muted-foreground bg-muted" },
@@ -12,7 +13,24 @@ const statusConfig = {
 };
 
 export default function Dashboard() {
-  const { projects, setCurrentProject, fetchProjects, isLoading, error } = useAppStore();
+  const { projects, setCurrentProject, fetchProjects, deleteProject, isLoading, error } = useAppStore();
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const { toast } = useToast();
+
+  const handleDelete = async (e: React.MouseEvent, projectId: string) => {
+    e.stopPropagation();
+    if (!confirm('Are you sure you want to delete this project?')) return;
+    
+    setDeletingId(projectId);
+    try {
+      await deleteProject(projectId);
+      toast({ title: "Project deleted", description: "The project has been removed successfully." });
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to delete project.", variant: "destructive" });
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   useEffect(() => {
     fetchProjects();
@@ -72,17 +90,28 @@ export default function Dashboard() {
             return (
               <div
                 key={project.id}
-                className="glass-card p-5 hover-lift cursor-pointer group"
+                className="glass-card p-5 hover-lift cursor-pointer group relative"
                 onClick={() => setCurrentProject(project)}
               >
                 <div className="flex items-start justify-between mb-4">
-                  <h3 className="font-semibold text-foreground group-hover:text-secondary transition-colors">
+                  <h3 className="font-semibold text-foreground group-hover:text-secondary transition-colors pr-8">
                     {project.name}
                   </h3>
-                  <span className={cn("inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium", status.className)}>
-                    <StatusIcon className={cn("w-3 h-3", project.status === "generating" && "animate-spin")} />
-                    {status.label}
-                  </span>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className={cn("inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium", status.className)}>
+                      <StatusIcon className={cn("w-3 h-3", project.status === "generating" && "animate-spin")} />
+                      {status.label}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 w-7 p-0 hover:bg-destructive/20 hover:text-destructive"
+                      onClick={(e) => handleDelete(e, project.id)}
+                      disabled={deletingId === project.id}
+                    >
+                      {deletingId === project.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                    </Button>
+                  </div>
                 </div>
                 <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{project.description}</p>
                 <div className="flex items-center gap-3 text-xs text-muted-foreground">

@@ -176,10 +176,10 @@ class ApiClient {
   }
 
   // Authentication
-  async register(name: string, email: string, password: string, password_confirmation: string) {
+  async register(name: string, email: string, password: string, password_confirmation: string, company?: string, role?: string, phone?: string) {
     const data = await this.request<{ user: User; token: string }>('/register', {
       method: 'POST',
-      body: JSON.stringify({ name, email, password, password_confirmation }),
+      body: JSON.stringify({ name, email, password, password_confirmation, company, role, phone }),
     });
     AuthManager.setToken(data.token);
     AuthManager.setUser(data.user);
@@ -218,6 +218,12 @@ class ApiClient {
     return this.request<{ project: Project }>('/projects', {
       method: 'POST',
       body: JSON.stringify({ name, description }),
+    });
+  }
+
+  async deleteProject(id: number) {
+    return this.request<{ message: string }>(`/projects/${id}`, {
+      method: 'DELETE',
     });
   }
 

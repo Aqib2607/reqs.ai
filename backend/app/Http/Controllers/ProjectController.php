@@ -12,9 +12,21 @@ class ProjectController extends Controller
         $projects = $request->user()->projects()
             ->with(['prdDocument', 'designDocument', 'techStackDocument'])
             ->latest()
-            ->get();
+            ->get()
+            ->map(function ($project) {
+                return [
+                    'id' => $project->id,
+                    'name' => $project->name,
+                    'description' => $project->description,
+                    'status' => $project->status,
+                    'created_at' => $project->created_at->format('Y-m-d'),
+                    'prd_document' => $project->prdDocument,
+                    'design_document' => $project->designDocument,
+                    'tech_stack_document' => $project->techStackDocument,
+                ];
+            });
 
-        return response()->json($projects);
+        return response()->json(['projects' => $projects]);
     }
 
     public function show(Request $request, $id)
@@ -39,6 +51,25 @@ class ProjectController extends Controller
             'status' => 'draft',
         ]);
 
-        return response()->json($project, 201);
+        return response()->json([
+            'project' => [
+                'id' => $project->id,
+                'name' => $project->name,
+                'description' => $project->description,
+                'status' => $project->status,
+                'created_at' => $project->created_at->format('Y-m-d'),
+                'prd_document' => null,
+                'design_document' => null,
+                'tech_stack_document' => null,
+            ]
+        ], 201);
+    }
+
+    public function destroy(Request $request, $id)
+    {
+        $project = $request->user()->projects()->findOrFail($id);
+        $project->delete();
+
+        return response()->json(['message' => 'Project deleted successfully']);
     }
 }

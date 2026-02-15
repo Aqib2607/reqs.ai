@@ -16,6 +16,9 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
+            'company' => 'nullable|string|max:255',
+            'role' => 'nullable|string|max:255',
+            'phone' => 'nullable|string|max:20',
         ]);
 
         /** @var \App\Models\User $user */
@@ -23,6 +26,10 @@ class AuthController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
+            'company' => $validated['company'] ?? null,
+            'role' => $validated['role'] ?? null,
+            'phone' => $validated['phone'] ?? null,
+            'plan' => 'free',
         ]);
 
         $token = $user->createToken('auth-token')->plainTextToken;
