@@ -1,0 +1,158 @@
+{
+  "project_name": "Reqs.ai",
+  "phase": "backend_system_phase",
+  "reference_documents": ["PRD", "Tech Stack Document"],
+  "objective": "Build full Laravel backend system including AI orchestration, database schema, API routing, security enforcement, version tracking, and PDF export. Must integrate cleanly with frontend.",
+  "tech_stack": {
+    "framework": "Laravel 11+",
+    "language": "PHP 8.3+",
+    "database": "MySQL",
+    "pdf_engine": "DomPDF",
+    "auth": "Laravel Sanctum"
+  },
+  "phases": {
+    "phase_1_foundation": {
+      "setup": [
+        "Initialize Laravel project",
+        "Configure Sanctum authentication",
+        "Setup MySQL connection",
+        "Enable CORS for frontend",
+        "Create environment configuration"
+      ]
+    },
+    "phase_2_mvp": {
+      "database_schema": {
+        "tables": [
+          "users",
+          "projects",
+          "prd_documents",
+          "design_documents",
+          "tech_stack_documents",
+          "document_versions",
+          "api_keys",
+          "ai_logs"
+        ]
+      },
+      "api_structure": {
+        "auth": [
+          "POST /api/register",
+          "POST /api/login",
+          "POST /api/logout"
+        ],
+        "projects": [
+          "POST /api/projects",
+          "GET /api/projects",
+          "GET /api/projects/{id}"
+        ],
+        "documents": [
+          "POST /api/prd/generate",
+          "POST /api/design/generate",
+          "POST /api/techstack/generate",
+          "POST /api/document/regenerate",
+          "POST /api/document/approve"
+        ],
+        "api_keys": [
+          "POST /api/keys",
+          "GET /api/keys",
+          "PATCH /api/keys/{id}",
+          "DELETE /api/keys/{id}"
+        ],
+        "export": [
+          "GET /api/export/markdown/{project_id}",
+          "GET /api/export/pdf-clean/{project_id}",
+          "GET /api/export/pdf-academic/{project_id}"
+        ]
+      }
+    },
+    "phase_3_feature_expansion": {
+      "ai_orchestration": {
+        "components": [
+          "AIProviderInterface",
+          "OpenAIProvider",
+          "GeminiProvider",
+          "AnthropicProvider",
+          "GroqProvider",
+          "OpenRouterProvider"
+        ],
+        "routing_logic": [
+          "Filter active keys",
+          "Sort by manual priority",
+          "Sort by avg latency",
+          "Attempt request",
+          "Fallback on failure",
+          "Log metrics"
+        ],
+        "deep_research_pipeline": [
+          "Draft pass",
+          "Critique pass",
+          "Gap detection",
+          "Expansion pass",
+          "Final validation"
+        ]
+      }
+    },
+    "phase_4_security_hardening": {
+      "security_enforcement": [
+        "Encrypt API keys using Laravel Crypt",
+        "Sanitize user input",
+        "Prevent prompt injection",
+        "Validate structured AI output",
+        "Mask keys in API responses"
+      ],
+      "validation_rules": [
+        "Required headings present",
+        "Minimum content length",
+        "Proper markdown structure"
+      ]
+    },
+    "phase_5_scalability_and_automation": {
+      "performance": [
+        "Section-based generation",
+        "Provider latency tracking",
+        "Token usage logging",
+        "Retry with exponential backoff"
+      ],
+      "environment_variables": [
+        "APP_ENV",
+        "APP_KEY",
+        "DB_CONNECTION",
+        "DB_HOST",
+        "DB_PORT",
+        "DB_DATABASE",
+        "DB_USERNAME",
+        "DB_PASSWORD",
+        "AI_MAX_RETRIES",
+        "AI_DEFAULT_MODEL",
+        "AI_TIMEOUT"
+      ]
+    },
+    "phase_6_launch_and_monitoring": {
+      "devops": [
+        "Git branch agent/reqs-ai",
+        "Commit convention enforcement",
+        "Logging configuration",
+        "Production config separation"
+      ],
+      "observability": [
+        "Log AI latency",
+        "Log failover events",
+        "Log token usage",
+        "Monitor document generation time"
+      ],
+      "frontend_polishing_and_integration": [
+        "Return structured JSON responses",
+        "Ensure CORS configured",
+        "Provide consistent error format",
+        "Support streaming-ready endpoints (future)"
+      ]
+    }
+  },
+  "strict_rules": [
+    "Follow PRD structure exactly",
+    "Implement encryption for API keys",
+    "Implement provider failover routing",
+    "Log all AI interactions",
+    "Ensure free-tier compatibility",
+    "Maintain modular architecture"
+  ]
+}
