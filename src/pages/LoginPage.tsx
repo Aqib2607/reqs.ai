@@ -1,30 +1,47 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Sparkles, Mail, Github, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { api } from "@/lib/api";
+import { useAppStore } from "@/store/useAppStore";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { setUser } = useAppStore();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) return;
+    
     setIsLoading(true);
-    // Mock login
-    setTimeout(() => {
-      setIsLoading(false);
+    setError(null);
+    
+    try {
+      const response = await api.login(email, password);
+      setUser(response.user);
       toast({ title: "Welcome back!", description: "You've been signed in successfully." });
-      window.location.href = "/dashboard";
-    }, 1200);
+      navigate("/dashboard");
+    } catch (err: any) {
+      setError(err.message || "Invalid email or password");
+      toast({ 
+        title: "Login Failed", 
+        description: err.message || "Invalid email or password",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleOAuth = (provider: string) => {
-    toast({ title: `${provider} Sign In`, description: `Redirecting to ${provider}...` });
+    toast({ title: `${provider} Sign In`, description: `OAuth integration coming soon...` });
   };
 
   return (
@@ -84,6 +101,12 @@ export default function LoginPage() {
             </div>
           </div>
 
+          {error && (
+            <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+              <p className="text-sm text-destructive">{error}</p>
+            </div>
+          )}
+
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <label className="text-sm text-muted-foreground mb-1.5 block">Email</label>
@@ -131,19 +154,18 @@ export default function LoginPage() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full h-11 gradient-primary text-primary-foreground border-0"
+              className="w-full h-11 bg-secondary hover:bg-secondary/90 text-background font-bold border-0"
             >
               {isLoading ? "Signing in..." : "Sign In"}
-              {!isLoading && <ArrowRight className="ml-2 w-4 h-4" />}
+              <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-muted-foreground">
-            Don't have an account?{" "}
-            <Link to="/register" className="text-primary hover:underline font-medium">
-              Sign up
-            </Link>
-          </p>
+          <Link to="/register">
+            <p className="text-center text-sm text-muted-foreground mt-6">
+              Don't have an account? <span className="text-secondary hover:underline font-medium">Sign up</span>
+            </p>
+          </Link>
         </div>
       </div>
     </div>

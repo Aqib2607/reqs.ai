@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, Trash2, Eye, EyeOff, Activity, CheckCircle2, Circle, AlertCircle, Key, Zap, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAppStore } from "@/store/useAppStore";
@@ -36,37 +36,65 @@ const checklist: ChecklistItem[] = [
   },
 ];
 
+const providerOptions = [
+  { value: "openai", label: "OpenAI (GPT-4, GPT-3.5)" },
+  { value: "gemini", label: "Google Gemini Pro" },
+  { value: "anthropic", label: "Anthropic Claude 3" },
+  { value: "groq", label: "Groq (Llama 3)" },
+  { value: "openrouter", label: "OpenRouter (Multi-model)" },
+];
+
 export default function ApiConfig() {
-  const { apiKeys, toggleApiKey, removeApiKey, addApiKey } = useAppStore();
+  const { apiKeys, toggleApiKey, removeApiKey, addApiKey, fetchApiKeys, isLoading, error } = useAppStore();
   const [showModal, setShowModal] = useState(false);
-  const [newKey, setNewKey] = useState({ name: "", provider: "", key: "" });
+  const [newKey, setNewKey] = useState({ name: "", provider: "openai", key: "", priority: 10 });
   const [visibleKeys, setVisibleKeys] = useState<Set<string>>(new Set());
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const handleAdd = () => {
-    if (!newKey.name || !newKey.key) return;
-    addApiKey({
-      id: Date.now().toString(),
-      name: newKey.name,
-      provider: newKey.provider,
-      key: newKey.key.slice(0, 6) + "..." + newKey.key.slice(-4),
-      active: true,
-      latency: Math.floor(Math.random() * 500) + 800,
-    });
-    setNewKey({ name: "", provider: "", key: "" });
-    setShowModal(false);
+  useEffect(() => {
+    fetchApiKeys();
+  }, [fetchApiKeys]);
+
+  const handleAdd = async () => {
+    if (!newKey.name || !newKey.key || !newKey.provider) return;
+    
+    setSubmitError(null);
+    try {
+      await addApiKey(newKey.provider, newKey.key, newKey.name, newKey.priority);
+      setNewKey({ name: "", provider: "openai", key: "", priority: 10 });
+      setShowModal(false);
+    } catch (error: any) {
+      setSubmitError(error.message || 'Failed to add API key');
+    }
   };
-
   const completedCount = checklist.filter((c) => c.check(apiKeys)).length;
+
+  if (isLoading && apiKeys.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-[60vh]">
+        <Activity className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-5xl mx-auto">
+      {error && (
+        <div className="glass-card p-4 mb-6 border border-destructive/50 bg-destructive/5">
+          <p className="text-sm text-destructive flex items-center gap-2">
+            <AlertCircle className="w-4 h-4" />
+            {error}
+          </p>
+        </div>
+      )}
+      
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold">API Configuration</h1>
           <p className="text-muted-foreground text-sm mt-1">Manage your AI provider API keys</p>
         </div>
-        <Button className="gradient-primary text-primary-foreground border-0" onClick={() => setShowModal(true)}>
+        <Button className="bg-secondary hover:bg-secondary/90 text-background font-bold border-0" onClick={() => setShowModal(true)}>
           <Plus className="w-4 h-4 mr-2" /> Add API Key
         </Button>
       </div>
@@ -206,6 +234,14 @@ export default function ApiConfig() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
           <div className="glass-card p-6 w-full max-w-md animate-fade-in">
             <h3 className="text-lg font-bold mb-4">Add API Key</h3>
+            {submitError && (
+              <div className="mb-4 p-3 border border-destructive/50 bg-destructive/5 rounded-lg">
+                <p className="text-xs text-destructive flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4" />
+                  {submitError}
+                </p>
+              </div>
+            )}
             <div className="space-y-4">
               <div>
                 <label className="text-sm text-muted-foreground mb-1.5 block">Name</label>
@@ -213,17 +249,20 @@ export default function ApiConfig() {
                   value={newKey.name}
                   onChange={(e) => setNewKey({ ...newKey, name: e.target.value })}
                   placeholder="e.g., OpenAI GPT-4"
-                  className="w-full bg-muted/50 border border-border rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  className="w-full bg-muted/50 border border-border rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-secondary/50"
                 />
               </div>
               <div>
                 <label className="text-sm text-muted-foreground mb-1.5 block">Provider</label>
-                <input
+                <select
                   value={newKey.provider}
                   onChange={(e) => setNewKey({ ...newKey, provider: e.target.value })}
-                  placeholder="e.g., OpenAI"
-                  className="w-full bg-muted/50 border border-border rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-                />
+                  className="w-full bg-muted/50 border border-border rounded-lg px-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-secondary/50"
+                >
+                  {providerOptions.map((opt) => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="text-sm text-muted-foreground mb-1.5 block">API Key</label>
@@ -232,17 +271,35 @@ export default function ApiConfig() {
                   value={newKey.key}
                   onChange={(e) => setNewKey({ ...newKey, key: e.target.value })}
                   placeholder="sk-..."
-                  className="w-full bg-muted/50 border border-border rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  className="w-full bg-muted/50 border border-border rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-secondary/50"
                 />
                 <p className="text-xs text-muted-foreground mt-1.5 flex items-center gap-1">
-                  <Shield className="w-3 h-3" /> Your key will be masked after entry
+                  <Shield className="w-3 h-3" /> Your key will be encrypted and masked after entry
+                </p>
+              </div>
+              <div>
+                <label className="text-sm text-muted-foreground mb-1.5 block">Priority (1-100)</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="100"
+                  value={newKey.priority}
+                  onChange={(e) => setNewKey({ ...newKey, priority: parseInt(e.target.value) || 10 })}
+                  className="w-full bg-muted/50 border border-border rounded-lg px-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-secondary/50"
+                />
+                <p className="text-xs text-muted-foreground mt-1.5">
+                  Higher priority keys are used first (default: 10)
                 </p>
               </div>
             </div>
             <div className="flex justify-end gap-3 mt-6">
-              <Button variant="outline" onClick={() => setShowModal(false)}>Cancel</Button>
-              <Button className="gradient-primary text-primary-foreground border-0" onClick={handleAdd} disabled={!newKey.name || !newKey.key}>
-                Add Key
+              <Button variant="outline" onClick={() => { setShowModal(false); setSubmitError(null); }}>Cancel</Button>
+              <Button 
+                className="bg-secondary hover:bg-secondary/90 text-background font-bold border-0" 
+                onClick={handleAdd} 
+                disabled={!newKey.name || !newKey.key || isLoading}
+              >
+                {isLoading ? 'Adding...' : 'Add Key'}
               </Button>
             </div>
           </div>
