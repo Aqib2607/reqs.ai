@@ -64,8 +64,8 @@ export default function ApiConfig() {
       await addApiKey(newKey.provider, newKey.key, newKey.name, newKey.priority);
       setNewKey({ name: "", provider: "openai", key: "", priority: 10 });
       setShowModal(false);
-    } catch (error: any) {
-      setSubmitError(error.message || 'Failed to add API key');
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : 'Failed to add API key');
     }
   };
   const completedCount = checklist.filter((c) => c.check(apiKeys)).length;
@@ -79,7 +79,7 @@ export default function ApiConfig() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="max-w-5xl mx-auto px-4">
       {error && (
         <div className="glass-card p-4 mb-6 border border-destructive/50 bg-destructive/5">
           <p className="text-sm text-destructive flex items-center gap-2">
@@ -89,9 +89,9 @@ export default function ApiConfig() {
         </div>
       )}
       
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 md:mb-8 gap-4">
         <div>
-          <h1 className="text-2xl font-bold">API Configuration</h1>
+          <h1 className="text-xl md:text-2xl font-bold">API Configuration</h1>
           <p className="text-muted-foreground text-sm mt-1">Manage your AI provider API keys</p>
         </div>
         <Button className="bg-secondary hover:bg-secondary/90 text-background font-bold border-0" onClick={() => setShowModal(true)}>
@@ -140,7 +140,7 @@ export default function ApiConfig() {
       </div>
 
       {/* Keys Table */}
-      <div className="glass-card overflow-hidden">
+      <div className="glass-card overflow-hidden overflow-x-auto">
         {apiKeys.length === 0 ? (
           <div className="p-12 text-center">
             <Key className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
@@ -150,7 +150,7 @@ export default function ApiConfig() {
             </Button>
           </div>
         ) : (
-          <table className="w-full">
+          <table className="w-full min-w-[640px]">
             <thead>
               <tr className="border-b border-border">
                 <th className="text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider px-6 py-3">Name</th>
@@ -191,7 +191,11 @@ export default function ApiConfig() {
                       <button
                         onClick={() => setVisibleKeys((prev) => {
                           const next = new Set(prev);
-                          next.has(key.id) ? next.delete(key.id) : next.add(key.id);
+                          if (next.has(key.id)) {
+                            next.delete(key.id);
+                          } else {
+                            next.add(key.id);
+                          }
                           return next;
                         })}
                         className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
@@ -231,8 +235,8 @@ export default function ApiConfig() {
 
       {/* Add Key Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
-          <div className="glass-card p-6 w-full max-w-md animate-fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4">
+          <div className="glass-card p-4 md:p-6 w-full max-w-md animate-fade-in">
             <h3 className="text-lg font-bold mb-4">Add API Key</h3>
             {submitError && (
               <div className="mb-4 p-3 border border-destructive/50 bg-destructive/5 rounded-lg">

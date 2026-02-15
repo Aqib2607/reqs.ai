@@ -83,7 +83,11 @@ export default function DocumentEditor() {
   const handleApprove = (id: string) => {
     setApprovedSections((prev) => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
       return next;
     });
   };
@@ -119,9 +123,9 @@ export default function DocumentEditor() {
 
   return (
     <>
-      <div className="flex gap-0 -m-6 h-[calc(100vh-3.5rem)]">
+      <div className="flex flex-col lg:flex-row gap-0 -m-6 h-auto lg:h-[calc(100vh-3.5rem)]">
         {/* Section Navigator */}
-        <div className="w-64 border-r border-border bg-card/30 p-4 overflow-y-auto shrink-0">
+        <div className="w-full lg:w-64 border-b lg:border-b-0 lg:border-r border-border bg-card/30 p-4 overflow-y-auto shrink-0 max-h-[40vh] lg:max-h-none">
           <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">
             {docType === "prd" ? "PRD" : docType === "design" ? "Design Doc" : "Tech Stack"} Sections
           </h3>
@@ -157,11 +161,11 @@ export default function DocumentEditor() {
         </div>
 
         {/* Editor Area */}
-        <div className="flex-1 overflow-y-auto p-8">
+        <div className="flex-1 overflow-y-auto p-4 md:p-8">
           <div className="max-w-3xl mx-auto">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold">{currentSection.title}</h2>
-              <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-3">
+              <h2 className="text-lg md:text-xl font-bold">{currentSection.title}</h2>
+              <div className="flex gap-2 flex-wrap">
                 <Button variant="outline" size="sm" onClick={() => setShowVersionHistory(true)}>
                   <Clock className="w-3.5 h-3.5 mr-1.5" /> History
                 </Button>
@@ -244,7 +248,7 @@ export default function DocumentEditor() {
         </div>
 
         {/* AI Action Panel */}
-        <div className="w-72 border-l border-border bg-card/30 p-4 overflow-y-auto shrink-0">
+        <div className="w-full lg:w-72 border-t lg:border-t-0 lg:border-l border-border bg-card/30 p-4 overflow-y-auto shrink-0 max-h-[60vh] lg:max-h-none">
           <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">AI Actions</h3>
 
           {!hasActiveApiKey && (

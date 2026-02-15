@@ -38,10 +38,10 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto">
-      <div className="flex items-center justify-between mb-8">
+    <div className="max-w-6xl mx-auto px-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 md:mb-8 gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Projects</h1>
+          <h1 className="text-xl md:text-2xl font-bold">Projects</h1>
           <p className="text-muted-foreground text-sm mt-1">Manage your AI-generated project documentation</p>
         </div>
         <Link to="/new-project">

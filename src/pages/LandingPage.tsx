@@ -47,6 +47,9 @@ export default function LandingPage() {
 
       {/* Hero */}
       <section className="relative pt-32 pb-20 px-6 overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=80" alt="" className="w-full h-full object-cover" />
+        </div>
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.15),transparent_60%)]" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[radial-gradient(circle,hsl(var(--ai-glow)/0.08),transparent_70%)]" />
         
@@ -79,6 +82,29 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Visual Showcase */}
+      <section className="py-20 px-6 bg-gradient-to-b from-background to-primary/5">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">AI-Powered Documentation</h2>
+              <p className="text-muted-foreground text-lg mb-6">
+                Transform your ideas into comprehensive technical documentation with the power of advanced AI models.
+              </p>
+              <ul className="space-y-3 text-muted-foreground">
+                <li className="flex items-center gap-2"><Sparkles className="w-4 h-4 text-secondary" /> Multi-provider AI orchestration</li>
+                <li className="flex items-center gap-2"><Sparkles className="w-4 h-4 text-secondary" /> 5-pass iterative refinement</li>
+                <li className="flex items-center gap-2"><Sparkles className="w-4 h-4 text-secondary" /> Real-time streaming responses</li>
+              </ul>
+            </div>
+            <div className="relative">
+              <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80" alt="AI Technology" className="rounded-xl shadow-2xl" />
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-tr from-primary/20 to-transparent" />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* How It Works */}
       <section className="py-24 px-6">
         <div className="max-w-6xl mx-auto">
@@ -101,8 +127,11 @@ export default function LandingPage() {
       </section>
 
       {/* Features Grid */}
-      <section className="py-24 px-6 border-t border-border/50">
-        <div className="max-w-6xl mx-auto">
+      <section className="py-24 px-6 border-t border-border/50 relative overflow-hidden">
+        <div className="absolute right-0 top-1/4 w-1/3 h-1/2 opacity-5">
+          <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=600&q=80" alt="" className="w-full h-full object-cover" />
+        </div>
+        <div className="max-w-6xl mx-auto relative z-10">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Powerful Features</h2>
             <p className="text-muted-foreground text-lg">Everything you need to go from idea to implementation</p>
@@ -121,9 +150,35 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Tech Stack Showcase */}
+      <section className="py-20 px-6 border-t border-border/50">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div className="relative order-2 md:order-1">
+              <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&q=80" alt="Development" className="rounded-xl shadow-2xl" />
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-tl from-secondary/20 to-transparent" />
+            </div>
+            <div className="order-1 md:order-2">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Smart Tech Stack Recommendations</h2>
+              <p className="text-muted-foreground text-lg mb-6">
+                Get AI-powered technology stack suggestions tailored to your project requirements, team size, and constraints.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {['React', 'Laravel', 'TypeScript', 'MySQL', 'Tailwind'].map(tech => (
+                  <span key={tech} className="px-3 py-1 rounded-full bg-secondary/20 border border-secondary/40 text-secondary text-sm">{tech}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
-      <section className="py-24 px-6">
-        <div className="max-w-3xl mx-auto text-center glass-card p-12 border-secondary/30 yellow-glow">
+      <section className="py-24 px-6 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-5">
+          <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1920&q=80" alt="" className="w-full h-full object-cover" />
+        </div>
+        <div className="max-w-3xl mx-auto text-center glass-card p-12 border-secondary/30 yellow-glow relative z-10">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Build?</h2>
           <p className="text-muted-foreground text-lg mb-8">
             Start generating professional project documentation in minutes.
