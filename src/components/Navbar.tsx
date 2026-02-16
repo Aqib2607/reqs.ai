@@ -16,7 +16,7 @@ export function Navbar({ activePage = "home" }: NavbarProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center yellow-glow">
-              <Sparkles className="w-4 h-4 text-secondary" />
+              <img src="/logo.svg" alt="Reqs.ai Logo" className="w-5 h-5" />
             </div>
             <span className="font-bold text-lg">
               Reqs<span className="text-secondary">.ai</span>
