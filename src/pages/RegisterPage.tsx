@@ -249,7 +249,7 @@ export default function RegisterPage() {
             <Button
               type="submit"
               disabled={isLoading || !passwordChecks.every((c) => c.met)}
-              className="w-full h-11 bg-secondary hover:bg-secondary/90 text-background font-bold border-0"
+              className="w-full h-11 bg-secondary hover:bg-secondary/90 text-secondary-foreground font-bold border-0"
             >
               {isLoading ? "Creating account..." : "Create Account"}
               <ArrowRight className="w-4 h-4 ml-2" />

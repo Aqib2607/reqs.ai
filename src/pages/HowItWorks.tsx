@@ -98,7 +98,7 @@ export default function HowItWorks() {
             Experience the power of AI-driven documentation yourself.
           </p>
           <Link to="/register">
-            <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-background font-bold">
+            <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-bold">
               Try It Free
             </Button>
           </Link>

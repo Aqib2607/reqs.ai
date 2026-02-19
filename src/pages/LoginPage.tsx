@@ -155,7 +155,7 @@ export default function LoginPage() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full h-11 bg-secondary hover:bg-secondary/90 text-background font-bold border-0"
+              className="w-full h-11 bg-secondary hover:bg-secondary/90 text-secondary-foreground font-bold border-0"
             >
               {isLoading ? "Signing in..." : "Sign In"}
               <ArrowRight className="w-4 h-4 ml-2" />

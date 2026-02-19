@@ -58,7 +58,7 @@ export default function Features() {
             Join teams already using Reqs.ai to streamline their documentation process.
           </p>
           <Link to="/register">
-            <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-background font-bold">
+            <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-bold">
               Start Free Trial
             </Button>
           </Link>

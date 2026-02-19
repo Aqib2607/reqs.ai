@@ -196,7 +196,7 @@ export default function NewProject() {
             </Button>
             <Button 
               onClick={() => { setWizardStep(3); handleGenerate(); }} 
-              className="bg-secondary hover:bg-secondary/90 text-background font-bold border-0"
+              className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-bold border-0"
             >
               <Sparkles className="mr-2 w-4 h-4" /> Generate Documents
             </Button>

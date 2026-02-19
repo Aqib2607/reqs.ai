@@ -94,7 +94,7 @@ export default function ApiConfig() {
           <h1 className="text-xl md:text-2xl font-bold">API Configuration</h1>
           <p className="text-muted-foreground text-sm mt-1">Manage your AI provider API keys</p>
         </div>
-        <Button className="bg-secondary hover:bg-secondary/90 text-background font-bold border-0" onClick={() => setShowModal(true)}>
+        <Button className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-bold border-0" onClick={() => setShowModal(true)}>
           <Plus className="w-4 h-4 mr-2" /> Add API Key
         </Button>
       </div>
@@ -299,7 +299,7 @@ export default function ApiConfig() {
             <div className="flex justify-end gap-3 mt-6">
               <Button variant="outline" onClick={() => { setShowModal(false); setSubmitError(null); }}>Cancel</Button>
               <Button 
-                className="bg-secondary hover:bg-secondary/90 text-background font-bold border-0" 
+                className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-bold border-0" 
                 onClick={handleAdd} 
                 disabled={!newKey.name || !newKey.key || isLoading}
               >

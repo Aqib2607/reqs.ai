@@ -78,12 +78,12 @@ export default function Pricing() {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {plans.map((plan) => (
-              <div 
-                key={plan.name} 
+              <div
+                key={plan.name}
                 className={`glass-card p-8 hover-lift relative ${plan.popular ? 'border-secondary/50 ring-2 ring-secondary/20' : ''}`}
               >
                 {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-secondary text-background text-xs font-bold rounded-full">
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-secondary text-secondary-foreground text-xs font-bold rounded-full">
                     MOST POPULAR
                   </div>
                 )}
@@ -95,7 +95,7 @@ export default function Pricing() {
                   </div>
                   <p className="text-sm text-muted-foreground">{plan.description}</p>
                 </div>
-                
+
                 <ul className="space-y-3 mb-8">
                   {plan.features.map((feature) => (
                     <li key={feature} className="flex items-start gap-3 text-sm">
@@ -106,8 +106,8 @@ export default function Pricing() {
                 </ul>
 
                 <Link to={plan.name === "Enterprise" ? "/contact" : "/register"}>
-                  <Button 
-                    className={`w-full ${plan.popular ? 'bg-secondary hover:bg-secondary/90 text-background' : ''}`}
+                  <Button
+                    className={`w-full ${plan.popular ? 'bg-secondary hover:bg-secondary/90 text-secondary-foreground' : ''}`}
                     variant={plan.popular ? "default" : "outline"}
                   >
                     {plan.cta}

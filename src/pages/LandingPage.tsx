@@ -31,26 +31,26 @@ export default function LandingPage() {
         </div>
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.15),transparent_60%)]" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[radial-gradient(circle,hsl(var(--ai-glow)/0.08),transparent_70%)]" />
-        
+
         <div className="relative max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-secondary/20 border border-secondary/40 text-secondary text-sm font-semibold mb-8 animate-fade-in yellow-glow">
             <Sparkles className="w-3.5 h-3.5" />
             AI-Powered Requirements Engineering
           </div>
-          
+
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.1] mb-6 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
             From Idea to{" "}
             <span className="gradient-text">Production-Ready</span>{" "}
             Docs
           </h1>
-          
+
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
             Generate comprehensive PRDs, design documents, and tech stack recommendations from a single project idea. Powered by AI.
           </p>
-          
+
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
             <Link to="/dashboard">
-              <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-background font-bold border-0 px-6 sm:px-8 h-11 sm:h-12 text-sm sm:text-base yellow-glow w-full sm:w-auto">
+              <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-bold border-0 px-6 sm:px-8 h-11 sm:h-12 text-sm sm:text-base yellow-glow w-full sm:w-auto">
                 Start Building <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
             </Link>
@@ -163,7 +163,7 @@ export default function LandingPage() {
             Start generating professional project documentation in minutes.
           </p>
           <Link to="/dashboard">
-            <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-background font-bold border-0 px-10 h-12 text-base yellow-glow">
+            <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-bold border-0 px-10 h-12 text-base yellow-glow">
               Get Started Free <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
           </Link>

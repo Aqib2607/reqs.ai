@@ -63,7 +63,7 @@ export default function Dashboard() {
           <p className="text-muted-foreground text-sm mt-1">Manage your AI-generated project documentation</p>
         </div>
         <Link to="/new-project">
-          <Button className="bg-secondary hover:bg-secondary/90 text-background font-bold border-0">
+          <Button className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-bold border-0">
             <Plus className="w-4 h-4 mr-2" /> New Project
           </Button>
         </Link>
@@ -77,7 +77,7 @@ export default function Dashboard() {
             Get started by creating your first project
           </p>
           <Link to="/new-project">
-            <Button className="bg-secondary hover:bg-secondary/90 text-background font-bold">
+            <Button className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-bold">
               <Plus className="w-4 h-4 mr-2" /> Create Your First Project
             </Button>
           </Link>
