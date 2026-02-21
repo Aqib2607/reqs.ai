@@ -33,7 +33,7 @@ const bottomItems = [
 ];
 
 export function AppSidebar() {
-  const { sidebarCollapsed, toggleSidebar } = useAppStore();
+  const { sidebarCollapsed, toggleSidebar, currentProject } = useAppStore();
   const location = useLocation();
 
   return (
@@ -47,12 +47,12 @@ export function AppSidebar() {
       >
         {/* Logo */}
         <div className="flex items-center gap-2 px-4 h-14 border-b border-border shrink-0">
-          <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center yellow-glow">
-            <img src="/logo.svg" alt="App Logo" className="w-5 h-5" />
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center yellow-glow overflow-hidden">
+            <img src="/logo.png" alt="Reqs.ai Logo" className="w-full h-full object-cover" />
           </div>
           {!sidebarCollapsed && (
             <span className="font-bold text-lg text-foreground tracking-tight">
-              Reqs<span className="text-secondary">.ai</span>
+              Reqs<span className="text-primary">.ai</span>
             </span>
           )}
         </div>
@@ -60,6 +60,10 @@ export function AppSidebar() {
         {/* Nav items */}
         <nav className="flex-1 py-4 px-2 space-y-1 overflow-y-auto">
           {navItems.map((item) => {
+            if (!currentProject && item.path.startsWith("/editor")) {
+              return null;
+            }
+
             const isActive = location.pathname === item.path ||
               (item.path.startsWith("/editor") && location.pathname.startsWith(item.path));
             return (
@@ -113,6 +117,10 @@ export function AppSidebar() {
             { label: "API", icon: Key, path: "/api-config" },
             { label: "Profile", icon: User, path: "/profile" },
           ].map((item) => {
+            if (!currentProject && item.path.startsWith("/editor")) {
+              return null;
+            }
+
             const isActive = location.pathname === item.path ||
               (item.path.startsWith("/editor") && location.pathname.startsWith("/editor"));
             return (

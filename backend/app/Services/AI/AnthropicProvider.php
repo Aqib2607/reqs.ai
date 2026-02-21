@@ -20,19 +20,19 @@ class AnthropicProvider implements AIProviderInterface
         $startTime = microtime(true);
 
         try {
-            $response = Http::withHeaders([
+            $response = Http::withoutVerifying()->withHeaders([
                 'x-api-key' => $this->apiKey,
                 'anthropic-version' => '2023-06-01',
                 'Content-Type' => 'application/json',
             ])
-            ->timeout($options['timeout'] ?? config('app.ai_timeout', 120))
-            ->post('https://api.anthropic.com/v1/messages', [
-                'model' => $options['model'] ?? $this->model,
-                'max_tokens' => $options['max_tokens'] ?? 4000,
-                'messages' => [
-                    ['role' => 'user', 'content' => $prompt]
-                ],
-            ]);
+                ->timeout($options['timeout'] ?? config('app.ai_timeout', 120))
+                ->post('https://api.anthropic.com/v1/messages', [
+                    'model' => $options['model'] ?? $this->model,
+                    'max_tokens' => $options['max_tokens'] ?? 4000,
+                    'messages' => [
+                        ['role' => 'user', 'content' => $prompt]
+                    ],
+                ]);
 
             $latency = (microtime(true) - $startTime) * 1000;
 
@@ -52,7 +52,7 @@ class AnthropicProvider implements AIProviderInterface
             ];
         } catch (\Exception $e) {
             $latency = (microtime(true) - $startTime) * 1000;
-            
+
             return [
                 'error' => $e->getMessage(),
                 'latency_ms' => $latency,

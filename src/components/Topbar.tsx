@@ -3,13 +3,17 @@ import { useAppStore } from "@/store/useAppStore";
 import { cn } from "@/lib/utils";
 
 export function Topbar() {
-  const { currentProject, sidebarCollapsed } = useAppStore();
+  const { currentProject, sidebarCollapsed, user } = useAppStore();
+
+  const initials = user?.name
+    ? user.name.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2)
+    : "U";
 
   return (
     <header
       className={cn(
         "fixed top-0 right-0 z-30 h-14 border-b border-border bg-background/80 backdrop-blur-xl flex items-center justify-between px-4 md:px-6 transition-all duration-300",
-        "left-0 md:left-16 lg:left-[260px]"
+        sidebarCollapsed ? "left-0 md:left-16" : "left-0 md:left-[260px]"
       )}
     >
       <div className="flex items-center gap-3">
@@ -33,10 +37,10 @@ export function Topbar() {
 
         {/* User */}
         <button className="flex items-center gap-2 px-2 md:px-3 py-1.5 rounded-lg hover:bg-secondary/10 hover:border hover:border-secondary/30 transition-colors">
-          <div className="w-7 h-7 rounded-full bg-secondary/20 border border-secondary/40 flex items-center justify-center">
-            <User className="w-4 h-4 text-secondary" />
+          <div className="w-7 h-7 rounded-full bg-secondary/20 border border-secondary/40 flex items-center justify-center text-xs font-bold text-secondary">
+            {initials}
           </div>
-          <span className="text-sm text-foreground hidden lg:block">User</span>
+          <span className="text-sm text-foreground hidden lg:block">{user?.name?.split(" ")[0] || "User"}</span>
           <ChevronDown className="w-3 h-3 text-muted-foreground hidden sm:block" />
         </button>
       </div>

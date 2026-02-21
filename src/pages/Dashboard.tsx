@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Plus, FileText, Palette, Layers, Clock, CheckCircle2, Loader2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAppStore } from "@/store/useAppStore";
@@ -16,11 +16,12 @@ export default function Dashboard() {
   const { projects, setCurrentProject, fetchProjects, deleteProject, isLoading, error } = useAppStore();
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleDelete = async (e: React.MouseEvent, projectId: string) => {
     e.stopPropagation();
     if (!confirm('Are you sure you want to delete this project?')) return;
-    
+
     setDeletingId(projectId);
     try {
       await deleteProject(projectId);
@@ -91,7 +92,10 @@ export default function Dashboard() {
               <div
                 key={project.id}
                 className="glass-card p-5 hover-lift cursor-pointer group relative"
-                onClick={() => setCurrentProject(project)}
+                onClick={() => {
+                  setCurrentProject(project);
+                  navigate('/editor/prd');
+                }}
               >
                 <div className="flex items-start justify-between mb-4">
                   <h3 className="font-semibold text-foreground group-hover:text-secondary transition-colors pr-8">
@@ -128,14 +132,14 @@ export default function Dashboard() {
                 </div>
               </div>
             );
-        })}
+          })}
 
-        {/* New Project Card */}
-        <Link to="/new-project" className="glass-card p-5 hover-lift flex flex-col items-center justify-center min-h-[180px] border-dashed border-2 border-border hover:border-primary/50 transition-colors">
-          <Plus className="w-8 h-8 text-muted-foreground mb-2" />
-          <span className="text-sm text-muted-foreground">Create New Project</span>
-        </Link>
-      </div>
+          {/* New Project Card */}
+          <Link to="/new-project" className="glass-card p-5 hover-lift flex flex-col items-center justify-center min-h-[180px] border-dashed border-2 border-border hover:border-primary/50 transition-colors">
+            <Plus className="w-8 h-8 text-muted-foreground mb-2" />
+            <span className="text-sm text-muted-foreground">Create New Project</span>
+          </Link>
+        </div>
       )}
     </div>
   );

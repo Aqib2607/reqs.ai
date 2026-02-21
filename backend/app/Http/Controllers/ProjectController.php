@@ -35,7 +35,18 @@ class ProjectController extends Controller
             ->with(['prdDocument', 'designDocument', 'techStackDocument'])
             ->findOrFail($id);
 
-        return response()->json($project);
+        return response()->json([
+            'project' => [
+                'id'                  => $project->id,
+                'name'                => $project->name,
+                'description'         => $project->description,
+                'status'              => $project->status,
+                'created_at'          => $project->created_at->format('Y-m-d'),
+                'prd_document'        => $project->prdDocument,
+                'design_document'     => $project->designDocument,
+                'tech_stack_document' => $project->techStackDocument,
+            ]
+        ]);
     }
 
     public function store(Request $request)

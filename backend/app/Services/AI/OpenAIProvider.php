@@ -20,19 +20,19 @@ class OpenAIProvider implements AIProviderInterface
         $startTime = microtime(true);
 
         try {
-            $response = Http::withHeaders([
+            $response = Http::withoutVerifying()->withHeaders([
                 'Authorization' => 'Bearer ' . $this->apiKey,
                 'Content-Type' => 'application/json',
             ])
-            ->timeout($options['timeout'] ?? config('app.ai_timeout', 120))
-            ->post('https://api.openai.com/v1/chat/completions', [
-                'model' => $options['model'] ?? $this->model,
-                'messages' => [
-                    ['role' => 'user', 'content' => $prompt]
-                ],
-                'temperature' => $options['temperature'] ?? 0.7,
-                'max_tokens' => $options['max_tokens'] ?? 4000,
-            ]);
+                ->timeout($options['timeout'] ?? config('app.ai_timeout', 120))
+                ->post('https://api.openai.com/v1/chat/completions', [
+                    'model' => $options['model'] ?? $this->model,
+                    'messages' => [
+                        ['role' => 'user', 'content' => $prompt]
+                    ],
+                    'temperature' => $options['temperature'] ?? 0.7,
+                    'max_tokens' => $options['max_tokens'] ?? 4000,
+                ]);
 
             $latency = (microtime(true) - $startTime) * 1000;
 
@@ -52,7 +52,7 @@ class OpenAIProvider implements AIProviderInterface
             ];
         } catch (\Exception $e) {
             $latency = (microtime(true) - $startTime) * 1000;
-            
+
             return [
                 'error' => $e->getMessage(),
                 'latency_ms' => $latency,

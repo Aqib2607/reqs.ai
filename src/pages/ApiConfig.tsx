@@ -58,7 +58,7 @@ export default function ApiConfig() {
 
   const handleAdd = async () => {
     if (!newKey.name || !newKey.key || !newKey.provider) return;
-    
+
     setSubmitError(null);
     try {
       await addApiKey(newKey.provider, newKey.key, newKey.name, newKey.priority);
@@ -88,7 +88,7 @@ export default function ApiConfig() {
           </p>
         </div>
       )}
-      
+
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 md:mb-8 gap-4">
         <div>
           <h1 className="text-xl md:text-2xl font-bold">API Configuration</h1>
@@ -248,8 +248,10 @@ export default function ApiConfig() {
             )}
             <div className="space-y-4">
               <div>
-                <label className="text-sm text-muted-foreground mb-1.5 block">Name</label>
+                <label htmlFor="key-name" className="text-sm text-muted-foreground mb-1.5 block">Name</label>
                 <input
+                  id="key-name"
+                  name="key-name"
                   value={newKey.name}
                   onChange={(e) => setNewKey({ ...newKey, name: e.target.value })}
                   placeholder="e.g., OpenAI GPT-4"
@@ -257,8 +259,10 @@ export default function ApiConfig() {
                 />
               </div>
               <div>
-                <label className="text-sm text-muted-foreground mb-1.5 block">Provider</label>
+                <label htmlFor="key-provider" className="text-sm text-muted-foreground mb-1.5 block">Provider</label>
                 <select
+                  id="key-provider"
+                  name="key-provider"
                   value={newKey.provider}
                   onChange={(e) => setNewKey({ ...newKey, provider: e.target.value })}
                   className="w-full bg-muted/50 border border-border rounded-lg px-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-secondary/50"
@@ -269,8 +273,10 @@ export default function ApiConfig() {
                 </select>
               </div>
               <div>
-                <label className="text-sm text-muted-foreground mb-1.5 block">API Key</label>
+                <label htmlFor="key-value" className="text-sm text-muted-foreground mb-1.5 block">API Key</label>
                 <input
+                  id="key-value"
+                  name="key-value"
                   type="password"
                   value={newKey.key}
                   onChange={(e) => setNewKey({ ...newKey, key: e.target.value })}
@@ -282,8 +288,10 @@ export default function ApiConfig() {
                 </p>
               </div>
               <div>
-                <label className="text-sm text-muted-foreground mb-1.5 block">Priority (1-100)</label>
+                <label htmlFor="key-priority" className="text-sm text-muted-foreground mb-1.5 block">Priority (1-100)</label>
                 <input
+                  id="key-priority"
+                  name="key-priority"
                   type="number"
                   min="1"
                   max="100"
@@ -298,9 +306,9 @@ export default function ApiConfig() {
             </div>
             <div className="flex justify-end gap-3 mt-6">
               <Button variant="outline" onClick={() => { setShowModal(false); setSubmitError(null); }}>Cancel</Button>
-              <Button 
-                className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-bold border-0" 
-                onClick={handleAdd} 
+              <Button
+                className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-bold border-0"
+                onClick={handleAdd}
                 disabled={!newKey.name || !newKey.key || isLoading}
               >
                 {isLoading ? 'Adding...' : 'Add Key'}

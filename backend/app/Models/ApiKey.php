@@ -14,14 +14,19 @@ class ApiKey extends Model
         'name',
         'priority',
         'is_active',
+        'is_backup',
+        'status',
         'total_requests',
         'successful_requests',
         'avg_latency_ms',
+        'last_checked_at',
         'last_used_at',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'is_backup' => 'boolean',
+        'last_checked_at' => 'datetime',
         'last_used_at' => 'datetime',
     ];
 

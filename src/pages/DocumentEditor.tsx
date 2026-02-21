@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import {
   RefreshCw,
@@ -65,7 +65,7 @@ const mockAiResponses: Record<string, string> = {
 
 export default function DocumentEditor() {
   const { type } = useParams<{ type: string }>();
-  const { activeSection, setActiveSection, apiKeys } = useAppStore();
+  const { activeSection, setActiveSection, apiKeys, fetchApiKeys, currentProject } = useAppStore();
   const [approvedSections, setApprovedSections] = useState<Set<string>>(new Set());
   const [editingContent, setEditingContent] = useState<string | null>(null);
   const [showVersionHistory, setShowVersionHistory] = useState(false);
@@ -73,8 +73,23 @@ export default function DocumentEditor() {
   const [aiResult, setAiResult] = useState<string | null>(null);
   const { toast } = useToast();
 
+  // Ensure API keys are loaded so the hasActiveApiKey check is accurate
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { fetchApiKeys(); }, []);
+
   const docType = type || "prd";
-  const sections = documentSections[docType] || documentSections.prd;
+
+  let aiContent = "";
+  if (currentProject) {
+    if (docType === "prd" && currentProject.documents.prdContent) aiContent = currentProject.documents.prdContent;
+    if (docType === "design" && currentProject.documents.designContent) aiContent = currentProject.documents.designContent;
+    if (docType === "tech-stack" && currentProject.documents.techStackContent) aiContent = currentProject.documents.techStackContent;
+  }
+
+  const sections = aiContent
+    ? [{ id: "full-doc", title: "Generated Document", content: aiContent }]
+    : (documentSections[docType] || documentSections.prd);
+
   const currentSection = sections.find((s) => s.id === activeSection) || sections[0];
   const content = editingContent ?? currentSection.content;
 

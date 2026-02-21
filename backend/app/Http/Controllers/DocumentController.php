@@ -22,11 +22,15 @@ class DocumentController extends Controller
             'use_deep_research' => 'nullable|boolean',
         ]);
 
+        if (!$request->user()->apiKeys()->where('is_active', true)->exists()) {
+            return response()->json(['error' => 'No active API provider configured'], 400);
+        }
+
         $project = $request->user()->projects()->findOrFail($validated['project_id']);
 
         try {
             $orchestrator = new AIOrchestrator($request->user(), $project);
-            
+
             $content = '';
             if ($validated['use_deep_research'] ?? false) {
                 $deepResearch = new DeepResearchService($orchestrator);
@@ -41,19 +45,22 @@ class DocumentController extends Controller
                 $content = $result['content'] ?? '';
             }
 
-            // Create or update PRD document
+            // Create or update PRD document with PHP-computed version
+            $existingPrd = PrdDocument::where('project_id', $project->id)->first();
+            $newVersion  = $existingPrd ? ($existingPrd->version + 1) : 1;
+
             $prd = PrdDocument::updateOrCreate(
                 ['project_id' => $project->id],
                 [
                     'content' => $content,
-                    'version' => DB::raw('version + 1'),
+                    'version' => $newVersion,
                 ]
             );
 
             // Save version history
             $prd->versions()->create([
-                'content' => $content,
-                'version_number' => $prd->version,
+                'content'        => $content,
+                'version_number' => $newVersion,
                 'change_summary' => 'Generated PRD document',
             ]);
 
@@ -61,10 +68,9 @@ class DocumentController extends Controller
                 'document' => $prd,
                 'message' => 'PRD generated successfully',
             ]);
-
         } catch (\Exception $e) {
             Log::error('PRD generation failed: ' . $e->getMessage());
-            
+
             return response()->json([
                 'error' => 'Failed to generate PRD: ' . $e->getMessage(),
             ], 500);
@@ -78,6 +84,10 @@ class DocumentController extends Controller
             'prd_content' => 'nullable|string',
             'use_deep_research' => 'nullable|boolean',
         ]);
+
+        if (!$request->user()->apiKeys()->where('is_active', true)->exists()) {
+            return response()->json(['error' => 'No active API provider configured'], 400);
+        }
 
         $project = $request->user()->projects()->findOrFail($validated['project_id']);
         $prd = $project->prdDocument;
@@ -97,17 +107,20 @@ class DocumentController extends Controller
                 $content = $result['content'] ?? '';
             }
 
+            $existingDesign = DesignDocument::where('project_id', $project->id)->first();
+            $newVersion     = $existingDesign ? ($existingDesign->version + 1) : 1;
+
             $design = DesignDocument::updateOrCreate(
                 ['project_id' => $project->id],
                 [
                     'content' => $content,
-                    'version' => DB::raw('version + 1'),
+                    'version' => $newVersion,
                 ]
             );
 
             $design->versions()->create([
-                'content' => $content,
-                'version_number' => $design->version,
+                'content'        => $content,
+                'version_number' => $newVersion,
                 'change_summary' => 'Generated Design document',
             ]);
 
@@ -115,10 +128,9 @@ class DocumentController extends Controller
                 'document' => $design,
                 'message' => 'Design document generated successfully',
             ]);
-
         } catch (\Exception $e) {
             Log::error('Design generation failed: ' . $e->getMessage());
-            
+
             return response()->json([
                 'error' => 'Failed to generate Design document: ' . $e->getMessage(),
             ], 500);
@@ -132,6 +144,10 @@ class DocumentController extends Controller
             'design_content' => 'nullable|string',
             'use_deep_research' => 'nullable|boolean',
         ]);
+
+        if (!$request->user()->apiKeys()->where('is_active', true)->exists()) {
+            return response()->json(['error' => 'No active API provider configured'], 400);
+        }
 
         $project = $request->user()->projects()->findOrFail($validated['project_id']);
         $design = $project->designDocument;
@@ -151,17 +167,20 @@ class DocumentController extends Controller
                 $content = $result['content'] ?? '';
             }
 
+            $existingTechStack = TechStackDocument::where('project_id', $project->id)->first();
+            $newVersion        = $existingTechStack ? ($existingTechStack->version + 1) : 1;
+
             $techStack = TechStackDocument::updateOrCreate(
                 ['project_id' => $project->id],
                 [
                     'content' => $content,
-                    'version' => DB::raw('version + 1'),
+                    'version' => $newVersion,
                 ]
             );
 
             $techStack->versions()->create([
-                'content' => $content,
-                'version_number' => $techStack->version,
+                'content'        => $content,
+                'version_number' => $newVersion,
                 'change_summary' => 'Generated Tech Stack document',
             ]);
 
@@ -169,10 +188,9 @@ class DocumentController extends Controller
                 'document' => $techStack,
                 'message' => 'Tech Stack document generated successfully',
             ]);
-
         } catch (\Exception $e) {
             Log::error('Tech Stack generation failed: ' . $e->getMessage());
-            
+
             return response()->json([
                 'error' => 'Failed to generate Tech Stack document: ' . $e->getMessage(),
             ], 500);
@@ -197,7 +215,7 @@ class DocumentController extends Controller
             }
 
             $orchestrator = new AIOrchestrator($request->user(), $project);
-            
+
             $prompt = $this->buildRegeneratePrompt(
                 $document->content,
                 $validated['feedback'] ?? '',
@@ -222,10 +240,9 @@ class DocumentController extends Controller
                 'document' => $document->fresh(),
                 'message' => 'Document regenerated successfully',
             ]);
-
         } catch (\Exception $e) {
             Log::error('Document regeneration failed: ' . $e->getMessage());
-            
+
             return response()->json([
                 'error' => 'Failed to regenerate document: ' . $e->getMessage(),
             ], 500);
@@ -257,7 +274,6 @@ class DocumentController extends Controller
                 'document' => $document,
                 'message' => 'Document approved successfully',
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'Failed to approve document: ' . $e->getMessage(),
@@ -265,9 +281,63 @@ class DocumentController extends Controller
         }
     }
 
+    public function clarifyScope(Request $request)
+    {
+        $validated = $request->validate([
+            'idea' => 'required|string',
+        ]);
+
+        if (!$request->user()->apiKeys()->where('is_active', true)->exists()) {
+            return response()->json(['error' => 'No active API provider configured'], 400);
+        }
+
+        try {
+            // Null project since the project is not created yet
+            $orchestrator = new AIOrchestrator($request->user(), null);
+
+            $result = $orchestrator->generate(
+                $this->buildClarifyScopePrompt($validated['idea'])
+            );
+
+            // The AI should return a JSON array string
+            $content = $result['content'] ?? '[]';
+
+            // Extract json array if the AI wraps it in markdown blocks
+            if (preg_match('/\[.*\]/s', $content, $matches)) {
+                $content = $matches[0];
+            }
+
+            $questions = json_decode($content, true);
+
+            if (!is_array($questions)) {
+                $questions = [
+                    "What specific problem does this solve?",
+                    "Who are your primary target users?",
+                    "What are the core technical constraints?",
+                    "What integrations are necessary?",
+                    "How will you measure success?",
+                    "What is your timeline for MVP?"
+                ];
+            }
+
+            // Limit to exactly 6-7 questions just in case it returns more
+            $questions = array_slice($questions, 0, 7);
+
+            return response()->json([
+                'questions' => $questions,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Clarify scope feature failed: ' . $e->getMessage());
+
+            return response()->json([
+                'error' => 'Failed to generate clarifying questions: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
     protected function getDocument(string $type, int $id)
     {
-        return match($type) {
+        return match ($type) {
             'prd' => PrdDocument::findOrFail($id),
             'design' => DesignDocument::findOrFail($id),
             'techstack' => TechStackDocument::findOrFail($id),
@@ -320,10 +390,15 @@ PROMPT;
 
     protected function buildTechStackPrompt(string $designContent): string
     {
+        // Truncate to avoid exceeding context windows on smaller LLM models (~3k tokens safe limit)
+        $truncated = mb_strlen($designContent) > 8000
+            ? mb_substr($designContent, 0, 8000) . '\n\n[Content truncated for brevity...]'
+            : $designContent;
+
         return <<<PROMPT
 Based on the following Design Document, create a comprehensive Tech Stack Document:
 
-{$designContent}
+{$truncated}
 
 The Tech Stack Document should include:
 1. Frontend Technologies
@@ -351,6 +426,28 @@ Current document:
 {$currentContent}
 
 Provide an improved version that addresses the feedback while maintaining all required sections.
+PROMPT;
+    }
+
+    protected function buildClarifyScopePrompt(string $idea): string
+    {
+        return <<<PROMPT
+You are an expert product manager. A user has provided the following initial project idea:
+
+"{$idea}"
+
+Generate exactly 6 to 7 highly specific, clarifying questions that will help you fully understand the core concept, technical constraints, target audience, and scale needed to write a detailed Product Requirements Document (PRD).
+
+The questions MUST be returned as a raw JSON array of strings ONLY. Do not include any formatting or conversational text.
+Example format:
+[
+  "Question 1?",
+  "Question 2?",
+  "Question 3?",
+  "Question 4?",
+  "Question 5?",
+  "Question 6?"
+]
 PROMPT;
     }
 }

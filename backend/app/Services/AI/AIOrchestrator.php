@@ -33,10 +33,10 @@ class AIOrchestrator
 
         foreach ($providers as $apiKey) {
             $attempt++;
-            
+
             try {
                 $provider = $this->createProvider($apiKey);
-                
+
                 if (!$provider->canMakeRequest()) {
                     continue;
                 }
@@ -51,12 +51,12 @@ class AIOrchestrator
                 // Check if request was successful
                 if (isset($result['error'])) {
                     $this->logFailure($apiKey, $result, $prompt);
-                    
+
                     if ($attempt < count($providers)) {
                         Log::warning("Provider {$apiKey->provider} failed, trying next provider");
                         continue;
                     }
-                    
+
                     throw new \Exception($result['error']);
                 }
 
@@ -65,14 +65,13 @@ class AIOrchestrator
                 $this->updateProviderMetrics($apiKey, $result['latency_ms']);
 
                 return $result;
-
             } catch (\Exception $e) {
                 Log::error("Provider {$apiKey->provider} error: " . $e->getMessage());
-                
+
                 if ($attempt >= count($providers)) {
                     throw $e;
                 }
-                
+
                 continue;
             }
         }
@@ -87,6 +86,7 @@ class AIOrchestrator
     {
         return $this->user->apiKeys()
             ->where('is_active', true)
+            ->orderBy('is_backup', 'asc')
             ->orderBy('priority', 'desc')
             ->orderBy('avg_latency_ms', 'asc')
             ->get();
@@ -99,7 +99,7 @@ class AIOrchestrator
     {
         $decryptedKey = $apiKey->decrypted_key;
 
-        return match($apiKey->provider) {
+        return match ($apiKey->provider) {
             'openai' => new OpenAIProvider($decryptedKey),
             'gemini' => new GeminiProvider($decryptedKey),
             'anthropic' => new AnthropicProvider($decryptedKey),
@@ -133,14 +133,18 @@ class AIOrchestrator
      */
     protected function logFailure(ApiKey $apiKey, array $result, string $prompt): void
     {
+        $apiKey->update([
+            'last_used_at' => now(),
+        ]);
+
         AiLog::create([
-            'api_key_id' => $apiKey->id,
-            'project_id' => $this->project?->id,
-            'provider' => $apiKey->provider,
-            'model' => $result['model'] ?? 'unknown',
-            'operation' => 'generate',
-            'latency_ms' => $result['latency_ms'],
-            'status' => 'failure',
+            'api_key_id'    => $apiKey->id,
+            'project_id'    => $this->project?->id,
+            'provider'      => $apiKey->provider,
+            'model'         => $result['model'] ?? 'unknown',
+            'operation'     => 'generate',
+            'latency_ms'    => $result['latency_ms'],
+            'status'        => 'failure',
             'error_message' => $result['error'] ?? 'Unknown error',
         ]);
     }
@@ -152,12 +156,12 @@ class AIOrchestrator
     {
         $apiKey->increment('total_requests');
         $apiKey->increment('successful_requests');
-        
+
         // Update average latency
         $totalSuccessful = $apiKey->successful_requests;
         $currentAvg = $apiKey->avg_latency_ms;
         $newAvg = (($currentAvg * ($totalSuccessful - 1)) + $latency) / $totalSuccessful;
-        
+
         $apiKey->update([
             'avg_latency_ms' => round($newAvg, 2),
             'last_used_at' => now(),

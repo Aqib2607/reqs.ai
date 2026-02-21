@@ -20,17 +20,17 @@ class OpenRouterProvider implements AIProviderInterface
         $startTime = microtime(true);
 
         try {
-            $response = Http::withHeaders([
+            $response = Http::withoutVerifying()->withHeaders([
                 'Authorization' => 'Bearer ' . $this->apiKey,
                 'Content-Type' => 'application/json',
             ])
-            ->timeout($options['timeout'] ?? config('app.ai_timeout', 120))
-            ->post('https://openrouter.ai/api/v1/chat/completions', [
-                'model' => $options['model'] ?? $this->model,
-                'messages' => [
-                    ['role' => 'user', 'content' => $prompt]
-                ],
-            ]);
+                ->timeout($options['timeout'] ?? config('app.ai_timeout', 120))
+                ->post('https://openrouter.ai/api/v1/chat/completions', [
+                    'model' => $options['model'] ?? $this->model,
+                    'messages' => [
+                        ['role' => 'user', 'content' => $prompt]
+                    ],
+                ]);
 
             $latency = (microtime(true) - $startTime) * 1000;
 
@@ -50,7 +50,7 @@ class OpenRouterProvider implements AIProviderInterface
             ];
         } catch (\Exception $e) {
             $latency = (microtime(true) - $startTime) * 1000;
-            
+
             return [
                 'error' => $e->getMessage(),
                 'latency_ms' => $latency,

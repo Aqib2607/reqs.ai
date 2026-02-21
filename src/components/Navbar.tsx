@@ -15,45 +15,41 @@ export function Navbar({ activePage = "home" }: NavbarProps) {
       <nav className="fixed top-0 w-full z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center yellow-glow">
-              <img src="/logo.svg" alt="Reqs.ai Logo" className="w-5 h-5" />
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center yellow-glow overflow-hidden">
+              <img src="/logo.png" alt="Reqs.ai Logo" className="w-full h-full object-cover" />
             </div>
             <span className="font-bold text-lg">
-              Reqs<span className="text-secondary">.ai</span>
+              Reqs<span className="text-primary">.ai</span>
             </span>
           </Link>
-          
+
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-6">
-            <Link 
-              to="/" 
-              className={`text-sm transition-colors ${
-                activePage === "home" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
-              }`}
+            <Link
+              to="/"
+              className={`text-sm transition-colors ${activePage === "home" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
+                }`}
             >
               Home
             </Link>
-            <Link 
-              to="/features" 
-              className={`text-sm transition-colors ${
-                activePage === "features" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
-              }`}
+            <Link
+              to="/features"
+              className={`text-sm transition-colors ${activePage === "features" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
+                }`}
             >
               Features
             </Link>
-            <Link 
-              to="/how-it-works" 
-              className={`text-sm transition-colors ${
-                activePage === "how-it-works" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
-              }`}
+            <Link
+              to="/how-it-works"
+              className={`text-sm transition-colors ${activePage === "how-it-works" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
+                }`}
             >
               How It Works
             </Link>
-            <Link 
-              to="/pricing" 
-              className={`text-sm transition-colors ${
-                activePage === "pricing" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
-              }`}
+            <Link
+              to="/pricing"
+              className={`text-sm transition-colors ${activePage === "pricing" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
+                }`}
             >
               Pricing
             </Link>
@@ -63,7 +59,7 @@ export function Navbar({ activePage = "home" }: NavbarProps) {
           </div>
 
           {/* Mobile Menu Button */}
-          <button 
+          <button
             onClick={() => setIsOpen(!isOpen)}
             className="md:hidden p-2 text-foreground"
           >
@@ -75,39 +71,35 @@ export function Navbar({ activePage = "home" }: NavbarProps) {
         {isOpen && (
           <div className="md:hidden border-t border-border/50 bg-background/95 backdrop-blur-xl">
             <div className="px-4 py-4 space-y-3">
-              <Link 
-                to="/" 
+              <Link
+                to="/"
                 onClick={() => setIsOpen(false)}
-                className={`block py-2 text-sm transition-colors ${
-                  activePage === "home" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
-                }`}
+                className={`block py-2 text-sm transition-colors ${activePage === "home" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
+                  }`}
               >
                 Home
               </Link>
-              <Link 
-                to="/features" 
+              <Link
+                to="/features"
                 onClick={() => setIsOpen(false)}
-                className={`block py-2 text-sm transition-colors ${
-                  activePage === "features" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
-                }`}
+                className={`block py-2 text-sm transition-colors ${activePage === "features" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
+                  }`}
               >
                 Features
               </Link>
-              <Link 
-                to="/how-it-works" 
+              <Link
+                to="/how-it-works"
                 onClick={() => setIsOpen(false)}
-                className={`block py-2 text-sm transition-colors ${
-                  activePage === "how-it-works" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
-                }`}
+                className={`block py-2 text-sm transition-colors ${activePage === "how-it-works" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
+                  }`}
               >
                 How It Works
               </Link>
-              <Link 
-                to="/pricing" 
+              <Link
+                to="/pricing"
                 onClick={() => setIsOpen(false)}
-                className={`block py-2 text-sm transition-colors ${
-                  activePage === "pricing" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
-                }`}
+                className={`block py-2 text-sm transition-colors ${activePage === "pricing" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
+                  }`}
               >
                 Pricing
               </Link>

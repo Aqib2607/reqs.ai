@@ -6,47 +6,47 @@
 
 @layer base {
   :root {
-    --background: 135 27% 9%;
-    --foreground: 152 20% 98%;
+    --background: 0 0% 7%;
+    --foreground: 0 0% 100%;
 
-    --card: 167 91% 5%;
-    --card-foreground: 152 20% 98%;
+    --card: 0 0% 7%;
+    --card-foreground: 0 0% 100%;
 
-    --popover: 167 91% 5%;
-    --popover-foreground: 152 20% 98%;
+    --popover: 0 0% 7%;
+    --popover-foreground: 0 0% 100%;
 
-    --primary: 152 27% 46%;
-    --primary-foreground: 135 27% 5%;
+    --primary: 47 100% 71%;
+    --primary-foreground: 0 0% 7%;
 
-    --secondary: 154 41% 26%;
-    --secondary-foreground: 152 20% 98%;
+    --secondary: 47 100% 50%;
+    --secondary-foreground: 0 0% 7%;
 
-    --muted: 167 91% 12%;
-    --muted-foreground: 152 10% 60%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 60%;
 
-    --accent: 152 27% 46%;
-    --accent-foreground: 135 27% 5%;
+    --accent: 0 0% 12%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 152 20% 98%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 167 91% 15%;
-    --input: 167 91% 15%;
-    --ring: 152 27% 46%;
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 47 100% 50%;
 
     --radius: 0.75rem;
 
-    --sidebar-background: 135 27% 6%;
-    --sidebar-foreground: 152 20% 98%;
-    --sidebar-primary: 152 27% 46%;
-    --sidebar-primary-foreground: 135 27% 5%;
-    --sidebar-accent: 154 41% 20%;
-    --sidebar-accent-foreground: 152 20% 98%;
-    --sidebar-border: 167 91% 12%;
-    --sidebar-ring: 152 27% 46%;
+    --sidebar-background: 0 0% 7%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 47 100% 50%;
+    --sidebar-primary-foreground: 0 0% 7%;
+    --sidebar-accent: 0 0% 12%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 15%;
+    --sidebar-ring: 47 100% 50%;
 
-    --ai-glow: 152 27% 46%;
-    --surface-glass: 135 27% 9%;
+    --ai-glow: 47 100% 50%;
+    --surface-glass: 0 0% 7%;
   }
 
   .light {
@@ -118,11 +118,11 @@
   }
 
   .gradient-primary {
-    @apply bg-gradient-to-r from-primary via-accent to-secondary;
+    @apply bg-gradient-to-r from-primary to-secondary;
   }
 
   .gradient-text {
-    @apply bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent;
   }
 
   .hover-lift {

@@ -51,11 +51,11 @@ export default function LoginPage() {
       <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.15),transparent_70%)]" />
         <div className="relative z-10 max-w-md text-center px-8">
-          <div className="w-16 h-16 rounded-2xl gradient-primary flex items-center justify-center mx-auto mb-8">
-            <img src="/logo.svg" alt="Reqs.ai Logo" className="w-10 h-10" />
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-8 yellow-glow overflow-hidden">
+            <img src="/logo.png" alt="Reqs.ai Logo" className="w-full h-full object-cover" />
           </div>
           <h1 className="text-4xl font-extrabold mb-4">
-            Reqs<span className="text-accent">.ai</span>
+            Reqs<span className="text-primary">.ai</span>
           </h1>
           <p className="text-muted-foreground text-lg leading-relaxed">
             From idea to production-ready documentation in minutes. Powered by AI.
@@ -67,10 +67,10 @@ export default function LoginPage() {
       <div className="flex-1 flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-md">
           <div className="lg:hidden flex items-center gap-2 mb-8 justify-center">
-            <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-primary-foreground" />
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden">
+              <img src="/logo.png" alt="Reqs.ai Logo" className="w-full h-full object-cover" />
             </div>
-            <span className="font-bold text-xl">Reqs<span className="text-accent">.ai</span></span>
+            <span className="font-bold text-xl">Reqs<span className="text-primary">.ai</span></span>
           </div>
 
           <h2 className="text-2xl font-bold mb-2">Welcome back</h2>

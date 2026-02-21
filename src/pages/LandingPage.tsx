@@ -94,7 +94,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {steps.map((s, i) => (
               <div key={s.step} className="glass-card p-6 hover-lift group" style={{ animationDelay: `${i * 0.1}s` }}>
-                <div className="text-4xl font-black text-secondary/60 mb-4 group-hover:text-secondary group-hover:yellow-glow transition-colors">
+                <div className="text-4xl font-black text-secondary/60 mb-4 group-hover:text-secondary transition-colors">
                   {s.step}
                 </div>
                 <h3 className="text-lg font-semibold mb-2">{s.title}</h3>

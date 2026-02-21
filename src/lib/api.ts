@@ -6,6 +6,12 @@ export interface User {
   id: number;
   name: string;
   email: string;
+  company: string | null;
+  role: string | null;
+  phone: string | null;
+  plan: string;
+  email_notifications: boolean;
+  two_factor_enabled: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -144,7 +150,7 @@ class ApiClient {
     options: RequestInit = {}
   ): Promise<T> {
     const token = AuthManager.getToken();
-    
+
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
@@ -167,7 +173,7 @@ class ApiClient {
 
     if (!response.ok) {
       throw {
-        message: data.message || 'An error occurred',
+        message: data.error || data.message || 'An error occurred',
         errors: data.errors,
       } as ApiError;
     }
@@ -205,6 +211,34 @@ class ApiClient {
     return this.request<{ user: User }>('/user');
   }
 
+  async updateProfile(data: { name: string; email: string; company?: string | null; role?: string | null; phone?: string | null }) {
+    return this.request<{ user: User }>('/user/profile', {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updatePreferences(data: { email_notifications?: boolean; two_factor_enabled?: boolean }) {
+    return this.request<{ user: User }>('/user/preferences', {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async changePassword(data: Record<string, string>) {
+    return this.request<{ message: string }>('/user/password', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteAccount(password: string) {
+    return this.request<{ message: string }>('/user/delete-account', {
+      method: 'POST',
+      body: JSON.stringify({ password }),
+    });
+  }
+
   // Projects
   async getProjects() {
     return this.request<{ projects: Project[] }>('/projects');
@@ -224,6 +258,13 @@ class ApiClient {
   async deleteProject(id: number) {
     return this.request<{ message: string }>(`/projects/${id}`, {
       method: 'DELETE',
+    });
+  }
+
+  async generateScopeQuestions(idea: string) {
+    return this.request<{ questions: string[] }>('/project/clarify', {
+      method: 'POST',
+      body: JSON.stringify({ idea }),
     });
   }
 
@@ -274,21 +315,34 @@ class ApiClient {
 
   // API Keys
   async getApiKeys() {
-    return this.request<{ api_keys: ApiKey[] }>('/keys');
+    return this.request<{ data: ApiKey[] }>('/keys').then(res => ({ api_keys: res.data ?? res }));
   }
 
   async addApiKey(provider: string, key: string, name: string, priority: number = 10) {
-    return this.request<{ api_key: ApiKey }>('/keys', {
+    return this.request<{ data: ApiKey }>('/keys', {
       method: 'POST',
       body: JSON.stringify({ provider, key, name, priority }),
-    });
+    }).then(res => ({ api_key: res.data ?? res }));
   }
 
-  async updateApiKey(id: number, data: { name?: string; priority?: number; is_active?: boolean }) {
-    return this.request<{ api_key: ApiKey }>(`/keys/${id}`, {
+  async updateApiKey(id: number, data: { name?: string; priority?: number }) {
+    return this.request<{ data: ApiKey }>(`/keys/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(data),
-    });
+    }).then(res => ({ api_key: res.data ?? res }));
+  }
+
+  async activateApiKey(id: number) {
+    return this.request<{ data: ApiKey }>(`/keys/${id}/activate`, {
+      method: 'PATCH',
+    }).then(res => ({ api_key: res.data ?? res }));
+  }
+
+  async setBackupApiKey(id: number, is_backup: boolean) {
+    return this.request<{ data: ApiKey }>(`/keys/${id}/set-backup`, {
+      method: 'PATCH',
+      body: JSON.stringify({ is_backup }),
+    }).then(res => ({ api_key: res.data ?? res }));
   }
 
   async deleteApiKey(id: number) {
@@ -305,9 +359,9 @@ class ApiClient {
         'Authorization': `Bearer ${token}`,
       },
     });
-    
+
     if (!response.ok) throw new Error('Export failed');
-    
+
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -323,9 +377,9 @@ class ApiClient {
         'Authorization': `Bearer ${token}`,
       },
     });
-    
+
     if (!response.ok) throw new Error('Export failed');
-    
+
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -341,9 +395,9 @@ class ApiClient {
         'Authorization': `Bearer ${token}`,
       },
     });
-    
+
     if (!response.ok) throw new Error('Export failed');
-    
+
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');

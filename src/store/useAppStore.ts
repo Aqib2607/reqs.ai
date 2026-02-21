@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { create } from 'zustand';
 import { api, Project as ApiProject, ApiKey as ApiApiKey, User, AuthManager } from '@/lib/api';
 
@@ -10,8 +11,11 @@ export interface Project {
   createdAt: string;
   documents: {
     prd: boolean;
+    prdContent?: string;
     design: boolean;
+    designContent?: string;
     techStack: boolean;
+    techStackContent?: string;
   };
 }
 
@@ -30,7 +34,12 @@ interface AppState {
   user: User | null;
   isAuthenticated: boolean;
   setUser: (user: User | null) => void;
+  fetchUser: () => Promise<void>;
   logout: () => Promise<void>;
+  updateProfile: (data: { name: string; email: string; company?: string | null; role?: string | null; phone?: string | null }) => Promise<void>;
+  updatePreferences: (data: { email_notifications?: boolean; two_factor_enabled?: boolean }) => Promise<void>;
+  changePassword: (data: Record<string, string>) => Promise<void>;
+  deleteAccount: (password: string) => Promise<void>;
 
   // Sidebar
   sidebarCollapsed: boolean;
@@ -43,16 +52,20 @@ interface AppState {
   error: string | null;
   fetchProjects: () => Promise<void>;
   createProject: (name: string, description: string) => Promise<Project | null>;
+  generateDocuments: (projectId: string, description: string, useDeepResearch?: boolean) => Promise<boolean>;
   deleteProject: (id: string) => Promise<void>;
   setCurrentProject: (project: Project | null) => void;
 
   // New Project Wizard
   wizardStep: number;
   wizardIdea: string;
+  wizardQuestions: string[];
+  isGeneratingQuestions: boolean;
   wizardAnswers: Record<string, string>;
   setWizardStep: (step: number) => void;
   setWizardIdea: (idea: string) => void;
   setWizardAnswer: (key: string, value: string) => void;
+  fetchDynamicQuestions: (idea: string) => Promise<boolean>;
   resetWizard: () => void;
 
   // Document Editor
@@ -77,22 +90,28 @@ function transformProject(apiProject: ApiProject): Project {
     createdAt: apiProject.created_at,
     documents: {
       prd: !!apiProject.prd_document,
+      prdContent: (apiProject.prd_document as any)?.content,
       design: !!apiProject.design_document,
+      designContent: (apiProject.design_document as any)?.content,
       techStack: !!apiProject.tech_stack_document,
+      techStackContent: (apiProject.tech_stack_document as any)?.content,
     },
   };
 }
 
 // Helper function to transform API key to UI key
-function transformApiKey(apiKey: ApiApiKey): ApiKey {
+function transformApiKey(apiKey: Record<string, unknown>): ApiKey {
+  if (!apiKey || typeof apiKey !== 'object') {
+    throw new Error(`transformApiKey received invalid data: ${JSON.stringify(apiKey)}`);
+  }
   return {
-    id: apiKey.id.toString(),
-    name: apiKey.name,
-    provider: apiKey.provider,
-    key: apiKey.masked_key,
-    active: apiKey.is_active,
-latency: apiKey.average_latency,
-    priority: apiKey.priority,
+    id: String(apiKey.id || 'missing-id'),
+    name: (apiKey.name as string) || '',
+    provider: (apiKey.provider as string) || 'unknown',
+    key: (apiKey.masked_key as string) || '********',
+    active: !!apiKey.is_active,
+    latency: (apiKey.avg_latency_ms as number) || (apiKey.average_latency as number) || 0,
+    priority: (apiKey.priority as number) || 0,
   };
 }
 
@@ -100,7 +119,19 @@ export const useAppStore = create<AppState>((set, get) => ({
   // Auth
   user: AuthManager.getUser(),
   isAuthenticated: AuthManager.isAuthenticated(),
-  setUser: (user) => set({ user, isAuthenticated: !!user }),
+  setUser: (user) => {
+    if (user) AuthManager.setUser(user);
+    set({ user, isAuthenticated: !!user });
+  },
+  fetchUser: async () => {
+    if (!AuthManager.isAuthenticated()) return;
+    try {
+      const response = await api.getUser();
+      get().setUser(response.user);
+    } catch (error) {
+      console.error('Fetch user error:', error);
+    }
+  },
   logout: async () => {
     try {
       await api.logout();
@@ -108,6 +139,21 @@ export const useAppStore = create<AppState>((set, get) => ({
     } catch (error) {
       console.error('Logout error:', error);
     }
+  },
+  updateProfile: async (data) => {
+    const response = await api.updateProfile(data);
+    get().setUser(response.user);
+  },
+  updatePreferences: async (data) => {
+    const response = await api.updatePreferences(data);
+    get().setUser(response.user);
+  },
+  changePassword: async (data) => {
+    await api.changePassword(data);
+  },
+  deleteAccount: async (password: string) => {
+    await api.deleteAccount(password);
+    get().logout();
   },
 
   // Sidebar
@@ -119,7 +165,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   currentProject: null,
   isLoading: false,
   error: null,
-  
+
   fetchProjects: async () => {
     set({ isLoading: true, error: null });
     try {
@@ -147,6 +193,37 @@ export const useAppStore = create<AppState>((set, get) => ({
     }
   },
 
+  generateDocuments: async (projectId: string, description: string, useDeepResearch: boolean = false) => {
+    set({ isLoading: true, error: null });
+    try {
+      // 1. Generate PRD
+      const prdResponse = await api.generatePrd(Number(projectId), description, useDeepResearch);
+      const prdContent = prdResponse.document.content;
+
+      // 2. Generate Design
+      const designResponse = await api.generateDesign(Number(projectId), prdContent, useDeepResearch);
+      const designContent = designResponse.document.content;
+
+      // 3. Generate Tech Stack
+      await api.generateTechStack(Number(projectId), prdContent, designContent, useDeepResearch);
+
+      // Refresh project to get updated document status
+      const projectResponse = await api.getProject(Number(projectId));
+      const updatedProject = transformProject(projectResponse.project);
+
+      set((state) => ({
+        currentProject: updatedProject,
+        projects: state.projects.map(p => p.id === projectId ? updatedProject : p),
+        isLoading: false
+      }));
+
+      return true;
+    } catch (error: unknown) {
+      set({ error: (error as Error).message || 'Failed to generate documents', isLoading: false });
+      return false;
+    }
+  },
+
   deleteProject: async (id: string) => {
     try {
       await api.deleteProject(Number(id));
@@ -164,11 +241,26 @@ export const useAppStore = create<AppState>((set, get) => ({
   // Wizard
   wizardStep: 0,
   wizardIdea: '',
+  wizardQuestions: [],
+  isGeneratingQuestions: false,
   wizardAnswers: {},
   setWizardStep: (step) => set({ wizardStep: step }),
   setWizardIdea: (idea) => set({ wizardIdea: idea }),
   setWizardAnswer: (key, value) => set((s) => ({ wizardAnswers: { ...s.wizardAnswers, [key]: value } })),
-  resetWizard: () => set({ wizardStep: 0, wizardIdea: '', wizardAnswers: {} }),
+
+  fetchDynamicQuestions: async (idea: string) => {
+    set({ isGeneratingQuestions: true, error: null });
+    try {
+      const response = await api.generateScopeQuestions(idea);
+      set({ wizardQuestions: response.questions, isGeneratingQuestions: false });
+      return true;
+    } catch (error: unknown) {
+      set({ error: (error as Error).message || 'Failed to generate questions', isGeneratingQuestions: false });
+      return false;
+    }
+  },
+
+  resetWizard: () => set({ wizardStep: 0, wizardIdea: '', wizardAnswers: {}, wizardQuestions: [] }),
 
   // Document Editor
   activeSection: 'overview',
@@ -176,12 +268,16 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   // API Keys
   apiKeys: [],
-  
+
   fetchApiKeys: async () => {
     set({ isLoading: true, error: null });
     try {
       const response = await api.getApiKeys();
-      const apiKeys = response.api_keys.map(transformApiKey);
+      // Handle array vs nested object format
+      const isArrayResponse = Array.isArray(response.api_keys);
+      const rawResponse = response as Record<string, unknown>;
+      const rawKeys = (isArrayResponse ? response.api_keys : rawResponse.data) as Record<string, unknown>[];
+      const apiKeys = (rawKeys || []).map(transformApiKey);
       set({ apiKeys, isLoading: false });
     } catch (error: unknown) {
       set({ error: (error as Error).message || 'Failed to fetch API keys', isLoading: false });
@@ -192,7 +288,9 @@ export const useAppStore = create<AppState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await api.addApiKey(provider, key, name, priority);
-      const newKey = transformApiKey(response.api_key);
+      const rawResponse = response as Record<string, unknown>;
+      const rawKey = (rawResponse.api_key || rawResponse.data || rawResponse) as Record<string, unknown>;
+      const newKey = transformApiKey(rawKey);
       set((state) => ({
         apiKeys: [...state.apiKeys, newKey],
         isLoading: false,
@@ -208,12 +306,12 @@ export const useAppStore = create<AppState>((set, get) => ({
     if (!key) return;
 
     try {
-      await api.updateApiKey(Number(id), { is_active: !key.active });
-      set((state) => ({
-        apiKeys: state.apiKeys.map((k) => (k.id === id ? { ...k, active: !k.active } : k)),
-      }));
+      // Backend now simply toggles is_active for this key
+      await api.activateApiKey(Number(id));
+      // Refetch to get the true synchronized list from DB
+      await get().fetchApiKeys();
     } catch (error: unknown) {
-      set({ error: (error as Error).message || 'Failed to update API key' });
+      set({ error: (error as Error).message || 'Failed to toggle API key' });
     }
   },
 

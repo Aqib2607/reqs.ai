@@ -3,55 +3,94 @@
 namespace App\Services\AI;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class GeminiProvider implements AIProviderInterface
 {
     protected $apiKey;
     protected $model;
 
-    public function __construct(string $apiKey, string $model = 'gemini-pro')
+    // Try these models in order until one works
+    protected array $modelFallbacks = [
+        'gemini-2.0-flash',
+        'gemini-1.5-flash',
+        'gemini-1.5-flash-latest',
+        'gemini-1.5-pro',
+        'gemini-1.5-pro-latest',
+    ];
+
+    public function __construct(string $apiKey, string $model = 'gemini-2.0-flash')
     {
         $this->apiKey = $apiKey;
-        $this->model = $model;
+        $this->model  = $model;
     }
 
     public function generate(string $prompt, array $options = []): array
     {
         $startTime = microtime(true);
 
-        try {
-            $response = Http::timeout($options['timeout'] ?? config('app.ai_timeout', 120))
-                ->post('https://generativelanguage.googleapis.com/v1/models/' . $this->model . ':generateContent?key=' . $this->apiKey, [
-                    'contents' => [
-                        ['parts' => [['text' => $prompt]]]
-                    ],
-                ]);
+        // Build the ordered list: preferred model first, then fallbacks
+        $modelsToTry = array_unique(array_merge([$this->model], $this->modelFallbacks));
 
-            $latency = (microtime(true) - $startTime) * 1000;
+        foreach ($modelsToTry as $model) {
+            try {
+                $url = 'https://generativelanguage.googleapis.com/v1beta/models/' . $model . ':generateContent?key=' . $this->apiKey;
 
-            if (!$response->successful()) {
-                throw new \Exception('Gemini API request failed: ' . $response->body());
+                $response = Http::withoutVerifying()
+                    ->timeout($options['timeout'] ?? config('app.ai_timeout', 120))
+                    ->post($url, [
+                        'contents' => [
+                            ['parts' => [['text' => $prompt]]]
+                        ],
+                    ]);
+
+                $latency = (microtime(true) - $startTime) * 1000;
+
+                if (!$response->successful()) {
+                    $body = $response->json();
+                    $errMsg = $body['error']['message'] ?? $response->body();
+
+                    // If the model is not found, try the next one silently
+                    if ($response->status() === 404 || str_contains($errMsg, 'not found')) {
+                        Log::debug("Gemini model '{$model}' not found, trying next fallback.");
+                        continue;
+                    }
+
+                    throw new \Exception('Gemini API request failed: ' . $response->body());
+                }
+
+                $data    = $response->json();
+                $content = $data['candidates'][0]['content']['parts'][0]['text'] ?? '';
+
+                Log::info("Gemini succeeded with model: {$model}");
+
+                return [
+                    'content'           => $content,
+                    'prompt_tokens'     => 0,
+                    'completion_tokens' => 0,
+                    'total_tokens'      => 0,
+                    'latency_ms'        => $latency,
+                    'model'             => $model,
+                ];
+            } catch (\Exception $e) {
+                // Only re-throw if it's not a "model not found" type error
+                if (!str_contains($e->getMessage(), 'not found') && !str_contains($e->getMessage(), 'NOT_FOUND')) {
+                    $latency = (microtime(true) - $startTime) * 1000;
+                    return [
+                        'error'      => $e->getMessage(),
+                        'latency_ms' => $latency,
+                    ];
+                }
+                Log::debug("Gemini model '{$model}' exception: " . $e->getMessage() . " — trying next.");
+                continue;
             }
-
-            $data = $response->json();
-            $content = $data['candidates'][0]['content']['parts'][0]['text'] ?? '';
-
-            return [
-                'content' => $content,
-                'prompt_tokens' => 0, // Gemini doesn't return token counts in the same way
-                'completion_tokens' => 0,
-                'total_tokens' => 0,
-                'latency_ms' => $latency,
-                'model' => $this->model,
-            ];
-        } catch (\Exception $e) {
-            $latency = (microtime(true) - $startTime) * 1000;
-            
-            return [
-                'error' => $e->getMessage(),
-                'latency_ms' => $latency,
-            ];
         }
+
+        $latency = (microtime(true) - $startTime) * 1000;
+        return [
+            'error'      => 'All Gemini model variants failed. Please verify your API key is from Google AI Studio (https://aistudio.google.com).',
+            'latency_ms' => $latency,
+        ];
     }
 
     public function getProviderName(): string

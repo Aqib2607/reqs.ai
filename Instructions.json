@@ -1,158 +1,105 @@
 {
   "project_name": "Reqs.ai",
-  "phase": "backend_system_phase",
-  "reference_documents": ["PRD", "Tech Stack Document"],
-  "objective": "Build full Laravel backend system including AI orchestration, database schema, API routing, security enforcement, version tracking, and PDF export. Must integrate cleanly with frontend.",
-  "tech_stack": {
-    "framework": "Laravel 11+",
-    "language": "PHP 8.3+",
-    "database": "MySQL",
-    "pdf_engine": "DomPDF",
-    "auth": "Laravel Sanctum"
+  "feature": "API Configuration System",
+  "objective": "Implement full backend logic to support the API Configuration page including checklist tracking, activation, failover, and connection status.",
+  "database_updates": {
+    "api_keys_table_modifications": [
+      "provider (string, indexed)",
+      "encrypted_key (text)",
+      "manual_priority (integer default 0)",
+      "is_active (boolean default false)",
+      "is_backup (boolean default false)",
+      "avg_latency_ms (integer nullable)",
+      "last_checked_at (timestamp nullable)",
+      "status (enum: active, inactive, failed, rate_limited)"
+    ]
   },
-  "phases": {
-    "phase_1_foundation": {
-      "setup": [
-        "Initialize Laravel project",
-        "Configure Sanctum authentication",
-        "Setup MySQL connection",
-        "Enable CORS for frontend",
-        "Create environment configuration"
-      ]
-    },
-    "phase_2_mvp": {
-      "database_schema": {
-        "tables": [
-          "users",
-          "projects",
-          "prd_documents",
-          "design_documents",
-          "tech_stack_documents",
-          "document_versions",
-          "api_keys",
-          "ai_logs"
-        ]
-      },
-      "api_structure": {
-        "auth": [
-          "POST /api/register",
-          "POST /api/login",
-          "POST /api/logout"
-        ],
-        "projects": [
-          "POST /api/projects",
-          "GET /api/projects",
-          "GET /api/projects/{id}"
-        ],
-        "documents": [
-          "POST /api/prd/generate",
-          "POST /api/design/generate",
-          "POST /api/techstack/generate",
-          "POST /api/document/regenerate",
-          "POST /api/document/approve"
-        ],
-        "api_keys": [
-          "POST /api/keys",
-          "GET /api/keys",
-          "PATCH /api/keys/{id}",
-          "DELETE /api/keys/{id}"
-        ],
-        "export": [
-          "GET /api/export/markdown/{project_id}",
-          "GET /api/export/pdf-clean/{project_id}",
-          "GET /api/export/pdf-academic/{project_id}"
-        ]
-      }
-    },
-    "phase_3_feature_expansion": {
-      "ai_orchestration": {
-        "components": [
-          "AIProviderInterface",
-          "OpenAIProvider",
-          "GeminiProvider",
-          "AnthropicProvider",
-          "GroqProvider",
-          "OpenRouterProvider"
-        ],
-        "routing_logic": [
-          "Filter active keys",
-          "Sort by manual priority",
-          "Sort by avg latency",
-          "Attempt request",
-          "Fallback on failure",
-          "Log metrics"
-        ],
-        "deep_research_pipeline": [
-          "Draft pass",
-          "Critique pass",
-          "Gap detection",
-          "Expansion pass",
-          "Final validation"
-        ]
-      }
-    },
-    "phase_4_security_hardening": {
-      "security_enforcement": [
-        "Encrypt API keys using Laravel Crypt",
-        "Sanitize user input",
-        "Prevent prompt injection",
-        "Validate structured AI output",
-        "Mask keys in API responses"
-      ],
-      "validation_rules": [
-        "Required headings present",
-        "Minimum content length",
-        "Proper markdown structure"
-      ]
-    },
-    "phase_5_scalability_and_automation": {
-      "performance": [
-        "Section-based generation",
-        "Provider latency tracking",
-        "Token usage logging",
-        "Retry with exponential backoff"
-      ],
-      "environment_variables": [
-        "APP_ENV",
-        "APP_KEY",
-        "DB_CONNECTION",
-        "DB_HOST",
-        "DB_PORT",
-        "DB_DATABASE",
-        "DB_USERNAME",
-        "DB_PASSWORD",
-        "AI_MAX_RETRIES",
-        "AI_DEFAULT_MODEL",
-        "AI_TIMEOUT"
-      ]
-    },
-    "phase_6_launch_and_monitoring": {
-      "devops": [
-        "Git branch agent/reqs-ai",
-        "Commit convention enforcement",
-        "Logging configuration",
-        "Production config separation"
-      ],
-      "observability": [
-        "Log AI latency",
-        "Log failover events",
-        "Log token usage",
-        "Monitor document generation time"
-      ],
-      "frontend_polishing_and_integration": [
-        "Return structured JSON responses",
-        "Ensure CORS configured",
-        "Provide consistent error format",
-        "Support streaming-ready endpoints (future)"
-      ]
-    }
+  "checklist_logic": {
+    "step_1_add_key": "Complete if user has at least 1 API key stored",
+    "step_2_activate_key": "Complete if at least 1 API key has is_active = true",
+    "step_3_backup_provider": "Complete if at least 2 active keys exist OR 1 active + 1 backup provider"
   },
-  "strict_rules": [
-    "Follow PRD structure exactly",
-    "Implement encryption for API keys",
-    "Implement provider failover routing",
-    "Log all AI interactions",
-    "Ensure free-tier compatibility",
-    "Maintain modular architecture"
+  "computed_status_endpoint": {
+    "GET /api/keys/status": [
+      "Return total_keys",
+      "Return active_keys_count",
+      "Return backup_keys_count",
+      "Return checklist_progress (0-3)",
+      "Return api_connected (boolean)",
+      "Return primary_provider",
+      "Return fallback_provider"
+    ]
+  },
+  "api_endpoints": {
+    "POST /api/keys": "Store encrypted API key",
+    "GET /api/keys": "List user's API keys",
+    "PATCH /api/keys/{id}/activate": "Set selected key as active and deactivate others if primary",
+    "PATCH /api/keys/{id}/set-backup": "Mark as backup provider",
+    "PATCH /api/keys/{id}/priority": "Update manual_priority",
+    "DELETE /api/keys/{id}": "Delete API key",
+    "GET /api/keys/status": "Return checklist + connection state",
+    "POST /api/keys/{id}/health-check": "Test provider connectivity"
+  },
+  "activation_rules": [
+    "Only one primary active provider allowed at a time",
+    "Multiple backup providers allowed",
+    "Primary provider must always have highest priority",
+    "If primary fails → auto switch to highest priority backup"
+  ],
+  "failover_logic": {
+    "trigger_conditions": [
+      "API request failure",
+      "Rate limit exceeded",
+      "Timeout exceeded",
+      "Provider health check fails"
+    ],
+    "process": [
+      "Mark failed provider status = failed",
+      "Log failover event in ai_logs",
+      "Select next backup by priority",
+      "Retry request automatically"
+    ]
+  },
+  "api_connected_badge_logic": {
+    "show_connected_if": "At least 1 active provider passes health check",
+    "show_disconnected_if": "No active providers OR all failed"
+  },
+  "health_check_implementation": {
+    "method": "Ping provider with lightweight test request",
+    "update_fields": [
+      "avg_latency_ms",
+      "status",
+      "last_checked_at"
+    ]
+  },
+  "security_requirements": [
+    "Encrypt all API keys using Laravel Crypt",
+    "Mask keys in responses (show last 4 chars only)",
+    "Never expose decrypted keys",
+    "Validate provider type before saving",
+    "Rate-limit health check endpoint"
+  ],
+  "stage_integration": {
+    "document_generation_block": "Block PRD generation if no active provider exists",
+    "return_error": "No active API provider configured"
+  },
+  "logging_requirements": [
+    "Log activation changes",
+    "Log failover events",
+    "Log health check results",
+    "Log provider status changes"
+  ],
+  "response_structure_standard": {
+    "success": true,
+    "data": {},
+    "message": "",
+    "errors": []
+  },
+  "non_negotiable_rules": [
+    "No AI call allowed without active provider",
+    "Automatic failover must be silent and fast",
+    "Checklist must update dynamically",
+    "Primary provider must be clearly identifiable",
+    "System must support multiple providers"
   ]
 }
