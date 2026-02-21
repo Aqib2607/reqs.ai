@@ -179,52 +179,51 @@ reqs.ai/
 
 ## 🔑 Key Features
 
-- **AI Orchestration** - Automatic failover across 5 AI providers
-- **Deep Research Pipeline** - 5-pass iterative refinement
-- **Secure API Management** - Encrypted key storage
-- **Version History** - Track document changes
-- **Export Options** - Markdown, Clean PDF, Academic PDF
-- **Team Collaboration** - Multi-user support
-- **Real-time Generation** - Streaming AI responses
+- **AI Orchestration v2** - Automatic failover across 5 AI providers with multiple active API key support.
+- **Dynamic Clarify Scope** - AI-driven interview process that generates specific questions to refine project requirements before documentation begins.
+- **Deep Research Pipeline** - Iterative refinement process for high-quality technical documents.
+- **Comprehensive Profile Hub** - Categorized management for Personal Info, Professional Details (Company/Role), Security (Password/2FA), and Preferences.
+- **Secure API Management** - Encrypted key storage with health check tracking and status monitoring.
+- **Advanced Export System** - Fast, client-side Markdown and Multi-page PDF generation via Blob API and jsPDF.
+- **Responsive Workspace** - Optimized for all screen sizes with smooth sidebar and navigation transitions.
 
 ## 🌐 API Endpoints
 
 Base URL: `http://127.0.0.1:8000/api`
 
-### Authentication
+### Authentication & User
 
 - `POST /register` - Register new user
 - `POST /login` - Login user
 - `POST /logout` - Logout user
+- `GET /user` - Get current user data
+- `PATCH /user/profile` - Update personal & professional info
+- `PATCH /user/preferences` - Toggle notifications and 2FA
+- `POST /user/password` - Secure password change
+- `POST /user/delete-account` - Permanent account removal
 
-### Projects
+### Projects & Scoping
 
 - `GET /projects` - List all projects
-- `POST /projects` - Create project
-- `GET /projects/{id}` - Get project details
-- `PUT /projects/{id}` - Update project
+- `POST /projects` - Create project metadata
+- `POST /projects/clarify` - Generate dynamic scope questions
+- `GET /projects/{id}` - Get project details with documents
+- `PUT /projects/{id}` - Update project status
 - `DELETE /projects/{id}` - Delete project
 
 ### Documents
 
-- `POST /documents/generate` - Generate document with AI
-- `POST /documents/regenerate` - Regenerate document section
-- `GET /documents/{id}` - Get document
-- `PUT /documents/{id}` - Update document
-- `GET /documents/{id}/versions` - Get version history
+- `POST /documents/generate` - Generate full suite (PRD, Design, Tech Stack)
+- `POST /documents/regenerate` - Refine specific document sections
+- `GET /documents/{id}/versions` - Access full version history
 
-### Export
+### API Key Management
 
-- `GET /export/{id}/markdown` - Export as Markdown
-- `GET /export/{id}/pdf` - Export as Clean PDF
-- `GET /export/{id}/pdf-academic` - Export as Academic PDF
-
-### API Keys
-
-- `GET /api-keys` - List API keys
-- `POST /api-keys` - Add API key
-- `PUT /api-keys/{id}` - Update API key
-- `DELETE /api-keys/{id}` - Delete API key
+- `GET /api-keys` - List all configured keys
+- `POST /api-keys` - Add new provider key
+- `PATCH /api-keys/{id}/status` - Enable/Disable key
+- `PATCH /api-keys/{id}/backup` - Toggle backup provider status
+- `DELETE /api-keys/{id}` - Revoke API key
 
 ## 📖 Documentation
 
