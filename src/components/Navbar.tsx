@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Sparkles, Menu, X } from "lucide-react";
+import { Sparkles, Menu, X, BrainCircuit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
@@ -12,103 +12,49 @@ export function Navbar({ activePage = "home" }: NavbarProps) {
 
   return (
     <>
-      <nav className="fixed top-0 w-full z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center yellow-glow overflow-hidden">
-              <img src="/logo.png" alt="Reqs.ai Logo" className="w-full h-full object-cover" />
-            </div>
-            <span className="font-bold text-lg">
-              Reqs<span className="text-primary">.ai</span>
-            </span>
-          </Link>
+      <nav className="fixed top-0 w-full z-50 bg-background/95 backdrop-blur-md border-b border-border/40 py-2">
+        <div className="max-w-[1400px] mx-auto px-6 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            {/* Logo */}
+            <Link to="/" className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-[#050208] flex items-center justify-center shrink-0 shadow-sm transition-transform hover:scale-105">
+                <BrainCircuit className="w-4 h-4 text-secondary" />
+              </div>
+              <span className="font-bold text-lg tracking-tight text-[#050208]">
+                Reqs<span className="text-secondary-dark font-black">.ai</span>
+              </span>
+            </Link>
 
-          {/* Desktop Menu */}
-          <div className="hidden md:flex items-center gap-6">
-            <Link
-              to="/"
-              className={`text-sm transition-colors ${activePage === "home" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
-                }`}
-            >
-              Home
-            </Link>
-            <Link
-              to="/features"
-              className={`text-sm transition-colors ${activePage === "features" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
-                }`}
-            >
-              Features
-            </Link>
-            <Link
-              to="/how-it-works"
-              className={`text-sm transition-colors ${activePage === "how-it-works" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
-                }`}
-            >
-              How It Works
-            </Link>
-            <Link
-              to="/pricing"
-              className={`text-sm transition-colors ${activePage === "pricing" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
-                }`}
-            >
-              Pricing
-            </Link>
-            <Link to="/login">
-              <Button variant="ghost" size="sm">Sign In</Button>
-            </Link>
+            {/* Main Links - Subtle and secondary */}
+            <div className="hidden lg:flex items-center gap-8 ml-8">
+              {["Features", "How It Works", "Pricing"].map((item) => {
+                const id = item.toLowerCase().replace(/\s+/g, "-");
+                return (
+                  <Link
+                    key={item}
+                    to={`/${id}`}
+                    className={`text-sm font-medium transition-colors ${activePage === id ? "text-slate-900" : "text-slate-400 hover:text-slate-900"
+                      }`}
+                  >
+                    {item}
+                  </Link>
+                );
+              })}
+            </div>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 text-foreground"
-          >
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          <div className="flex items-center gap-4">
+            <Link to="/login" className="hidden sm:block">
+              <span className="text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors px-4">Log in</span>
+            </Link>
+            {/* Primary Action Button (Pill shaped) */}
+            <Link to="/register">
+              <Button className="rounded-full bg-primary text-white hover:bg-primary/90 font-bold px-7 h-10 text-sm shadow-md transition-all hover:translate-y-[-1px] hover:shadow-lg">
+                Get Started
+              </Button>
+            </Link>
+          </div>
         </div>
-
-        {/* Mobile Dropdown */}
-        {isOpen && (
-          <div className="md:hidden border-t border-border/50 bg-background/95 backdrop-blur-xl">
-            <div className="px-4 py-4 space-y-3">
-              <Link
-                to="/"
-                onClick={() => setIsOpen(false)}
-                className={`block py-2 text-sm transition-colors ${activePage === "home" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
-                  }`}
-              >
-                Home
-              </Link>
-              <Link
-                to="/features"
-                onClick={() => setIsOpen(false)}
-                className={`block py-2 text-sm transition-colors ${activePage === "features" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
-                  }`}
-              >
-                Features
-              </Link>
-              <Link
-                to="/how-it-works"
-                onClick={() => setIsOpen(false)}
-                className={`block py-2 text-sm transition-colors ${activePage === "how-it-works" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
-                  }`}
-              >
-                How It Works
-              </Link>
-              <Link
-                to="/pricing"
-                onClick={() => setIsOpen(false)}
-                className={`block py-2 text-sm transition-colors ${activePage === "pricing" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
-                  }`}
-              >
-                Pricing
-              </Link>
-              <Link to="/login" onClick={() => setIsOpen(false)}>
-                <Button variant="ghost" size="sm" className="w-full justify-start">Sign In</Button>
-              </Link>
-            </div>
-          </div>
-        )}
       </nav>
     </>
   );

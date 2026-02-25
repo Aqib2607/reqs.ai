@@ -38,9 +38,9 @@ export default function Features() {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {allFeatures.map((f) => (
-              <div key={f.title} className="glass-card p-6 hover-lift">
+              <div key={f.title} className="soft-card p-6 hover-lift">
                 <div className="w-12 h-12 rounded-lg bg-secondary/20 border border-secondary/40 flex items-center justify-center mb-4">
-                  <f.icon className="w-6 h-6 text-secondary" />
+                  <f.icon className="w-6 h-6 text-secondary-dark" />
                 </div>
                 <h3 className="text-xl font-semibold mb-3">{f.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{f.description}</p>
@@ -52,7 +52,7 @@ export default function Features() {
 
       {/* CTA */}
       <section className="py-20 px-6">
-        <div className="max-w-3xl mx-auto text-center glass-card p-12 border-secondary/30">
+        <div className="max-w-3xl mx-auto text-center soft-card p-12 border-secondary/30">
           <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
           <p className="text-muted-foreground mb-8">
             Join teams already using Reqs.ai to streamline their documentation process.

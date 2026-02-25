@@ -12,7 +12,7 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
-  Sparkles,
+  Sparkles, BrainCircuit
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store/useAppStore";
@@ -47,12 +47,12 @@ export function AppSidebar() {
       >
         {/* Logo */}
         <div className="flex items-center gap-2 px-4 h-14 border-b border-border shrink-0">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center yellow-glow overflow-hidden">
-            <img src="/logo.png" alt="Reqs.ai Logo" className="w-full h-full object-cover" />
+          <div className="w-8 h-8 rounded-lg bg-[#050208] flex items-center justify-center shrink-0 shadow-md">
+            <BrainCircuit className="w-4 h-4 text-secondary" />
           </div>
           {!sidebarCollapsed && (
-            <span className="font-bold text-lg text-foreground tracking-tight">
-              Reqs<span className="text-primary">.ai</span>
+            <span className="font-bold text-lg text-[#050208] tracking-tight">
+              Reqs<span className="text-secondary-dark font-black">.ai</span>
             </span>
           )}
         </div>
@@ -73,7 +73,7 @@ export function AppSidebar() {
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
                   isActive
-                    ? "bg-secondary/20 text-secondary border border-secondary/30"
+                    ? "bg-secondary/20 text-secondary-dark border border-secondary/30"
                     : "text-muted-foreground hover:text-foreground hover:bg-secondary/10 hover:border hover:border-secondary/20"
                 )}
               >
@@ -130,7 +130,7 @@ export function AppSidebar() {
                 className={cn(
                   "flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all min-w-[60px]",
                   isActive
-                    ? "text-secondary bg-secondary/10"
+                    ? "text-secondary-dark bg-secondary/10"
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >

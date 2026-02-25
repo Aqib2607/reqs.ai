@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Karla:wght@400;500;700;800&family=Space+Mono:wght@400;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,77 +6,55 @@
 
 @layer base {
   :root {
-    --background: 0 0% 7%;
-    --foreground: 0 0% 100%;
+    --background: 225 100% 99%;
+    /* Very light tint of soft blue */
+    --foreground: 270 60% 2%;
+    /* #050208 - Deep Black */
 
-    --card: 0 0% 7%;
-    --card-foreground: 0 0% 100%;
+    --card: 225 100% 97%;
+    /* Very light Soft Blue tint */
+    --card-foreground: 270 60% 2%;
 
-    --popover: 0 0% 7%;
-    --popover-foreground: 0 0% 100%;
+    --popover: 225 100% 97%;
+    --popover-foreground: 270 60% 2%;
 
-    --primary: 47 100% 71%;
-    --primary-foreground: 0 0% 7%;
+    --primary: 234 100% 66%;
+    /* #5465FF - Royal Blue */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 47 100% 50%;
-    --secondary-foreground: 0 0% 7%;
+    --secondary: 170 100% 50%;
+    /* #00FFD4 - Cyan */
+    --secondary-foreground: 270 60% 2%;
+    --secondary-dark: 170 100% 35%;
+    /* Readable version of cyan */
 
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 60%;
+    --muted: 225 60% 95%;
+    --muted-foreground: 234 40% 45%;
 
-    --accent: 0 0% 12%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 170 100% 50%;
+    --accent-foreground: 270 60% 2%;
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 15%;
-    --input: 0 0% 15%;
-    --ring: 47 100% 50%;
+    --border: 225 40% 80%;
+    /* Slightly darker for better visibility */
+    --input: 225 40% 80%;
+    --ring: 234 100% 66%;
 
-    --radius: 0.75rem;
+    --radius: 1.5rem;
 
-    --sidebar-background: 0 0% 7%;
-    --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 47 100% 50%;
-    --sidebar-primary-foreground: 0 0% 7%;
-    --sidebar-accent: 0 0% 12%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 0 0% 15%;
-    --sidebar-ring: 47 100% 50%;
-
-    --ai-glow: 47 100% 50%;
-    --surface-glass: 0 0% 7%;
-  }
-
-  .light {
-    --background: 152 20% 98%;
-    --foreground: 135 27% 9%;
-    --card: 152 20% 98%;
-    --card-foreground: 135 27% 9%;
-    --popover: 152 20% 98%;
-    --popover-foreground: 135 27% 9%;
-    --primary: 167 91% 9%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 154 41% 26%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 154 20% 92%;
-    --muted-foreground: 154 15% 40%;
-    --accent: 152 27% 46%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 154 20% 90%;
-    --input: 154 20% 90%;
-    --ring: 167 91% 9%;
-    --sidebar-background: 167 91% 9%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 152 27% 46%;
+    --sidebar-background: 225 100% 97%;
+    --sidebar-foreground: 270 60% 2%;
+    --sidebar-primary: 234 100% 66%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 154 41% 26%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 167 91% 15%;
-    --sidebar-ring: 152 27% 46%;
+    --sidebar-accent: 170 100% 50%;
+    --sidebar-accent-foreground: 270 60% 2%;
+    --sidebar-border: 225 40% 88%;
+    --sidebar-ring: 234 100% 66%;
+
+    --ai-glow: 170 100% 50%;
+    --surface-glass: 0 0% 100%;
   }
 }
 
@@ -95,46 +73,37 @@
   h4,
   h5,
   h6 {
-    @apply font-heading;
-  }
-
-  code,
-  pre {
-    @apply font-mono;
+    @apply font-sans font-bold tracking-tight text-slate-800;
   }
 }
 
 @layer components {
-  .glass-card {
-    @apply bg-card/60 backdrop-blur-xl border border-border/50 rounded-xl;
+  .pill-button {
+    @apply rounded-full px-8 py-3 font-semibold transition-all duration-300;
   }
 
-  .ai-glow {
-    box-shadow: 0 0 20px hsl(var(--secondary) / 0.2), 0 0 60px hsl(var(--secondary) / 0.08);
+  .primary-button {
+    @apply pill-button bg-primary text-white hover:bg-primary/95 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30;
   }
 
-  .ai-glow-strong {
-    box-shadow: 0 0 30px hsl(var(--secondary) / 0.4), 0 0 80px hsl(var(--secondary) / 0.15);
+  .secondary-button {
+    @apply pill-button bg-white border-2 border-primary text-primary hover:bg-slate-50;
   }
 
-  .gradient-primary {
-    @apply bg-gradient-to-r from-primary to-secondary;
+  .cyan-button {
+    @apply pill-button bg-secondary text-foreground hover:bg-secondary/90 shadow-lg shadow-secondary/20;
   }
 
-  .gradient-text {
-    @apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent;
+  .soft-card {
+    @apply bg-card rounded-[2rem] border border-border/60 shadow-sm hover:shadow-md transition-shadow duration-300;
   }
 
-  .hover-lift {
-    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-secondary/50;
+  .section-container {
+    @apply py-24 px-6 md:py-32;
   }
 
-  .yellow-accent {
-    @apply text-secondary;
-  }
-
-  .yellow-glow {
-    box-shadow: 0 0 20px hsl(var(--secondary) / 0.3), 0 0 40px hsl(var(--secondary) / 0.1);
+  .section-bg-alt {
+    @apply bg-muted/30;
   }
 }
 

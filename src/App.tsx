@@ -16,6 +16,7 @@ import DocumentEditor from "./pages/DocumentEditor";
 import ApiConfig from "./pages/ApiConfig";
 import Downloads from "./pages/Downloads";
 import Profile from "./pages/Profile";
+import SocialCallbackPage from "./pages/SocialCallbackPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/social-callback" element={<SocialCallbackPage />} />
           <Route element={<AppLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/new-project" element={<NewProject />} />

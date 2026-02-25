@@ -80,7 +80,7 @@ export default function Pricing() {
             {plans.map((plan) => (
               <div
                 key={plan.name}
-                className={`glass-card p-8 hover-lift relative ${plan.popular ? 'border-secondary/50 ring-2 ring-secondary/20' : ''}`}
+                className={`soft-card p-8 hover-lift relative ${plan.popular ? 'border-primary shadow-lg ring-4 ring-primary/5' : ''}`}
               >
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-secondary text-secondary-foreground text-xs font-bold rounded-full">
@@ -99,7 +99,7 @@ export default function Pricing() {
                 <ul className="space-y-3 mb-8">
                   {plan.features.map((feature) => (
                     <li key={feature} className="flex items-start gap-3 text-sm">
-                      <Check className="w-5 h-5 text-secondary shrink-0 mt-0.5" />
+                      <Check className="w-5 h-5 text-secondary-dark shrink-0 mt-0.5" />
                       <span className="text-muted-foreground">{feature}</span>
                     </li>
                   ))}
@@ -124,15 +124,15 @@ export default function Pricing() {
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
           <div className="space-y-6">
-            <div className="glass-card p-6">
+            <div className="soft-card p-6">
               <h3 className="font-semibold mb-2">Can I switch plans anytime?</h3>
               <p className="text-sm text-muted-foreground">Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately.</p>
             </div>
-            <div className="glass-card p-6">
+            <div className="soft-card p-6">
               <h3 className="font-semibold mb-2">What payment methods do you accept?</h3>
               <p className="text-sm text-muted-foreground">We accept all major credit cards, PayPal, and wire transfers for Enterprise plans.</p>
             </div>
-            <div className="glass-card p-6">
+            <div className="soft-card p-6">
               <h3 className="font-semibold mb-2">Is there a free trial?</h3>
               <p className="text-sm text-muted-foreground">Yes! Pro plan comes with a 14-day free trial. No credit card required.</p>
             </div>

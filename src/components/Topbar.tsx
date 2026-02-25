@@ -25,19 +25,19 @@ export function Topbar() {
       <div className="flex items-center gap-2 md:gap-4">
         {/* API Status */}
         <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-secondary/20 border border-secondary/30 text-xs">
-          <Wifi className="w-3.5 h-3.5 text-secondary" />
-          <span className="text-secondary font-medium">API Connected</span>
+          <Wifi className="w-3.5 h-3.5 text-secondary-dark" />
+          <span className="text-secondary-dark font-medium">API Connected</span>
         </div>
 
         {/* Notifications */}
-        <button className="relative p-2 rounded-lg text-muted-foreground hover:text-secondary hover:bg-secondary/10 transition-colors hidden sm:block">
+        <button className="relative p-2 rounded-lg text-muted-foreground hover:text-secondary-dark hover:bg-secondary/10 transition-colors hidden sm:block">
           <Bell className="w-4 h-4" />
           <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-secondary rounded-full animate-pulse" />
         </button>
 
         {/* User */}
         <button className="flex items-center gap-2 px-2 md:px-3 py-1.5 rounded-lg hover:bg-secondary/10 hover:border hover:border-secondary/30 transition-colors">
-          <div className="w-7 h-7 rounded-full bg-secondary/20 border border-secondary/40 flex items-center justify-center text-xs font-bold text-secondary">
+          <div className="w-7 h-7 rounded-full bg-secondary/20 border border-secondary/40 flex items-center justify-center text-xs font-bold text-secondary-dark">
             {initials}
           </div>
           <span className="text-sm text-foreground hidden lg:block">{user?.name?.split(" ")[0] || "User"}</span>

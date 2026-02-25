@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
@@ -70,5 +71,50 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Logged out successfully',
         ]);
+    }
+
+    public function redirectToProvider($provider)
+    {
+        /** @var \Laravel\Socialite\Two\AbstractProvider $driver */
+        $driver = Socialite::driver($provider);
+        return $driver->stateless()->redirect();
+    }
+
+    public function handleProviderCallback($provider)
+    {
+        try {
+            /** @var \Laravel\Socialite\Two\AbstractProvider $driver */
+            $driver = Socialite::driver($provider);
+            $socialUser = $driver->stateless()->user();
+        } catch (\Exception $e) {
+            return redirect(config('app.frontend_url', 'http://localhost:5173') . '/login?error=social_auth_failed');
+        }
+
+        $user = User::where($provider . '_id', $socialUser->getId())
+            ->orWhere('email', $socialUser->getEmail())
+            ->first();
+
+        if ($user) {
+            $user->update([
+                $provider . '_id' => $socialUser->getId(),
+                'avatar' => $socialUser->getAvatar(),
+            ]);
+        } else {
+            $user = User::create([
+                'name' => $socialUser->getName() ?? $socialUser->getNickname() ?? 'Social User',
+                'email' => $socialUser->getEmail(),
+                'google_id' => $provider === 'google' ? $socialUser->getId() : null,
+                'github_id' => $provider === 'github' ? $socialUser->getId() : null,
+                'avatar' => $socialUser->getAvatar(),
+                'plan' => 'free',
+                'email_verified_at' => now(),
+            ]);
+        }
+
+        $token = $user->createToken('auth-token')->plainTextToken;
+        $frontendUrl = config('app.frontend_url', 'http://localhost:5173');
+
+        // Redirect to a frontend route that will handle the token
+        return redirect($frontendUrl . '/social-callback?token=' . $token . '&user=' . urlencode(json_encode($user)));
     }
 }

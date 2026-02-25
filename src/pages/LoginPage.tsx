@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Sparkles, Mail, Github, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { Sparkles, Mail, Github, ArrowRight, Eye, EyeOff, BrainCircuit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { api } from "@/lib/api";
+import { api, User as ApiUser } from "@/lib/api";
 import { useAppStore } from "@/store/useAppStore";
 
 export default function LoginPage() {
@@ -42,7 +42,10 @@ export default function LoginPage() {
   };
 
   const handleOAuth = (provider: string) => {
-    toast({ title: `${provider} Sign In`, description: `OAuth integration coming soon...` });
+    setIsLoading(true);
+    // Real redirection to backend OAuth route
+    const backendUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:8000';
+    window.location.href = `${backendUrl}/auth/${provider.toLowerCase()}/redirect`;
   };
 
   return (
@@ -51,11 +54,11 @@ export default function LoginPage() {
       <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.15),transparent_70%)]" />
         <div className="relative z-10 max-w-md text-center px-8">
-          <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-8 yellow-glow overflow-hidden">
-            <img src="/logo.png" alt="Reqs.ai Logo" className="w-full h-full object-cover" />
+          <div className="w-16 h-16 rounded-2xl bg-[#050208] flex items-center justify-center mx-auto mb-8 shadow-xl">
+            <BrainCircuit className="w-8 h-8 text-secondary" />
           </div>
-          <h1 className="text-4xl font-extrabold mb-4">
-            Reqs<span className="text-primary">.ai</span>
+          <h1 className="text-4xl font-extrabold mb-4 text-[#050208]">
+            Reqs<span className="text-secondary-dark font-black">.ai</span>
           </h1>
           <p className="text-muted-foreground text-lg leading-relaxed">
             From idea to production-ready documentation in minutes. Powered by AI.
@@ -67,10 +70,10 @@ export default function LoginPage() {
       <div className="flex-1 flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-md">
           <div className="lg:hidden flex items-center gap-2 mb-8 justify-center">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden">
-              <img src="/logo.png" alt="Reqs.ai Logo" className="w-full h-full object-cover" />
+            <div className="w-8 h-8 rounded-lg bg-[#050208] flex items-center justify-center shrink-0 shadow-md">
+              <BrainCircuit className="w-4 h-4 text-secondary" />
             </div>
-            <span className="font-bold text-xl">Reqs<span className="text-primary">.ai</span></span>
+            <span className="font-extrabold text-xl tracking-tight text-[#050208]">Reqs<span className="text-secondary-dark">.ai</span></span>
           </div>
 
           <h2 className="text-2xl font-bold mb-2">Welcome back</h2>
@@ -78,7 +81,7 @@ export default function LoginPage() {
 
           {/* OAuth */}
           <div className="grid grid-cols-2 gap-3 mb-6">
-            <Button variant="outline" className="h-11" onClick={() => handleOAuth("Google")}>
+            <Button variant="outline" className="h-11" onClick={() => handleOAuth("Google")} disabled={isLoading}>
               <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
                 <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
                 <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
@@ -87,7 +90,7 @@ export default function LoginPage() {
               </svg>
               Google
             </Button>
-            <Button variant="outline" className="h-11" onClick={() => handleOAuth("GitHub")}>
+            <Button variant="outline" className="h-11" onClick={() => handleOAuth("GitHub")} disabled={isLoading}>
               <Github className="w-4 h-4 mr-2" />
               GitHub
             </Button>
@@ -164,7 +167,7 @@ export default function LoginPage() {
 
           <Link to="/register">
             <p className="text-center text-sm text-muted-foreground mt-6">
-              Don't have an account? <span className="text-secondary hover:underline font-medium">Sign up</span>
+              Don't have an account? <span className="text-secondary-dark hover:underline font-medium">Sign up</span>
             </p>
           </Link>
         </div>

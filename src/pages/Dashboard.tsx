@@ -98,7 +98,7 @@ export default function Dashboard() {
                 }}
               >
                 <div className="flex items-start justify-between mb-4">
-                  <h3 className="font-semibold text-foreground group-hover:text-secondary transition-colors pr-8">
+                  <h3 className="font-semibold text-foreground group-hover:text-secondary-dark transition-colors pr-8">
                     {project.name}
                   </h3>
                   <div className="flex items-center gap-2 shrink-0">
